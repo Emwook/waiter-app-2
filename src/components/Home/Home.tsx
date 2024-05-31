@@ -3,6 +3,7 @@ import { db } from '../../config/firebase';
 import { getDocs, collection } from "firebase/firestore";
 import { Table } from "../../types/tableType";
 import TableBar from "../TableBar/TableBar";
+import { Sort } from "../../utils/Sort";
 
 const Home:React.FC = () => {
     const [tables, setTables] = useState<Table[]>([]);
@@ -17,7 +18,9 @@ const Home:React.FC = () => {
                     ...doc.data(), 
                     id: doc.id,
                   } as Table));
-                setTables(filteredData);
+                  Sort(filteredData);
+                  setTables(filteredData);
+                
             } 
             catch(err){
                 console.error(err);
@@ -31,7 +34,7 @@ const Home:React.FC = () => {
          <ul className="mt-5 px-3 list-unstyled">
             {tables.map(table => 
             <TableBar
-                id={table.id}
+                Table={table}
                 key={table.id}
             />)}
         </ul>

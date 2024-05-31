@@ -1,0 +1,34 @@
+import { useState, useEffect } from "react";
+import { getDocs, collection, query, where } from "firebase/firestore";
+import { db } from '../config/firebase';  
+import { Table } from "../types/tableType";
+
+const useTableByNumber = (tableNumber: number) => {
+    const [table, setTable] = useState<Table | null>(null);
+    
+    useEffect(() => {
+        const getTable = async () => {
+            try {
+                const tablesCollectionRef = collection(db, "tables");
+                const q = query(tablesCollectionRef, where("tableNumber", "==", tableNumber));
+                const querySnapshot = await getDocs(q);
+                const tableData = querySnapshot.docs.map(doc => ({
+                    ...doc.data(),
+                    id: doc.id,
+                }))[0] as Table | undefined;
+                if (tableData) {
+                    setTable(tableData);
+                } else {
+                    console.error(`Table with number ${tableNumber} not found`);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+        getTable();
+    }, [tableNumber]);
+    
+    return table;
+};
+
+export default useTableByNumber;
