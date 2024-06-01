@@ -1,34 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { db } from '../../config/firebase';
-import { getDocs, collection } from "firebase/firestore";
+import React from "react";
 import { Table } from "../../types/tableType";
 import TableBar from "../TableBar/TableBar";
-import { Sort } from "../../utils/Sort";
+import useTables from "../../utils/useTables";
+import { useState, useEffect } from "react";
+import Loading from "../Loading/Loading";
 
 const Home:React.FC = () => {
-    const [tables, setTables] = useState<Table[]>([]);
-    
-    const tablesCollectionRef = collection(db, "tables");
+    const tables: Table[] = useTables();
+    const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(()=> {
-        const getTables = async () => {
-            try {
-                const data = await getDocs(tablesCollectionRef);
-                const filteredData: Table[] = data.docs.map((doc) => ({
-                    ...doc.data(), 
-                    id: doc.id,
-                  } as Table));
-                  Sort(filteredData);
-                  setTables(filteredData);
-                
-            } 
-            catch(err){
-                console.error(err);
-            }
+    useEffect(() => {
+        if (tables) {
+            setLoading(false);
         }
-        getTables();
-    }, []);
-    
+    }, [tables]);
+
+    if (loading) {
+        return <Loading/>
+    }
     return(
        <div>
          <ul className="mt-5 px-3 list-unstyled">

@@ -1,30 +1,25 @@
 import { Row, Col, Form } from "react-bootstrap";
-import React, { useState } from "react";
-import { Table } from "../../types/tableType";
-import { updateTable } from "../../utils/UpdateTableStatus";
+import React from "react";
+import useTableByNumber from "../../utils/useTableByNumber";
+import { possibleStatusList } from "../../config/settings";
 
 interface StatusInputProps {
-    table: Table;
+    tableNumber: number;
+    updateSelectedStatus: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
-const StatusInput: React.FC<StatusInputProps> = ({ table }) => {
-    const [status, setStatus] = useState(table?.status);
-    const possibleStatus = ['free', 'busy', 'cleaning', 'reserved'];
+const StatusInput: React.FC<StatusInputProps> = ({ tableNumber, updateSelectedStatus }) => {
+    const table = useTableByNumber(tableNumber);
 
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const newStatus = event.target.value;
-        updateTable(table.id, { status: newStatus });
-        setStatus(newStatus);
-        console.log(newStatus);
-    };
-    //bug that displayed status on entering details stays as 'busy', not the actual value
     return (
+        <Form.Group className="w-50" onChange={updateSelectedStatus}>
         <Row className="my-2">
-            <Col xs={3} md={3} lg={3}><Form.Label>Select:</Form.Label></Col>
+            <Col xs={3} md={3} lg={3}><Form.Label>Status:</Form.Label></Col>
             <Col xs={6} md={5} lg={4}>
-                <Form.Select name="status" data-bs-theme="light" size="sm" className="border-dark" value={status} onChange={handleChange}>
-                    {possibleStatus.map(possibleStatus => 
+                <Form.Select name="status" data-bs-theme="light" size="sm" className="border-dark">
+                    {possibleStatusList.map(possibleStatus => 
                         <option 
+                            selected = {possibleStatus === table?.status}
                             key={possibleStatus}
                             value={possibleStatus}>
                             {possibleStatus}
@@ -33,6 +28,7 @@ const StatusInput: React.FC<StatusInputProps> = ({ table }) => {
                 </Form.Select>
             </Col>
         </Row>
+        </Form.Group>
     );
 };
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from '../config/firebase';  
 import { Table } from "../types/tableType";
+import { sort } from "./Sort";
 
 const useTables = () => {
     const [tables, setTables] = useState<Table[]>([]);
@@ -15,6 +16,7 @@ const useTables = () => {
                     ...doc.data(), 
                     id: doc.id,
                 } as Table));
+                sort(filteredData);
                 setTables(filteredData);
             } catch (err) {
                 console.error(err);
