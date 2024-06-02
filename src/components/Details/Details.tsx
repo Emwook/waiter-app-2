@@ -81,6 +81,7 @@ const Details: React.FC<DetailsProps> = ({ tableNumber }) => {
             <h1 className="py-4">Table {table?.tableNumber}</h1>
             <Form onSubmit={handleSubmit}>
                 <StatusInput 
+                    inDetailsComponent={true}
                     tableNumber={tableNumber}
                     updateSelectedStatus={updateSelectedStatus}/>
                 <PeopleInput 

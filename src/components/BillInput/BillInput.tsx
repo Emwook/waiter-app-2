@@ -12,7 +12,7 @@ const BillInput: React.FC<BillInputProps> = ({ tableNumber, displayedBill, updat
     const table = useTableByNumber(tableNumber);
 
     return (
-        <Form.Group className="w-75">
+        <Form.Group className="w-100">
             <Row className="my-2">
                 <Col xs={2}><Form.Label>Bill: </Form.Label></Col>
                 <Col xs={1}><span className="px-2 fs-5 text-center lead">$</span></Col>

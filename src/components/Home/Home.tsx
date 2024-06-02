@@ -4,6 +4,7 @@ import TableBar from "../TableBar/TableBar";
 import useTables from "../../utils/useTables";
 import { useState, useEffect } from "react";
 import Loading from "../Loading/Loading";
+import TableForm from "../TableForm/TableForm";
 
 const Home:React.FC = () => {
     const tables: Table[] = useTables();
@@ -26,6 +27,7 @@ const Home:React.FC = () => {
                 Table={table}
                 key={table.id}
             />)}
+            <TableForm/>
         </ul>
        </div>
     );

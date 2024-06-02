@@ -1,6 +1,5 @@
 import { Table } from "../types/tableType";
 
-
 export const sort = (arr: Table[]): Table[] => {
     for (let i = 1; i < arr.length; i++) {
         let key = arr[i];
