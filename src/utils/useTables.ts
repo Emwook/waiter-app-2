@@ -23,7 +23,7 @@ const useTables = () => {
             }
         };
         getTables();
-    }, []);
+    }, []); //using tables in dependencies array might cause firebase spam reading
     
     return tables;
 };

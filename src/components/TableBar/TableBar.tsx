@@ -9,7 +9,6 @@ interface TableBarProps {
 
 const TableBar: React.FC<TableBarProps> = ({ Table }) => {
     return (
-        <li>
             <Row className="text-dark py-4 px-3 d-flex justify-content-between align-items-center border-bottom border-dark">
                 <Col><h2>Table {Table ? Table.tableNumber : ''}</h2></Col>
                 <Col><span className="text-muted">Status: {Table ? Table.status : ''}</span></Col>
@@ -21,7 +20,6 @@ const TableBar: React.FC<TableBarProps> = ({ Table }) => {
                     </Button>
                 </Col>
             </Row>
-        </li>
     );
 };
 

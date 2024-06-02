@@ -6,12 +6,9 @@ import { Table } from "../../types/tableType";
 import useNextTable from "../../utils/UseNextTable";
 import { mostNumOfPeople, leastNumOfPeople } from "../../config/settings";
 import { addNewTable } from "../../utils/addNewTable";
-import { useNavigate } from "react-router";
 
-interface TableFormProps {
-}
 
-const TableForm:React.FC<TableFormProps> = () =>{
+const TableForm:React.FC = () =>{
     const newTable: Table = useNextTable();
     const [selectedStatus, setSelectedStatus] = useState<string>('free'); 
     const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(0);
