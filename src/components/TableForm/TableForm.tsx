@@ -6,6 +6,7 @@ import { Table } from "../../types/tableType";
 import useNextTable from "../../utils/UseNextTable";
 import { mostNumOfPeople, leastNumOfPeople } from "../../config/settings";
 import { addNewTable } from "../../utils/addNewTable";
+import { dispatchTableAddedEvent } from "../../utils/eventDispatcher";
 
 
 const TableForm:React.FC = () =>{
@@ -21,7 +22,7 @@ const TableForm:React.FC = () =>{
         newTable.numOfPeople = displayedNumOfPeople;
         newTable.maxNumOfPeople = displayedMaxNumOfPeople;
         addNewTable(newTable);
-        //window.location.reload(); // needs work to correctly update homepage to show the new table
+        dispatchTableAddedEvent(newTable);
     };
 
     const updateSelectedStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -51,27 +52,25 @@ const TableForm:React.FC = () =>{
     };
     
     return(
-        <li>
-            <Row className="text-dark py-4 px-3 d-flex justify-content-between align-items-center">
-                <Col xs={12} className="d-flex justify-content-center">
-                    <Form onSubmit={handleSubmit}>
-                        <StatusInput 
-                            inDetailsComponent={false}
-                            tableNumber={tableNumber}
-                            updateSelectedStatus={updateSelectedStatus}/>
-                        <PeopleInput 
-                            tableNumber={tableNumber}  
-                            updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
-                            updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
-                            displayedNumOfPeople={displayedNumOfPeople}
-                            displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                        <Button size="sm" variant="primary" type="submit">
-                            Submit
-                        </Button>
-                    </Form>
-                </Col>
-            </Row>
-        </li>
+        <Row className="text-dark px-5 my-5 py-4 justify-content-center bg-light d-flex align-items-center">
+            <Col xs={12} className="d-flex justify-content-left">
+                <Form onSubmit={handleSubmit}>
+                    <StatusInput 
+                        inDetailsComponent={false}
+                        tableNumber={tableNumber}
+                        updateSelectedStatus={updateSelectedStatus}/>
+                    <PeopleInput 
+                        tableNumber={tableNumber}  
+                        updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
+                        updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
+                        displayedNumOfPeople={displayedNumOfPeople}
+                        displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
+                    <Button size="sm" variant="primary" type="submit">
+                        Submit
+                    </Button>
+                </Form>
+            </Col>
+        </Row>
     )
 }
 export default TableForm

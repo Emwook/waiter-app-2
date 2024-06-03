@@ -1,56 +1,50 @@
 import React, { useState, useEffect } from "react";
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import type { DropResult } from 'react-beautiful-dnd';
 import { Table } from "../../types/tableType";
 import TableBar from "../TableBar/TableBar";
 import useTables from "../../utils/useTables";
 import Loading from "../Loading/Loading";
 import TableForm from "../TableForm/TableForm";
 
-const Home:React.FC = () => {
-    const tables: Table[] = useTables();
-    const [loading, setLoading] = useState<boolean>(true);
+const Home: React.FC = () => {
+  const [tables, setTables] = useState<Table[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const tablesData = useTables();
 
-    useEffect(() => {
-        if (tables) {
-            setLoading(false);
-        }
-    }, [tables]);
+  useEffect(() => {
+    if (tablesData) {
+      setTables(tablesData);
+      setLoading(false);
+    }
+  }, [tablesData]);
 
-    const handleOnDragEnd = (result: DropResult) => {
-        // TODO: Implement combination logic here
-        console.log('Drag end result:', result);
+  useEffect(() => {
+    const handleTableAdded = (event: CustomEvent<{ table: Table }>) => {
+      setTables((prevTables) => [...prevTables, event.detail.table]);
     };
 
-    if (loading) {
-        return <Loading/>
-    }
-    return(
-        <div>
-       <DragDropContext onDragEnd={handleOnDragEnd}>
-           <Droppable droppableId='tables'>
-               {(provided) => (
-                   <ul className="mt-5 px-3 list-unstyled" ref={provided.innerRef} {...provided.droppableProps}>
-                       {tables.map((table, index) => (
-                           <Draggable key={table.id} draggableId={table.id} index={table.tableNumber}>
-                               {(provided) => (
-                                   <li ref={provided.innerRef}
-                                    {...provided.draggableProps} 
-                                    {...provided.dragHandleProps}
-                                    >
-                                       <TableBar Table={table} key={table.id} />
-                                   </li>
-                               )}
-                           </Draggable>
-                       ))}
-                       {provided.placeholder}
-                   </ul>
-               )}
-           </Droppable>
-        </DragDropContext>
-        <TableForm/>
-       </div>
-    );
-}
+    window.addEventListener('tableAdded', handleTableAdded as EventListener);
+
+    return () => {
+      window.removeEventListener('tableAdded', handleTableAdded as EventListener);
+    };
+  }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
+
+  return (
+    <div>
+      <ul className="mt-5 px-3 list-unstyled">
+        {tables.map((table, index) => (
+          <li key={table.id}>
+            <TableBar Table={table} />
+          </li>
+        ))}
+      </ul>
+      <TableForm />
+    </div>
+  );
+};
 
 export default Home;
