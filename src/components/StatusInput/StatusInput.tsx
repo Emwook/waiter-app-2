@@ -20,7 +20,7 @@ const StatusInput: React.FC<StatusInputProps> = ({ tableNumber, updateSelectedSt
                 <Form.Select name="status" data-bs-theme="light" size="sm" className="border-dark">
                     {possibleStatusList.map(possibleStatus => 
                         <option 
-                            selected = {inDetailsComponent?(possibleStatus === table?.status):(possibleStatus === 'free')}
+                            defaultValue = {((inDetailsComponent === true) && (possibleStatus === table?.status))?possibleStatus:('free')}
                             key={possibleStatus}
                             value={possibleStatus}>
                             {possibleStatus}

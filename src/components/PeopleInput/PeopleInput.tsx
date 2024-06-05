@@ -24,7 +24,6 @@ const PeopleInput: React.FC<PeopleInputProps> = (
                         name={`numOfPeople${tableNumber}`}
                         className="border-dark text-center" 
                         value = {displayedNumOfPeople}
-                        defaultValue={displayedNumOfPeople}
                         onChange={updateDisplayedNumOfPeople}
                     />
                 </Col>    
@@ -36,7 +35,6 @@ const PeopleInput: React.FC<PeopleInputProps> = (
                         name={`MaxNumOfPeople${tableNumber}`}
                         className="border-dark text-center" 
                         value = {displayedMaxNumOfPeople}
-                        defaultValue={displayedMaxNumOfPeople}
                         onChange={updateDisplayedMaxNumOfPeople}
                     />
                 </Col>    

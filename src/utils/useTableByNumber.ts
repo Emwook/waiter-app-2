@@ -13,8 +13,7 @@ const useTableByNumber = (tableNumber: number) => {
                 const q = query(tablesCollectionRef, where("tableNumber", "==", tableNumber));
                 const querySnapshot = await getDocs(q);
                 const tableData = querySnapshot.docs.map(doc => ({
-                    ...doc.data(),
-                    id: doc.id,
+                    ...doc.data()
                 }))[0] as Table | undefined;
                 if (tableData) {
                     setTable(tableData);

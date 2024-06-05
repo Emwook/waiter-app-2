@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import { Table } from "../types/tableType";
-import { sort } from "./Sort";
-import { nanoid } from 'nanoid';
+import { sortTables } from "./sortTables";
 import useTables from "./useTables";
 
 const useNextTable = (): Table => {
     const tables: Table[] = useTables();
     const [newTable, setNewTable] = useState<Table>({
-        id: '',
         tableNumber: 0,
         status: 'free',
         numOfPeople: 0,
@@ -17,13 +15,15 @@ const useNextTable = (): Table => {
 
     useEffect(() => {
         const sortedTables = [...tables];
-        sort(sortedTables);
+        sortTables(sortedTables, 'tableNumber');
 
         const lastTableNumber = sortedTables.length > 0 ? sortedTables[sortedTables.length - 1].tableNumber : 0;
+        console.log('last: ', lastTableNumber)
+
         const nextTableNumber = lastTableNumber + 1;
+        console.log('next: ', nextTableNumber)
 
         const newTable: Table = {
-            id: nanoid(),
             tableNumber: nextTableNumber,
             status: 'free',
             numOfPeople: 0,
@@ -33,7 +33,6 @@ const useNextTable = (): Table => {
 
         setNewTable(newTable);
     }, [tables]);
-
     return newTable;
 };
 export default useNextTable;

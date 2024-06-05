@@ -4,18 +4,23 @@ import TableBar from "../TableBar/TableBar";
 import useTables from "../../utils/useTables";
 import Loading from "../Loading/Loading";
 import TableForm from "../TableForm/TableForm";
+import SortingPanel from "../SortingPanel/SortingPanel";
+import { sortTables } from "../../utils/sortTables";
+import { defaultSortingMethod } from "../../config/settings";
 
 const Home: React.FC = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const tablesData = useTables();
+  const [sortingMethod, setSortingMethod] = useState <keyof Table>(defaultSortingMethod);
 
   useEffect(() => {
+    setLoading(true);
     if (tablesData) {
-      setTables(tablesData);
+      setTables(sortTables(tablesData, sortingMethod));
       setLoading(false);
     }
-  }, [tablesData]);
+  }, [tablesData, sortingMethod]);
 
   useEffect(() => {
     const handleTableAdded = (event: CustomEvent<{ table: Table }>) => {
@@ -29,15 +34,40 @@ const Home: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleTableRemoved = (event: CustomEvent<{ table: Table }>) => {
+      setTables((prevTables) => prevTables.filter(table => table.tableNumber !== event.detail.table.tableNumber));
+    };
+
+    window.addEventListener('tableRemoved', handleTableRemoved as EventListener);
+
+    return () => {
+      window.removeEventListener('tableRemoved', handleTableRemoved as EventListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleSortingMethodChange = (event: CustomEvent<{ method: keyof Table }>) => {
+      setSortingMethod(event.detail.method);
+      console.log('method changed to: ', event.detail.method);
+    };
+    window.addEventListener('methodChanged', handleSortingMethodChange as EventListener);
+
+    return () => {
+      window.removeEventListener('methodChanged', handleSortingMethodChange as EventListener);
+    };
+  });
+
   if (loading) {
     return <Loading />;
   }
 
   return (
     <div>
-      <ul className="mt-5 px-3 list-unstyled">
+      <SortingPanel sortingMethod={sortingMethod}/>
+      <ul className="mt-1 px-3 list-unstyled">
         {tables.map((table, index) => (
-          <li key={table.id}>
+          <li key={table.tableNumber}>
             <TableBar Table={table} />
           </li>
         ))}

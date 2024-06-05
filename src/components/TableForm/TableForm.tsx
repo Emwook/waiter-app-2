@@ -14,7 +14,7 @@ const TableForm:React.FC = () =>{
     const [selectedStatus, setSelectedStatus] = useState<string>('free'); 
     const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(0);
     const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(1);
-    const tableNumber = newTable.tableNumber;
+    let tableNumber = newTable.tableNumber;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
