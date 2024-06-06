@@ -3,13 +3,12 @@ import { Row, Col, Button, Form } from 'react-bootstrap'
 import StatusInput from "../StatusInput/StatusInput";
 import PeopleInput from "../PeopleInput/PeopleInput";
 import { Table } from "../../types/tableType";
-import useNextTable from "../../utils/UseNextTable";
+import useNextTable from "../../utils/sorting/useNextTable";
 import { mostNumOfPeople, leastNumOfPeople } from "../../config/settings";
-import { addNewTable } from "../../utils/addNewTable";
-import { dispatchTableAddedEvent } from "../../utils/eventDispatcher";
+import { addNewTable } from "../../utils/store/addNewTable";
+import { dispatchTableAddedEvent } from "../../utils/events/eventDispatcher";
 
-
-const TableForm:React.FC = () =>{
+const TableForm: React.FC = () => {
     const newTable: Table = useNextTable();
     const [selectedStatus, setSelectedStatus] = useState<string>('free'); 
     const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(0);
@@ -55,18 +54,19 @@ const TableForm:React.FC = () =>{
         <Row className="text-dark px-5 my-5 py-4 justify-content-center bg-light d-flex align-items-center">
             <Col xs={12} className="d-flex justify-content-left">
                 <Form onSubmit={handleSubmit}>
-                    <StatusInput 
+                    <StatusInput
                         inDetailsComponent={false}
                         tableNumber={tableNumber}
                         updateSelectedStatus={updateSelectedStatus}/>
-                    <PeopleInput 
+                    <PeopleInput
+                        
                         tableNumber={tableNumber}  
                         updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
                         updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
                         displayedNumOfPeople={displayedNumOfPeople}
                         displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
                     <Button size="sm" variant="primary" type="submit">
-                        Submit
+                        add table
                     </Button>
                 </Form>
             </Col>

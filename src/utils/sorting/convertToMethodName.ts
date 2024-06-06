@@ -1,4 +1,4 @@
-import { Table } from '../types/tableType';
+import { Table } from '../../types/tableType';
 
 export const convertToMethodName = <K extends keyof Table>(method: K) => {
     const letterArray: string[] = method.split('');

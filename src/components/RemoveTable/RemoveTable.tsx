@@ -1,8 +1,8 @@
 import React from "react";
 import { Button } from 'react-bootstrap'
 import { Table } from "../../types/tableType";
-import { removeSelectedTable } from "../../utils/removeSelectedTable";
-import { dispatchTableRemovedEvent } from "../../utils/eventDispatcher";
+import { removeSelectedTable } from "../../utils/store/removeSelectedTable";
+import { dispatchTableRemovedEvent } from "../../utils/events/eventDispatcher";
 
 interface RemoveTableProps {
     table: Table;

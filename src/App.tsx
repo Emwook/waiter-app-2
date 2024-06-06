@@ -6,7 +6,7 @@ import { Container } from 'react-bootstrap';
 import Details from './components/Details/Details';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Table } from './types/tableType';
-import useTables from './utils/useTables';
+import useTables from './utils/store/useTables';
 
 const App = () => {
   const tables: Table[] = useTables();

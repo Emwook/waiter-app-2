@@ -1,7 +1,7 @@
 import React from "react";
 import { Row, Col, Dropdown } from 'react-bootstrap';
 import { Table } from "../../types/tableType";
-import { dispatchSortingMethodEvent } from "../../utils/eventDispatcher";
+import { dispatchSortingMethodEvent } from "../../utils/events/eventDispatcher";
 
 interface SortingPanelProps {
     sortingMethod: keyof Table;

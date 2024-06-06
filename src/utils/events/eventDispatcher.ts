@@ -1,5 +1,5 @@
-import { SortingMethodEvent, TableAddedEventDetail, TableRemovedEventDetail } from "../types/customEventTypes";
-import { Table } from "../types/tableType";
+import { SortingMethodEvent, TableAddedEventDetail, TableRemovedEventDetail } from "../../types/customEventTypes";
+import { Table } from "../../types/tableType";
 
 export const dispatchTableAddedEvent = (table: Table) => {
   const event = new CustomEvent<TableAddedEventDetail>('tableAdded', { detail: { table } });

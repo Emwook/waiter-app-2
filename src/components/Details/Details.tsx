@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Form, Container, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import useTableByNumber from "../../utils/useTableByNumber";
+import useTableByNumber from "../../utils/store/useTableByNumber";
 import StatusInput from "../StatusInput/StatusInput";
-import { updateTable } from "../../utils/UpdateTable";
+import { updateTable } from "../../utils/store/UpdateTable";
 import PeopleInput from "../PeopleInput/PeopleInput";
 import Loading from "../Loading/Loading";
 import { mostNumOfPeople, leastNumOfPeople, maxBill } from "../../config/settings";
@@ -80,11 +80,11 @@ const Details: React.FC<DetailsProps> = ({ tableNumber }) => {
         <Container>
             <h1 className="py-4">Table {table?.tableNumber}</h1>
             <Form onSubmit={handleSubmit}>
-                <StatusInput 
+                <StatusInput
                     inDetailsComponent={true}
                     tableNumber={tableNumber}
                     updateSelectedStatus={updateSelectedStatus}/>
-                <PeopleInput 
+                <PeopleInput
                     tableNumber={tableNumber}  
                     updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
                     updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}

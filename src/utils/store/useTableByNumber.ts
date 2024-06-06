@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getDocs, collection, query, where } from "firebase/firestore";
-import { db } from '../config/firebase';  
-import { Table } from "../types/tableType";
+import { db } from '../../config/firebase';  
+import { Table } from "../../types/tableType";
 
 const useTableByNumber = (tableNumber: number) => {
     const [table, setTable] = useState<Table | null>(null);

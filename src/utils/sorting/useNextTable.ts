@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Table } from "../types/tableType";
+import { Table } from "../../types/tableType";
 import { sortTables } from "./sortTables";
-import useTables from "./useTables";
+import useTables from "../store/useTables";
 
 const useNextTable = (): Table => {
     const tables: Table[] = useTables();
@@ -18,10 +18,8 @@ const useNextTable = (): Table => {
         sortTables(sortedTables, 'tableNumber');
 
         const lastTableNumber = sortedTables.length > 0 ? sortedTables[sortedTables.length - 1].tableNumber : 0;
-        console.log('last: ', lastTableNumber)
 
         const nextTableNumber = lastTableNumber + 1;
-        console.log('next: ', nextTableNumber)
 
         const newTable: Table = {
             tableNumber: nextTableNumber,

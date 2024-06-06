@@ -7,11 +7,14 @@ interface PeopleInputProps {
     updateDisplayedMaxNumOfPeople: (event: React.ChangeEvent<HTMLInputElement>) => void;
     displayedNumOfPeople: number;
     displayedMaxNumOfPeople: number;
+    
 }
 
 const PeopleInput: React.FC<PeopleInputProps> = (
-    { tableNumber, updateDisplayedNumOfPeople, updateDisplayedMaxNumOfPeople,
-        displayedNumOfPeople, displayedMaxNumOfPeople }) => {
+    { tableNumber, updateDisplayedNumOfPeople, 
+        updateDisplayedMaxNumOfPeople,
+        displayedNumOfPeople, displayedMaxNumOfPeople, 
+        }) => {
 
     return (
         <Form.Group className="w-100">

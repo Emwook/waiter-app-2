@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Row, Col } from "react-bootstrap";
-import useTableByNumber from "../../utils/useTableByNumber";
+import useTableByNumber from "../../utils/store/useTableByNumber";
 
 interface BillInputProps {
     tableNumber: number;

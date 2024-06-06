@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { getDocs, collection } from "firebase/firestore";
-import { db } from '../config/firebase';  
-import { Table } from "../types/tableType";
-import { sortTables } from "./sortTables";
-import { defaultSortingMethod } from "../config/settings";
+import { db } from '../../config/firebase';  
+import { Table } from "../../types/tableType";
+import { sortTables } from "../sorting/sortTables";
+import { defaultSortingMethod } from "../../config/settings";
 
 const useTables = () => {
     const [tables, setTables] = useState<Table[]>([]);

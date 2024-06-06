@@ -1,6 +1,6 @@
 import { doc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../config/firebase'; 
-import { Table } from '../types/tableType';
+import { db } from '../../config/firebase'; 
+import { Table } from '../../types/tableType';
 
 export const updateTable = async (tableNumber: number, newData: Partial<Table>) => {
   const tablesCollection = collection(db, 'tables');

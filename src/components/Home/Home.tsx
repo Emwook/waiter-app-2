@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Table } from "../../types/tableType";
 import TableBar from "../TableBar/TableBar";
-import useTables from "../../utils/useTables";
+import useTables from "../../utils/store/useTables";
 import Loading from "../Loading/Loading";
 import TableForm from "../TableForm/TableForm";
 import SortingPanel from "../SortingPanel/SortingPanel";
-import { sortTables } from "../../utils/sortTables";
+import { sortTables } from "../../utils/sorting/sortTables";
 import { defaultSortingMethod } from "../../config/settings";
 
 const Home: React.FC = () => {
