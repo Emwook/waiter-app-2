@@ -1,4 +1,4 @@
-import { SortingMethodEvent, TableAddedEventDetail, TableRemovedEventDetail } from "../../types/customEventTypes";
+import { RefetchTablesEvent, SortingMethodEvent, TableAddedEventDetail, TableRemovedEventDetail } from "../../types/customEventTypes";
 import { Table } from "../../types/tableType";
 
 export const dispatchTableAddedEvent = (table: Table) => {
@@ -13,5 +13,10 @@ export const dispatchTableRemovedEvent = (table: Table) => {
 
 export const dispatchSortingMethodEvent = (method: keyof Table) => {
   const event = new CustomEvent<SortingMethodEvent>('methodChanged', { detail: { method } });
+  window.dispatchEvent(event);
+};
+
+export const dispatchRefetchTables = (table: Table) => {
+  const event = new CustomEvent<RefetchTablesEvent>('refetchedTables', { detail: { table } });
   window.dispatchEvent(event);
 };

@@ -3,10 +3,13 @@ import { getDocs, collection } from "firebase/firestore";
 import { db } from '../../config/firebase';  
 import { Table } from "../../types/tableType";
 import { sortTables } from "../sorting/sortTables";
-import { defaultSortingMethod } from "../../config/settings";
+import { defaultNewTable, defaultSortingMethod } from "../../config/settings";
+import { dispatchRefetchTables } from "../events/eventDispatcher";
 
 const useTables = () => {
     const [tables, setTables] = useState<Table[]>([]);
+    const [loadingTables, setLoadingTables] = useState(true);
+    const table: Table = defaultNewTable;
     
     useEffect(() => {
         const getTables = async () => {
@@ -18,6 +21,7 @@ const useTables = () => {
                 } as Table));
                 sortTables(filteredData, defaultSortingMethod);
                 setTables(filteredData);
+                setLoadingTables(false);
             } catch (err) {
                 console.error(err);
             }
@@ -25,6 +29,7 @@ const useTables = () => {
         getTables();
         const handleUpdate = (event: CustomEvent<{ table: Table }>) => {
             getTables();
+            dispatchRefetchTables(table);
         };
     
         window.addEventListener('tableRemoved', handleUpdate as EventListener);
@@ -33,10 +38,10 @@ const useTables = () => {
         return () => {
             window.removeEventListener('tableRemoved', handleUpdate as EventListener);
             window.removeEventListener('tableAdded', handleUpdate as EventListener);
-
         };
-    }, []); //using tables in dependencies array might cause firebase spam reading
-    return tables;
+    }, [table]);
+
+    return { tables, loadingTables };
 };
 
 export default useTables;

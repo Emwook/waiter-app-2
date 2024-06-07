@@ -10,4 +10,7 @@ export interface TableRemovedEventDetail {
 export interface SortingMethodEvent {
     method: keyof Table;
 }
+export interface RefetchTablesEvent {
+    table: Table;
+}
   

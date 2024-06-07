@@ -11,7 +11,7 @@ import { defaultSortingMethod } from "../../config/settings";
 const Home: React.FC = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const tablesData = useTables();
+  const {tables: tablesData} = useTables();
   const [sortingMethod, setSortingMethod] = useState <keyof Table>(defaultSortingMethod);
 
   useEffect(() => {

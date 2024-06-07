@@ -4,22 +4,27 @@ import StatusInput from "../StatusInput/StatusInput";
 import PeopleInput from "../PeopleInput/PeopleInput";
 import { Table } from "../../types/tableType";
 import useNextTable from "../../utils/sorting/useNextTable";
-import { mostNumOfPeople, leastNumOfPeople } from "../../config/settings";
+import { mostNumOfPeople, leastNumOfPeople, defaultNewTable } from "../../config/settings";
 import { addNewTable } from "../../utils/store/addNewTable";
 import { dispatchTableAddedEvent } from "../../utils/events/eventDispatcher";
+import useTables from "../../utils/store/useTables";
 
 const TableForm: React.FC = () => {
-    const newTable: Table = useNextTable();
-    const [selectedStatus, setSelectedStatus] = useState<string>('free'); 
-    const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(0);
-    const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(1);
-    let tableNumber = newTable.tableNumber;
+    const newTable: Table = defaultNewTable;
+    const { tables } = useTables();
+    const [selectedStatus, setSelectedStatus] = useState<string>(newTable.status); 
+    const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(newTable.numOfPeople);
+    const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(newTable.maxNumOfPeople);
+    const { nextTable, loadingNextTable } = useNextTable();
+    const nextTableNumber = nextTable.tableNumber;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         newTable.status = selectedStatus;
         newTable.numOfPeople = displayedNumOfPeople;
         newTable.maxNumOfPeople = displayedMaxNumOfPeople;
+        !loadingNextTable?(newTable.tableNumber = nextTableNumber):(newTable.tableNumber = tables.length);
+        console.log('adding new table!');
         addNewTable(newTable);
         dispatchTableAddedEvent(newTable);
     };
@@ -56,18 +61,19 @@ const TableForm: React.FC = () => {
                 <Form onSubmit={handleSubmit}>
                     <StatusInput
                         inDetailsComponent={false}
-                        tableNumber={tableNumber}
+                        tableNumber={!loadingNextTable?(nextTableNumber):(tables.length)}
                         updateSelectedStatus={updateSelectedStatus}/>
-                    <PeopleInput
-                        
-                        tableNumber={tableNumber}  
+                    <PeopleInput   
+                        tableNumber={!loadingNextTable?(nextTableNumber):(tables.length)}
                         updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
                         updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
                         displayedNumOfPeople={displayedNumOfPeople}
                         displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                    <Button size="sm" variant="primary" type="submit">
-                        add table
-                    </Button>
+                    {!loadingNextTable && (
+                        <Button size="sm" variant="primary" type="submit">
+                            add table
+                        </Button>
+                    )}
                 </Form>
             </Col>
         </Row>

@@ -11,3 +11,10 @@ export const statusOrder: { [status: string]: number } = {
     'reserved': 3
 };
 
+export const defaultNewTable = {
+    status: 'free',
+    bill: 0,
+    numOfPeople: 0,
+    maxNumOfPeople: 1,
+    tableNumber: 9999,
+}
