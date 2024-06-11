@@ -19,7 +19,7 @@ const RemoveTable:React.FC<RemoveTableProps> = ({table}) =>{
 
     
     return(
-    <Button variant="danger" className="border-light text-right ml-auto" onClick={handleRemove}>
+    <Button variant="danger" className="border-light text-right mx-2" onClick={handleRemove}>
         <i className="bi bi-trash"/>
     </Button>
     )

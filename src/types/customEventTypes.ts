@@ -13,4 +13,7 @@ export interface SortingMethodEvent {
 export interface RefetchTablesEvent {
     table: Table;
 }
+export interface CombinedTablesEvent {
+    tables: Table[];
+}
   

@@ -4,4 +4,5 @@ export interface Table {
     numOfPeople: number;
     maxNumOfPeople: number;
     status: string;
+    combinedWith: number[]
 }

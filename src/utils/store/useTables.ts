@@ -4,7 +4,7 @@ import { db } from '../../config/firebase';
 import { Table } from "../../types/tableType";
 import { sortTables } from "../sorting/sortTables";
 import { defaultNewTable, defaultSortingMethod } from "../../config/settings";
-import { dispatchRefetchTables } from "../events/eventDispatcher";
+import { dispatchRefetchTablesEvent } from "../events/eventDispatcher";
 
 const useTables = () => {
     const [tables, setTables] = useState<Table[]>([]);
@@ -29,13 +29,15 @@ const useTables = () => {
         getTables();
         const handleUpdate = (event: CustomEvent<{ table: Table }>) => {
             getTables();
-            dispatchRefetchTables(table);
+            dispatchRefetchTablesEvent(table);
         };
     
         window.addEventListener('tableRemoved', handleUpdate as EventListener);
         window.addEventListener('tableAdded', handleUpdate as EventListener);
-    
+        window.addEventListener('combinedTables', handleUpdate as EventListener);
+
         return () => {
+            window.addEventListener('combinedTables', handleUpdate as EventListener);
             window.removeEventListener('tableRemoved', handleUpdate as EventListener);
             window.removeEventListener('tableAdded', handleUpdate as EventListener);
         };

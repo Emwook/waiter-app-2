@@ -2,76 +2,51 @@ import { useEffect, useState, useMemo } from "react";
 import { Table } from "../../types/tableType";
 import { sortTables } from "./sortTables";
 import useTables from "../store/useTables";
+import { determineNextTableNumber } from "./determineNextTableNumber";
+import { defaultNewTable } from "../../config/settings";
 
 const useNextTable = () => {
     const { tables, loadingTables } = useTables();
     const [loadingNextTable, setLoadingNextTable] = useState(true);
+    const [nextTable, setNextTable] = useState<Table>(defaultNewTable);
 
-    const [nextTable, setNextTable] = useState<Table>({
-        tableNumber: 0,
-        status: 'free',
-        numOfPeople: 0,
-        maxNumOfPeople: 1,
-        bill: 0
-    });
-
-    const memoizedTables = useMemo(() => tables,  [tables]);
-    console.log('memoized tables: ', memoizedTables);
+    const memoizedTables = useMemo(() => tables, [tables]);
 
     useEffect(() => {
-        console.log("Entering useEffect in useNextTable");
-
-        const updateNextTableNumber = async () => {
-            console.log("Updating new table number...");
-
-            try {
-                if (!loadingTables) { // Wait for loading to be false
-                    console.log('loading state is: ',loadingTables);
-                    if (memoizedTables.length === 0) {
-                        console.log("Tables list is empty. Setting tableNumber to 1.");
-                        setNextTable(prevTable => ({
-                            ...prevTable,
-                            tableNumber: 9999
-                        }));
-                    } else {
-                        const sortedTables = [...memoizedTables];
-                        sortTables(sortedTables, 'tableNumber');
-
-                        const lastTableNumber = sortedTables[sortedTables.length - 1].tableNumber;
-                        console.log("lastTableNumber", lastTableNumber)
-                        const nextTableNumber = lastTableNumber + 1;
-                        console.log("nextTableNumber", nextTableNumber);
-
-                        const table: Table = {
-                            tableNumber: nextTableNumber,
-                            status: 'free',
-                            numOfPeople: 0,
-                            maxNumOfPeople: 1,
-                            bill: 0
-                        };
-
-                        console.log("New table:", table);
-                        setNextTable(table);
-                        setLoadingNextTable(false);
+        const updateNextTableNumber = () => {
+            if (!loadingTables) {
+                if (memoizedTables.length === 0) {
+                    setNextTable(prevTable => ({
+                        ...prevTable,
+                        tableNumber: 1
+                    }));
+                } else {
+                    const sortedTables = sortTables([...memoizedTables], 'tableNumber');
+                    const lastTableNumber = sortedTables[sortedTables.length - 1].tableNumber;
+                    let nextTableNumber = lastTableNumber + 1;
+                    if (lastTableNumber > sortedTables.length) {
+                        nextTableNumber = determineNextTableNumber(sortedTables);
                     }
+                    const table: Table = (defaultNewTable);
+                    table.tableNumber = nextTableNumber;
+                    setNextTable(table);
                 }
-            } catch (error) {
-                console.error('Error updating new table number:', error);
-                // Handle error appropriately, such as logging or displaying an error message
+                setLoadingNextTable(false);
             }
         };
+
         updateNextTableNumber();
+
         const handleUpdate = (event: CustomEvent<{ table: Table }>) => {
             updateNextTableNumber();
         };
+
         window.addEventListener('tableRefetched', handleUpdate as EventListener);
-    
+
         return () => {
             window.removeEventListener('tableRefetched', handleUpdate as EventListener);
-            console.log("Exiting useEffect in useNextTable");
         };
-    }, [memoizedTables, loadingTables]); // Use memoized tables and loading in dependency array
-    console.log("New table state:", nextTable);
+    }, [memoizedTables, loadingTables]);
 
     return { nextTable, loadingNextTable };
 };

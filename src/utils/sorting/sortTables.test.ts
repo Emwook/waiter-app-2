@@ -1,13 +1,15 @@
 import { sortTables } from "./sortTables";
+import { Table } from "../../types/tableType";
+import { defaultCombined } from "../../config/settings";
 
 describe("sortTables function", () => {
-  const table1 = { tableNumber: 1, status: "free", bill:0, numOfPeople: 1, maxNumOfPeople:2 };
-  const table2 = { tableNumber: 2, status: "busy", bill:10, numOfPeople: 2, maxNumOfPeople:4 };
-  const table3 = { tableNumber: 3, status: "cleaning", bill:20, numOfPeople: 0, maxNumOfPeople:1 };
-  const table4 = { tableNumber: 4, status: "reserved", bill:30, numOfPeople: 9, maxNumOfPeople:2 };
-  const table5 = { tableNumber: 5, status: "free", bill:29.5, numOfPeople: 10, maxNumOfPeople:5 };
+  const table1:Table = { tableNumber: 1, status: "free", bill:0, numOfPeople: 1, maxNumOfPeople:2,combinedWith: defaultCombined};
+  const table2:Table = { tableNumber: 2, status: "busy", bill:10, numOfPeople: 2, maxNumOfPeople:4, combinedWith: defaultCombined};
+  const table3:Table = { tableNumber: 3, status: "cleaning", bill:20, numOfPeople: 0, maxNumOfPeople:1, combinedWith: defaultCombined};
+  const table4:Table = { tableNumber: 4, status: "reserved", bill:30, numOfPeople: 9, maxNumOfPeople:2, combinedWith: defaultCombined};
+  const table5:Table = { tableNumber: 5, status: "free", bill:29.5, numOfPeople: 10, maxNumOfPeople:5, combinedWith: defaultCombined};
 
-  const unsortedTables = [table3, table1, table4, table2, table5];
+  const unsortedTables: Table[] = [table3, table1, table4, table2, table5];
   
   it("should sort tables by table number in ascending order", () => {
     const sortedTables = sortTables(unsortedTables, "tableNumber");

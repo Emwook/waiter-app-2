@@ -7,20 +7,26 @@ import TableForm from "../TableForm/TableForm";
 import SortingPanel from "../SortingPanel/SortingPanel";
 import { sortTables } from "../../utils/sorting/sortTables";
 import { defaultSortingMethod } from "../../config/settings";
+import useNextTable from "../../utils/sorting/useNextTable";
+import { Row } from "react-bootstrap";
+import CombineTablesForm from "../CombineTablesForm/CombineTablesForm";
 
 const Home: React.FC = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const {tables: tablesData} = useTables();
+  const {loadingNextTable} = useNextTable();
+  const {tables: tablesData, loadingTables} = useTables();
   const [sortingMethod, setSortingMethod] = useState <keyof Table>(defaultSortingMethod);
 
   useEffect(() => {
-    setLoading(true);
-    if (tablesData) {
+    if(loadingTables || loadingNextTable){
+      setLoading(true);
+    }
+    else {
       setTables(sortTables(tablesData, sortingMethod));
       setLoading(false);
     }
-  }, [tablesData, sortingMethod]);
+  }, [loadingTables, loadingNextTable, sortingMethod, tablesData]);
 
   useEffect(() => {
     const handleTableAdded = (event: CustomEvent<{ table: Table }>) => {
@@ -72,7 +78,10 @@ const Home: React.FC = () => {
           </li>
         ))}
       </ul>
-      <TableForm />
+      <Row>
+        <TableForm />
+        <CombineTablesForm/>
+      </Row>
     </div>
   );
 };

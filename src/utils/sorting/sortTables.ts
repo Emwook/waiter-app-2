@@ -11,17 +11,17 @@ export const sortTables = <K extends keyof Table>(arr: Table[], method: K): Tabl
         let j = i - 1;
 
         if (isSortingByStatus) {
-            while (j >= 0 && statusOrder[sortedArr[j][method]] > statusOrder[key[method]]) {
+            while (j >= 0 && statusOrder[sortedArr[j][method] as string] > statusOrder[key[method] as string]) {
                 sortedArr[j + 1] = sortedArr[j];
                 j--;
             }
         } 
-        else if(isSortingByTableNumber){
+        else if (isSortingByTableNumber) {
             while (j >= 0 && sortedArr[j][method] > key[method]) {
                 sortedArr[j + 1] = sortedArr[j];
                 j--;
             }
-        }
+        } 
         else {
             while (j >= 0 && sortedArr[j][method] < key[method]) {
                 sortedArr[j + 1] = sortedArr[j];

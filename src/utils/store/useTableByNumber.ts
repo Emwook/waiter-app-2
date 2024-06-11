@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { getDocs, collection, query, where } from "firebase/firestore";
 import { db } from '../../config/firebase';  
 import { Table } from "../../types/tableType";
+import { defaultNewTable } from "../../config/settings";
 
 const useTableByNumber = (tableNumber: number) => {
-    const [table, setTable] = useState<Table | null>(null);
+    const [table, setTable] = useState<Table>(defaultNewTable);
     
     useEffect(() => {
         const getTable = async () => {

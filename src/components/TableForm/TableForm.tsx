@@ -11,7 +11,7 @@ import useTables from "../../utils/store/useTables";
 
 const TableForm: React.FC = () => {
     const newTable: Table = defaultNewTable;
-    const { tables } = useTables();
+    const { tables, loadingTables } = useTables();
     const [selectedStatus, setSelectedStatus] = useState<string>(newTable.status); 
     const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(newTable.numOfPeople);
     const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(newTable.maxNumOfPeople);
@@ -56,9 +56,13 @@ const TableForm: React.FC = () => {
     };
     
     return(
-        <Row className="text-dark px-5 my-5 py-4 justify-content-center bg-light d-flex align-items-center">
+        <Col xs={6}>
+        <Row className="text-dark mx-1 mt-4 mb-5 p-3 justify-content-center bg-light d-flex align-items-center border-bottom border-dark">
             <Col xs={12} className="d-flex justify-content-left">
                 <Form onSubmit={handleSubmit}>
+                    <Row className="my-2">
+                        <Col xs={12}><span className="h2">Table {nextTableNumber}</span></Col>
+                    </Row>
                     <StatusInput
                         inDetailsComponent={false}
                         tableNumber={!loadingNextTable?(nextTableNumber):(tables.length)}
@@ -69,7 +73,7 @@ const TableForm: React.FC = () => {
                         updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
                         displayedNumOfPeople={displayedNumOfPeople}
                         displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                    {!loadingNextTable && (
+                    {(!loadingNextTable || !loadingTables) && (
                         <Button size="sm" variant="primary" type="submit">
                             add table
                         </Button>
@@ -77,6 +81,7 @@ const TableForm: React.FC = () => {
                 </Form>
             </Col>
         </Row>
+        </Col>
     )
 }
 export default TableForm

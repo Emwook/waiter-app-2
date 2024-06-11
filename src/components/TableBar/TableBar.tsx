@@ -15,6 +15,21 @@ const TableBar: React.FC<TableBarProps> = ({ Table }) => {
                 <Col><span className="text-muted">{Table ? Table.status : ''}</span></Col>
                 <Col><span className="text-muted">${Table ? Table.bill : ''}</span></Col>
                 <Col><span className="text-muted">{Table ? Table.numOfPeople : ''}/{Table ? Table.maxNumOfPeople : ''}</span></Col>
+                <Col>
+                    <i className="bi bi-link"/>
+                    <span className="text-muted">
+                        {Table.combinedWith.length > 0 ? (
+                            Table.combinedWith.map((tableNumber, index) => (
+                                <span key={tableNumber}>
+                                    {tableNumber}
+                                    {index < Table.combinedWith.length - 1 && ", "}
+                                </span>
+                            ))
+                        ) : (
+                            "No combined tables"
+                        )}
+                    </span>
+                </Col>  
                 <Col xs={6} className="d-flex justify-content-end">
                     <RemoveTable table= {Table}/>
                     <Button variant="primary" className="border-light text-right ml-auto">

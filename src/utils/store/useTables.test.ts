@@ -3,7 +3,8 @@ import { getDocs, collection } from "firebase/firestore";
 import useTables from './useTables';
 import { Table } from "../../types/tableType";
 import { sortTables } from "../sorting/sortTables";
-import { defaultSortingMethod } from "../../config/settings";
+import { defaultCombined, defaultSortingMethod } from "../../config/settings";
+
 
 jest.mock("../sorting/sortTables", () => ({
   sortTables: jest.fn(),
@@ -19,11 +20,11 @@ jest.mock("../../config/firebase", () => ({
 }));
 
 const mockTablesData: Table[] = [
-    { tableNumber: 2, status: "busy", bill:10, numOfPeople: 2, maxNumOfPeople:4 },
-    { tableNumber: 3, status: "cleaning", bill:20, numOfPeople: 0, maxNumOfPeople:1 },
-    { tableNumber: 4, status: "reserved", bill:30, numOfPeople: 9, maxNumOfPeople:2 },
-    { tableNumber: 1, status: "free", bill:0, numOfPeople: 1, maxNumOfPeople:2 },
-    { tableNumber: 5, status: "free", bill:29.5, numOfPeople: 10, maxNumOfPeople:5 }
+  { tableNumber: 2, status: "busy", bill:10, numOfPeople: 2, maxNumOfPeople:4,combinedWith: defaultCombined},
+  { tableNumber: 3, status: "cleaning", bill:20, numOfPeople: 0, maxNumOfPeople:1 ,combinedWith: defaultCombined},
+  { tableNumber: 4, status: "reserved", bill:30, numOfPeople: 9, maxNumOfPeople:2,combinedWith: defaultCombined},
+  { tableNumber: 1, status: "free", bill:0, numOfPeople: 1, maxNumOfPeople:2,combinedWith: defaultCombined},
+  { tableNumber: 5, status: "free", bill:29.5, numOfPeople: 10, maxNumOfPeople:5,combinedWith: defaultCombined}
 ];
 
 describe('useTables', () => {
@@ -68,7 +69,7 @@ describe('useTables', () => {
 
     console.log('Initial fetch:', result.current.tables);
 
-    const newTable: Table = { tableNumber: 6, status: "free", bill:0, numOfPeople: 0, maxNumOfPeople:4 };
+    const newTable: Table = { tableNumber: 6, status: "free", bill:0, numOfPeople: 0, maxNumOfPeople:4, combinedWith: defaultCombined };
     modifiedTablesData.push(newTable);
     
     (getDocs as jest.Mock).mockResolvedValueOnce({
