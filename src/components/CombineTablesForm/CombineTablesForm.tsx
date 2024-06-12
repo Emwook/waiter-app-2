@@ -51,42 +51,53 @@ const CombineTablesForm: React.FC = () => {
             <Row className="text-dark mx-1 mt-4 mb-5 p-3 justify-content-center bg-light d-flex align-items-center border-bottom border-dark">
                 <Col xs={12} className="d-flex justify-content-left">
                     <Form onSubmit={handleSubmit}>
-                        <Form.Select
-                            name="combine1" data-bs-theme="light"
-                            size="sm" className="border-dark"
-                            onChange={handleTableSelect(0)}>
-                            <option>Select Table 1</option>
-                            {tableOptions[0].length > 0 ? (
-                                tableOptions[0].map((table: Table) =>
-                                    <option
-                                        key={table.tableNumber}
-                                        value={table.tableNumber}>
-                                        Table {table.tableNumber}
-                                    </option>
-                                )
-                            ) : (
-                                <option disabled>No tables available</option>
-                            )}
-                        </Form.Select>
-                        <Form.Select
-                            name="combine2" data-bs-theme="light"
-                            size="sm" className="border-dark"
-                            onChange={handleTableSelect(1)}>
-                            <option>Select Table 2</option>
-                            {tableOptions[1].length > 0 ? (
-                                tableOptions[1].map((table: Table) =>
-                                    <option
-                                        key={table.tableNumber}
-                                        value={table.tableNumber}>
-                                        Table {table.tableNumber}
-                                    </option>
-                                )
-                            ) : (
-                                <option disabled>No tables available</option>
-                            )}
-                        </Form.Select>
+                            <Row className="my-2">
+                                <Col xs={12}><span className="h2">Combine tables</span></Col>
+                            </Row>
+                            <Row className="my-2"> 
+                                <Col xs={8}>
+                                <Form.Select
+                                name="combine1" data-bs-theme="light"
+                                size="sm" className="border-dark"
+                                onChange={handleTableSelect(0)}>
+                                <option>Select Table 1</option>
+                                {tableOptions[0].length > 0 ? (
+                                    tableOptions[0].map((table: Table) =>
+                                        <option
+                                            key={table.tableNumber}
+                                            value={table.tableNumber}>
+                                            Table {table.tableNumber}
+                                        </option>
+                                    )
+                                ) : (
+                                    <option disabled>No tables available</option>
+                                )}
+                                </Form.Select>
+                                </Col>                       
+                            </Row>
+                            <Row className="my-2"> 
+                                <Col xs={8}>
+                                    <Form.Select
+                                        name="combine2" data-bs-theme="light"
+                                        size="sm" className="border-dark"
+                                        onChange={handleTableSelect(1)}>
+                                        <option>Select Table 2</option>
+                                        {tableOptions[1].length > 0 ? (
+                                            tableOptions[1].map((table: Table) =>
+                                                <option
+                                                    key={table.tableNumber}
+                                                    value={table.tableNumber}>
+                                                    Table {table.tableNumber}
+                                                </option>
+                                            )
+                                        ) : (
+                                            <option disabled>No tables available</option>
+                                        )}
+                                    </Form.Select>
+                                </Col>
+                            </Row>
                         <Button size="sm" variant="primary" type="submit">
-                            Join Tables
+                            join tables
                         </Button>
                     </Form>
                 </Col>

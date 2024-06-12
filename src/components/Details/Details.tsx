@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Form, Container, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import useTableByNumber from "../../utils/store/useTableByNumber";
+import useTables from "../../utils/store/useTables";
 import StatusInput from "../StatusInput/StatusInput";
 import { updateTable } from "../../utils/store/UpdateTable";
 import PeopleInput from "../PeopleInput/PeopleInput";
 import Loading from "../Loading/Loading";
-import { mostNumOfPeople, leastNumOfPeople, maxBill } from "../../config/settings";
+import { mostNumOfPeople, leastNumOfPeople, maxBill, defaultNewTable } from "../../config/settings";
 import BillInput from "../BillInput/BillInput";
+import { Table } from "../../types/tableType";
 
 interface DetailsProps {
     tableNumber: number;
@@ -15,7 +16,8 @@ interface DetailsProps {
 
 const Details: React.FC<DetailsProps> = ({ tableNumber }) => {    
     const navigate = useNavigate();
-    const table = useTableByNumber(tableNumber);
+    const { tables } = useTables();
+    const table: Table = tables?.find(table => table.tableNumber === tableNumber) ?? defaultNewTable;
     const [loading, setLoading] = useState<boolean>(true);
 
     const [selectedStatus, setSelectedStatus] = useState<string>('busy'); 
@@ -82,16 +84,16 @@ const Details: React.FC<DetailsProps> = ({ tableNumber }) => {
             <Form onSubmit={handleSubmit}>
                 <StatusInput
                     inDetailsComponent={true}
-                    tableNumber={tableNumber}
+                    table={table}
                     updateSelectedStatus={updateSelectedStatus}/>
                 <PeopleInput
-                    tableNumber={tableNumber}  
+                    table={table}  
                     updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
                     updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
                     displayedNumOfPeople={displayedNumOfPeople}
                     displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
                 <BillInput
-                    tableNumber={tableNumber} 
+                    table={table} 
                     displayedBill={displayedBill}
                     updateDisplayedBill={updateDisplayedBill}/>
                 <Button size="sm" variant="primary" type="submit">

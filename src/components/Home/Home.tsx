@@ -5,25 +5,25 @@ import useTables from "../../utils/store/useTables";
 import Loading from "../Loading/Loading";
 import TableForm from "../TableForm/TableForm";
 import SortingPanel from "../SortingPanel/SortingPanel";
-import { sortTables } from "../../utils/sorting/sortTables";
 import { defaultSortingMethod } from "../../config/settings";
 import useNextTable from "../../utils/sorting/useNextTable";
 import { Row } from "react-bootstrap";
 import CombineTablesForm from "../CombineTablesForm/CombineTablesForm";
+import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import { sortTables } from "../../utils/sorting/sortTables";
 
 const Home: React.FC = () => {
   const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const {loadingNextTable} = useNextTable();
-  const {tables: tablesData, loadingTables} = useTables();
-  const [sortingMethod, setSortingMethod] = useState <keyof Table>(defaultSortingMethod);
+  const { loadingNextTable } = useNextTable();
+  const { tables: tablesData, loadingTables } = useTables();
+  const [sortingMethod, setSortingMethod] = useState<keyof Table>(defaultSortingMethod);
 
   useEffect(() => {
-    if(loadingTables || loadingNextTable){
+    if (loadingTables || loadingNextTable) {
       setLoading(true);
-    }
-    else {
-      setTables(sortTables(tablesData, sortingMethod));
+    } else {
+      setTables(sortTables(tablesData,sortingMethod));
       setLoading(false);
     }
   }, [loadingTables, loadingNextTable, sortingMethod, tablesData]);
@@ -55,7 +55,6 @@ const Home: React.FC = () => {
   useEffect(() => {
     const handleSortingMethodChange = (event: CustomEvent<{ method: keyof Table }>) => {
       setSortingMethod(event.detail.method);
-      console.log('method changed to: ', event.detail.method);
     };
     window.addEventListener('methodChanged', handleSortingMethodChange as EventListener);
 
@@ -64,23 +63,42 @@ const Home: React.FC = () => {
     };
   });
 
+  const onDragEnd = (result: DropResult) => {
+
+    if (!result.destination) {
+      return;
+    }
+  
+    const reorderedTables = Array.from(tables);
+    const [newOrder] = reorderedTables.splice(result.source.index, 1);
+    reorderedTables.splice(result.destination.index, 0, newOrder);
+
+    setTables(reorderedTables);
+  };
+
   if (loading) {
     return <Loading />;
   }
 
   return (
     <div>
-      <SortingPanel sortingMethod={sortingMethod}/>
-      <ul className="mt-1 px-3 list-unstyled">
-        {tables.map((table, index) => (
-          <li key={table.tableNumber}>
-            <TableBar Table={table} />
-          </li>
-        ))}
-      </ul>
+      <SortingPanel sortingMethod={sortingMethod} />
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="tables" isCombineEnabled>
+          {(provided) => (
+              <div 
+                ref={provided.innerRef} 
+                {...provided.droppableProps}
+              >
+                {tables.map((table, index) => (<TableBar Table={table} index={index} />))}
+                {provided.placeholder}
+              </div>
+            )}
+        </Droppable>
+      </DragDropContext>
       <Row>
         <TableForm />
-        <CombineTablesForm/>
+        <CombineTablesForm />
       </Row>
     </div>
   );

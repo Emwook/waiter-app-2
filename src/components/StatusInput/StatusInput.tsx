@@ -1,18 +1,17 @@
 import { Row, Col, Form } from "react-bootstrap";
 import React from "react";
-import useTableByNumber from "../../utils/store/useTableByNumber";
 import { possibleStatusList } from "../../config/settings";
+import { Table } from "../../types/tableType";
 
 interface StatusInputProps {
     inDetailsComponent: boolean;
-    tableNumber: number;
+    table: Table;
     updateSelectedStatus: (event: React.ChangeEvent<HTMLSelectElement>) => void;
 }
 
 const StatusInput: React.FC<StatusInputProps> = ({ 
-    tableNumber, updateSelectedStatus, 
+    table, updateSelectedStatus, 
     inDetailsComponent }) => {
-    const table = useTableByNumber(tableNumber);
 
     return (
         <Form.Group className="w-100" onChange={updateSelectedStatus}>

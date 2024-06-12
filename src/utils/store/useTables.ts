@@ -3,7 +3,8 @@ import { getDocs, collection } from "firebase/firestore";
 import { db } from '../../config/firebase';  
 import { Table } from "../../types/tableType";
 import { sortTables } from "../sorting/sortTables";
-import { defaultNewTable, defaultSortingMethod } from "../../config/settings";
+import { defaultNewTable } from "../../config/settings";
+import {  defaultSortingMethod } from "../../config/settings";
 import { dispatchRefetchTablesEvent } from "../events/eventDispatcher";
 
 const useTables = () => {

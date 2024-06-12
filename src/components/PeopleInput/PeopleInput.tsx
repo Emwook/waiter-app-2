@@ -1,8 +1,9 @@
 import { Form, Col, Row } from "react-bootstrap";
 import React from "react";
+import { Table } from "../../types/tableType";
 
 interface PeopleInputProps {
-    tableNumber: number;
+    table: Table;
     updateDisplayedNumOfPeople: (event: React.ChangeEvent<HTMLInputElement>) => void;
     updateDisplayedMaxNumOfPeople: (event: React.ChangeEvent<HTMLInputElement>) => void;
     displayedNumOfPeople: number;
@@ -11,7 +12,7 @@ interface PeopleInputProps {
 }
 
 const PeopleInput: React.FC<PeopleInputProps> = (
-    { tableNumber, updateDisplayedNumOfPeople, 
+    { table, updateDisplayedNumOfPeople, 
         updateDisplayedMaxNumOfPeople,
         displayedNumOfPeople, displayedMaxNumOfPeople, 
         }) => {
@@ -24,7 +25,7 @@ const PeopleInput: React.FC<PeopleInputProps> = (
                     <Form.Control 
                         type="number" 
                         size="sm" 
-                        name={`numOfPeople${tableNumber}`}
+                        name={`numOfPeople${table.tableNumber}`}
                         className="border-dark text-center" 
                         value = {displayedNumOfPeople}
                         onChange={updateDisplayedNumOfPeople}
@@ -35,7 +36,7 @@ const PeopleInput: React.FC<PeopleInputProps> = (
                     <Form.Control 
                         type="number" 
                         size="sm" 
-                        name={`MaxNumOfPeople${tableNumber}`}
+                        name={`MaxNumOfPeople${table.tableNumber}`}
                         className="border-dark text-center" 
                         value = {displayedMaxNumOfPeople}
                         onChange={updateDisplayedMaxNumOfPeople}

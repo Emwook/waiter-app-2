@@ -1,23 +1,34 @@
 import React from "react";
-import { Row, Col, Button } from 'react-bootstrap';
+import { Col, Button } from 'react-bootstrap';
 import { NavLink } from "react-router-dom";
 import { Table } from "../../types/tableType";
 import RemoveTable from "../RemoveTable/RemoveTable";
+import { Draggable } from "react-beautiful-dnd";
 
 interface TableBarProps {
     Table: Table;
+    index: number;
 }
 
-const TableBar: React.FC<TableBarProps> = ({ Table }) => {
+const TableBar: React.FC<TableBarProps> = ({ Table, index }) => {
     return (
-            <Row className="text-dark pb-2 pt-5 px-3 d-flex justify-content-between align-items-center border-bottom border-dark">
+        <Draggable key={Table.tableNumber} draggableId={String(Table.tableNumber)} index={index}>
+        {(provided) => (
+            <div 
+            className="text-dark pb-2 pt-4 px-3 d-flex
+             justify-content-between align-items-center
+              border-bottom border-dark"
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            ref={provided.innerRef}
+            >
                 <Col xs={2}><h2>Table {Table ? Table.tableNumber : ''}</h2></Col>
                 <Col><span className="text-muted">{Table ? Table.status : ''}</span></Col>
                 <Col><span className="text-muted">${Table ? Table.bill : ''}</span></Col>
                 <Col><span className="text-muted">{Table ? Table.numOfPeople : ''}/{Table ? Table.maxNumOfPeople : ''}</span></Col>
                 <Col>
                     <i className="bi bi-link"/>
-                    <span className="text-muted">
+                    <span className="text-muted px-1">
                         {Table.combinedWith.length > 0 ? (
                             Table.combinedWith.map((tableNumber, index) => (
                                 <span key={tableNumber}>
@@ -26,7 +37,7 @@ const TableBar: React.FC<TableBarProps> = ({ Table }) => {
                                 </span>
                             ))
                         ) : (
-                            "No combined tables"
+                            ""
                         )}
                     </span>
                 </Col>  
@@ -38,7 +49,9 @@ const TableBar: React.FC<TableBarProps> = ({ Table }) => {
                         </NavLink> 
                     </Button>
                 </Col>
-            </Row>
+            </div>
+        )}
+        </Draggable>
     );
 };
 

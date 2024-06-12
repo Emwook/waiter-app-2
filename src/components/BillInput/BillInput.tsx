@@ -1,15 +1,14 @@
 import React from "react";
 import { Form, Row, Col } from "react-bootstrap";
-import useTableByNumber from "../../utils/store/useTableByNumber";
+import { Table } from "../../types/tableType";
 
 interface BillInputProps {
-    tableNumber: number;
+    table: Table;
     updateDisplayedBill: (event: React.ChangeEvent<HTMLInputElement>) => void;
     displayedBill: number;
 }
 
-const BillInput: React.FC<BillInputProps> = ({ tableNumber, displayedBill, updateDisplayedBill }) => {
-    const table = useTableByNumber(tableNumber);
+const BillInput: React.FC<BillInputProps> = ({ table, displayedBill, updateDisplayedBill }) => {
 
     return (
         <Form.Group className="w-100">

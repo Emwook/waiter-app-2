@@ -65,10 +65,10 @@ const TableForm: React.FC = () => {
                     </Row>
                     <StatusInput
                         inDetailsComponent={false}
-                        tableNumber={!loadingNextTable?(nextTableNumber):(tables.length)}
+                        table={!loadingNextTable?(nextTable): defaultNewTable}
                         updateSelectedStatus={updateSelectedStatus}/>
                     <PeopleInput   
-                        tableNumber={!loadingNextTable?(nextTableNumber):(tables.length)}
+                        table={!loadingNextTable?(nextTable): defaultNewTable}
                         updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
                         updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
                         displayedNumOfPeople={displayedNumOfPeople}
