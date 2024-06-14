@@ -11,12 +11,14 @@ import { Row } from "react-bootstrap";
 import CombineTablesForm from "../CombineTablesForm/CombineTablesForm";
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { sortTables } from "../../utils/sorting/sortTables";
+import combineTables from "../../utils/store/combineTables";
+import { dispatchCombinedTablesEvent } from "../../utils/events/eventDispatcher";
 
 const Home: React.FC = () => {
-  const [tables, setTables] = useState<Table[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const { loadingNextTable } = useNextTable();
   const { tables: tablesData, loadingTables } = useTables();
+  const [tables, setTables] = useState<Table[]>(tablesData);
   const [sortingMethod, setSortingMethod] = useState<keyof Table>(defaultSortingMethod);
 
   useEffect(() => {
@@ -64,14 +66,27 @@ const Home: React.FC = () => {
   });
 
   const onDragEnd = (result: DropResult) => {
+    const { source, destination, combine } = result;
 
-    if (!result.destination) {
+    if (combine) {
+      const sourceTable = tables[source.index];
+      const destinationTable = tables.find(table => table.tableNumber === parseInt(combine.draggableId));
+
+      if (sourceTable && destinationTable) {
+        const combinedTables = combineTables(sourceTable, destinationTable, tables);
+        setTables(combinedTables);
+        dispatchCombinedTablesEvent([sourceTable, destinationTable]);
+      }
       return;
     }
-  
+
+    if (!destination) {
+      return;
+    }
+
     const reorderedTables = Array.from(tables);
-    const [newOrder] = reorderedTables.splice(result.source.index, 1);
-    reorderedTables.splice(result.destination.index, 0, newOrder);
+    const [removed] = reorderedTables.splice(source.index, 1);
+    reorderedTables.splice(destination.index, 0, removed);
 
     setTables(reorderedTables);
   };
@@ -89,6 +104,7 @@ const Home: React.FC = () => {
               <div 
                 ref={provided.innerRef} 
                 {...provided.droppableProps}
+                className="my-4"
               >
                 {tables.map((table, index) => (<TableBar Table={table} index={index} />))}
                 {provided.placeholder}

@@ -32,15 +32,21 @@ const useTables = () => {
             getTables();
             dispatchRefetchTablesEvent(table);
         };
+        /*
+        const handleUpdateFromTablesList = (event: CustomEvent<{ tables: Table[] }>) => {
+            getTables();
+            dispatchRefetchTablesEvent(table);
+        };
+        */
     
         window.addEventListener('tableRemoved', handleUpdate as EventListener);
         window.addEventListener('tableAdded', handleUpdate as EventListener);
         window.addEventListener('combinedTables', handleUpdate as EventListener);
 
         return () => {
-            window.addEventListener('combinedTables', handleUpdate as EventListener);
             window.removeEventListener('tableRemoved', handleUpdate as EventListener);
             window.removeEventListener('tableAdded', handleUpdate as EventListener);
+            window.addEventListener('combinedTables', handleUpdate as EventListener);
         };
     }, [table]);
 
