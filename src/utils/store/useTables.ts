@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from '../../config/firebase';  
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 import { sortTables } from "../sorting/sortTables";
 import { defaultNewTable } from "../../config/settings";
 import {  defaultSortingMethod } from "../../config/settings";

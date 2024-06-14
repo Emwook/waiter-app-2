@@ -1,4 +1,4 @@
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 import { statusOrder } from "../../config/settings";
 
 export const sortTables = <K extends keyof Table>(arr: Table[], method: K): Table[] => {

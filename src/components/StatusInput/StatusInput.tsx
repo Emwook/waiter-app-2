@@ -1,7 +1,7 @@
 import { Row, Col, Form } from "react-bootstrap";
 import React from "react";
 import { possibleStatusList } from "../../config/settings";
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 
 interface StatusInputProps {
     inDetailsComponent: boolean;
@@ -23,7 +23,6 @@ const StatusInput: React.FC<StatusInputProps> = ({
                     size="sm" className="border-dark">
                     {possibleStatusList.map(possibleStatus => 
                         <option
-                            defaultValue = {((inDetailsComponent === true) && (possibleStatus === table?.status))?possibleStatus:('free')}
                             key={possibleStatus}
                             value={possibleStatus}>
                             {possibleStatus}

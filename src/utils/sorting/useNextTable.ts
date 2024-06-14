@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 import { sortTables } from "./sortTables";
 import useTables from "../store/useTables";
 import { determineNextTableNumber } from "./determineNextTableNumber";

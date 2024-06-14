@@ -1,4 +1,4 @@
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 
 export const determineNextTableNumber = (sortedTables: Table[]) => {
     for (let i = 0; i < sortedTables.length - 1; i++) {

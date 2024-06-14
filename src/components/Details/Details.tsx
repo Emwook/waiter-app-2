@@ -8,7 +8,7 @@ import PeopleInput from "../PeopleInput/PeopleInput";
 import Loading from "../Loading/Loading";
 import { mostNumOfPeople, leastNumOfPeople, maxBill, defaultNewTable } from "../../config/settings";
 import BillInput from "../BillInput/BillInput";
-import { Table } from "../../types/tableType";
+import { Table, TableStatus } from "../../types/tableTypes";
 
 interface DetailsProps {
     tableNumber: number;
@@ -20,7 +20,7 @@ const Details: React.FC<DetailsProps> = ({ tableNumber }) => {
     const table: Table = tables?.find(table => table.tableNumber === tableNumber) ?? defaultNewTable;
     const [loading, setLoading] = useState<boolean>(true);
 
-    const [selectedStatus, setSelectedStatus] = useState<string>('busy'); 
+    const [selectedStatus, setSelectedStatus] = useState<TableStatus>('busy'); 
     const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(0);
     const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(1); 
     const [displayedBill, setDisplayedBill] = useState<number>(0); 
@@ -42,7 +42,7 @@ const Details: React.FC<DetailsProps> = ({ tableNumber }) => {
     };
 
     const updateSelectedStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedStatus(event.target.value);
+        setSelectedStatus(event.target.value as TableStatus);
     };
 
     const updateDisplayedNumOfPeople = (event: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,5 +1,5 @@
 import { sortTables } from "./sortTables";
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 import { defaultCombined } from "../../config/settings";
 
 describe("sortTables function", () => {

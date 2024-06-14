@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import useTables from "../../utils/store/useTables";
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 import combineTables from "../../utils/store/combineTables";
 import { dispatchCombinedTablesEvent } from "../../utils/events/eventDispatcher";
 

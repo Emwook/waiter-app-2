@@ -1,4 +1,4 @@
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 import { updateTable } from "../../utils/store/UpdateTable";
 
 const combineTables = (table1: Table, table2: Table, tableList: Table[]): Table[] => {

@@ -1,11 +1,14 @@
-import { Table } from "../types/tableType";
+import { Table } from "../types/tableTypes";
 
 export const mostNumOfPeople = 10;
 export const leastNumOfPeople = 0;
 export const possibleStatusList = ['free', 'busy', 'cleaning', 'reserved'];
+export const groupTypes = ['none', 'combined', 'cleaning', 'free', 'busy', 'cleaning', 'reserved'];
 export const maxBill = 10000;
 export const defaultSortingMethod = 'tableNumber';
 export const defaultCombined = [];
+export const defaultGroupingMethod = 'none';
+
 
 export const defaultNewTable: Table = {
     status: 'free',

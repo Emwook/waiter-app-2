@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Button } from 'react-bootstrap';
 import { NavLink } from "react-router-dom";
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 import RemoveTable from "../RemoveTable/RemoveTable";
 import { Draggable } from "react-beautiful-dnd";
 
@@ -11,13 +11,11 @@ interface TableBarProps {
 }
 
 const TableBar: React.FC<TableBarProps> = ({ Table, index }) => {
-    const borderClass = Table.combinedWith.length > 0 ? 'border-primary border m-0' : 'border-dark border-bottom my-1';
-
     return (
         <Draggable key={Table.tableNumber} draggableId={String(Table.tableNumber)} index={index}>
             {(provided) => (
                 <div 
-                    className={`text-dark pb-2 pt-4 px-3 d-flex justify-content-between align-items-center ${borderClass}`}
+                    className={`text-dark pb-2 pt-4 px-3 d-flex justify-content-between align-items-center border-bottom border-dark`}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}

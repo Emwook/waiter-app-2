@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react-hooks';
 import { getDocs, collection } from "firebase/firestore";
 import useTables from './useTables';
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 import { sortTables } from "../sorting/sortTables";
 import { defaultCombined, defaultSortingMethod } from "../../config/settings";
 

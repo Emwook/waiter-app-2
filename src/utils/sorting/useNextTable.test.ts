@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import useNextTable from './useNextTable';
 import useTables from '../store/useTables';
-import { Table } from '../../types/tableType';
+import { Table } from '../../types/tableTypes';
 import { defaultCombined } from '../../config/settings';
 jest.mock('../store/useTables');
 

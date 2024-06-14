@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Table } from "../../types/tableType";
-import TableBar from "../TableBar/TableBar";
+import { GroupingMethod, Table } from "../../types/tableTypes";
 import useTables from "../../utils/store/useTables";
 import Loading from "../Loading/Loading";
 import TableForm from "../TableForm/TableForm";
 import SortingPanel from "../SortingPanel/SortingPanel";
-import { defaultSortingMethod } from "../../config/settings";
+import { defaultGroupingMethod, defaultSortingMethod } from "../../config/settings";
 import useNextTable from "../../utils/sorting/useNextTable";
 import { Row } from "react-bootstrap";
 import CombineTablesForm from "../CombineTablesForm/CombineTablesForm";
-import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { sortTables } from "../../utils/sorting/sortTables";
 import combineTables from "../../utils/store/combineTables";
 import { dispatchCombinedTablesEvent } from "../../utils/events/eventDispatcher";
+import TableGroup from "../TableGroup/TableGroup";
+import GroupingPanel from "../GroupingPanel/GroupingPanel";
+import { getCombinedTables } from "../../utils/sorting/getCombinedTables";
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -20,12 +22,13 @@ const Home: React.FC = () => {
   const { tables: tablesData, loadingTables } = useTables();
   const [tables, setTables] = useState<Table[]>(tablesData);
   const [sortingMethod, setSortingMethod] = useState<keyof Table>(defaultSortingMethod);
+  const [groupingMethod, setGroupingMethod] = useState<GroupingMethod>(defaultGroupingMethod);
 
   useEffect(() => {
     if (loadingTables || loadingNextTable) {
       setLoading(true);
     } else {
-      setTables(sortTables(tablesData,sortingMethod));
+      setTables(sortTables(tablesData, sortingMethod));
       setLoading(false);
     }
   }, [loadingTables, loadingNextTable, sortingMethod, tablesData]);
@@ -58,10 +61,21 @@ const Home: React.FC = () => {
     const handleSortingMethodChange = (event: CustomEvent<{ method: keyof Table }>) => {
       setSortingMethod(event.detail.method);
     };
-    window.addEventListener('methodChanged', handleSortingMethodChange as EventListener);
+    window.addEventListener('sortingMethodChanged', handleSortingMethodChange as EventListener);
 
     return () => {
-      window.removeEventListener('methodChanged', handleSortingMethodChange as EventListener);
+      window.removeEventListener('sortingMethodChanged', handleSortingMethodChange as EventListener);
+    };
+  });
+
+  useEffect(() => {
+    const handleGroupingMethodChange = (event: CustomEvent<{ method: GroupingMethod }>) => {
+      setGroupingMethod(event.detail.method);
+    };
+    window.addEventListener('groupingMethodChanged', handleGroupingMethodChange as EventListener);
+
+    return () => {
+      window.removeEventListener('groupingMethodChanged', handleGroupingMethodChange as EventListener);
     };
   });
 
@@ -95,22 +109,29 @@ const Home: React.FC = () => {
     return <Loading />;
   }
 
+  const combinedTableGroups = getCombinedTables(tables);
+  const singleTables = combinedTableGroups.filter(group => group.length === 1).flat();
+  const groupedTables = combinedTableGroups.filter(group => group.length > 1);
+
   return (
     <div>
-      <SortingPanel sortingMethod={sortingMethod} />
+      <Row>
+        <SortingPanel sortingMethod={sortingMethod} />
+        <GroupingPanel groupingMethod={groupingMethod}/>
+      </Row>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="tables" isCombineEnabled>
-          {(provided) => (
-              <div 
-                ref={provided.innerRef} 
-                {...provided.droppableProps}
-                className="my-4"
-              >
-                {tables.map((table, index) => (<TableBar Table={table} index={index} />))}
-                {provided.placeholder}
-              </div>
+        {groupingMethod === 'none' ? (
+          <TableGroup tables={tables} groupType='none' />
+        ) : (
+          <>
+            {groupedTables.map((group, index) => (
+              <TableGroup key={`group-${index}`} tables={group} groupType='combined' />
+            ))}
+            {singleTables.length > 0 && (
+              <TableGroup tables={singleTables} groupType='none' />
             )}
-        </Droppable>
+          </>
+        )}
       </DragDropContext>
       <Row>
         <TableForm />

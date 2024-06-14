@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { Row, Col, Button, Form } from 'react-bootstrap'
 import StatusInput from "../StatusInput/StatusInput";
 import PeopleInput from "../PeopleInput/PeopleInput";
-import { Table } from "../../types/tableType";
+import { Table, TableStatus } from "../../types/tableTypes";
 import useNextTable from "../../utils/sorting/useNextTable";
 import { mostNumOfPeople, leastNumOfPeople, defaultNewTable } from "../../config/settings";
 import { addNewTable } from "../../utils/store/addNewTable";
@@ -12,7 +12,7 @@ import useTables from "../../utils/store/useTables";
 const TableForm: React.FC = () => {
     const newTable: Table = defaultNewTable;
     const { tables, loadingTables } = useTables();
-    const [selectedStatus, setSelectedStatus] = useState<string>(newTable.status); 
+    const [selectedStatus, setSelectedStatus] = useState<TableStatus>(newTable.status); 
     const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(newTable.numOfPeople);
     const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(newTable.maxNumOfPeople);
     const { nextTable, loadingNextTable } = useNextTable();
@@ -30,7 +30,7 @@ const TableForm: React.FC = () => {
     };
 
     const updateSelectedStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedStatus(event.target.value);
+        setSelectedStatus(event.target.value as TableStatus);
     };
 
     const updateDisplayedNumOfPeople = (event: React.ChangeEvent<HTMLInputElement>) => {

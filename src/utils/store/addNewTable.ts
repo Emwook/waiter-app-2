@@ -1,6 +1,6 @@
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../../config/firebase'; 
-import { Table } from '../../types/tableType';
+import { Table } from '../../types/tableTypes';
 
 export const addNewTable = async (newTable:Table) => {
   const tablesCollection = collection(db, 'tables');

@@ -1,6 +1,6 @@
 import { Form, Col, Row } from "react-bootstrap";
 import React from "react";
-import { Table } from "../../types/tableType";
+import { Table } from "../../types/tableTypes";
 
 interface PeopleInputProps {
     table: Table;

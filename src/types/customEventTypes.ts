@@ -1,4 +1,4 @@
-import { Table } from "./tableType";
+import { GroupingMethod, Table } from "./tableTypes";
 
 export interface TableAddedEventDetail {
     table: Table;
@@ -15,5 +15,9 @@ export interface RefetchTablesEvent {
 }
 export interface CombinedTablesEvent {
     tables: Table[];
+}
+
+export interface GroupingMethodEvent {
+    method: GroupingMethod;
 }
   
