@@ -24,7 +24,6 @@ const TableForm: React.FC = () => {
         newTable.numOfPeople = displayedNumOfPeople;
         newTable.maxNumOfPeople = displayedMaxNumOfPeople;
         !loadingNextTable?(newTable.tableNumber = nextTableNumber):(newTable.tableNumber = tables.length);
-        console.log('adding new table!');
         addNewTable(newTable);
         dispatchTableAddedEvent(newTable);
     };
@@ -61,23 +60,23 @@ const TableForm: React.FC = () => {
             <Col xs={12} className="d-flex justify-content-left">
                 <Form onSubmit={handleSubmit}>
                     <Row className="my-2">
-                        <Col xs={12}><span className="h2">Table {nextTableNumber}</span></Col>
-                    </Row>
-                    <StatusInput
-                        inDetailsComponent={false}
-                        table={!loadingNextTable?(nextTable): defaultNewTable}
-                        updateSelectedStatus={updateSelectedStatus}/>
-                    <PeopleInput   
-                        table={!loadingNextTable?(nextTable): defaultNewTable}
-                        updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
-                        updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
-                        displayedNumOfPeople={displayedNumOfPeople}
-                        displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                    {(!loadingNextTable || !loadingTables) && (
+                        <Col xs={4}><span className="h2">Table {nextTableNumber}</span></Col>
+                        <StatusInput
+                            inDetailsComponent={false}
+                            table={!loadingNextTable?(nextTable): defaultNewTable}
+                            updateSelectedStatus={updateSelectedStatus}/>
+                        <PeopleInput   
+                            table={!loadingNextTable?(nextTable): defaultNewTable}
+                            updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
+                            updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
+                            displayedNumOfPeople={displayedNumOfPeople}
+                            displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
+                        {(!loadingNextTable || !loadingTables) && (
                         <Button size="sm" variant="primary" type="submit">
                             add table
                         </Button>
                     )}
+                    </Row>
                 </Form>
             </Col>
         </Row>

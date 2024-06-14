@@ -1,6 +1,6 @@
 import React from "react";
 import { GroupOption, Table } from "../../types/tableTypes";
-import { Droppable } from "react-beautiful-dnd";
+//import { Droppable } from "react-beautiful-dnd";
 import TableBar from "../TableBar/TableBar";
 
 interface TableGroupProps {
@@ -10,19 +10,22 @@ interface TableGroupProps {
 
 const TableGroup:React.FC<TableGroupProps> = ({groupType, tables}) =>{
     return(
-        <Droppable droppableId={`group-${tables[0]}`} isCombineEnabled>
+      <div className={`p-1 my-4 border-dark border rounded`}> 
+        {tables.map((table, index) => (<TableBar Table={table} index={index} />))}
+      </div>
+       )
+      }
+        /*<Droppable droppableId={`group-${tables[0]}`} >
           {(provided) => (
-              <div 
-                ref={provided.innerRef} 
+              <div> 
+                {/* ref={provided.innerRef} 
                 {...provided.droppableProps}
                 className={`p-1 my-4 border-dark border`}
-              >
                 {tables.map((table, index) => (<TableBar Table={table} index={index} />))}
-                {provided.placeholder}
+                {/*{provided.placeholder}
               </div>
-            )}
-        </Droppable>
-    )
-}
+             )}
+       </Droppable>*/
+
 
 export default TableGroup;

@@ -17,7 +17,7 @@ export const dispatchSortingMethodEvent = (method: keyof Table) => {
 };
 
 export const dispatchGroupingMethodEvent = (method: GroupingMethod) => {
-  const event = new CustomEvent<GroupingMethodEvent>('GroupingMethodChanged', { detail: { method } });
+  const event = new CustomEvent<GroupingMethodEvent>('groupingMethodChanged', { detail: { method } });
   window.dispatchEvent(event);
 };
 

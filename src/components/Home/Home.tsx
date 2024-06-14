@@ -7,11 +7,11 @@ import SortingPanel from "../SortingPanel/SortingPanel";
 import { defaultGroupingMethod, defaultSortingMethod } from "../../config/settings";
 import useNextTable from "../../utils/sorting/useNextTable";
 import { Row } from "react-bootstrap";
-import CombineTablesForm from "../CombineTablesForm/CombineTablesForm";
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+//import CombineTablesForm from "../CombineTablesForm/CombineTablesForm";
+//import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { sortTables } from "../../utils/sorting/sortTables";
-import combineTables from "../../utils/store/combineTables";
-import { dispatchCombinedTablesEvent } from "../../utils/events/eventDispatcher";
+//import combineTables from "../../utils/store/combineTables";
+//import { dispatchCombinedTablesEvent } from "../../utils/events/eventDispatcher";
 import TableGroup from "../TableGroup/TableGroup";
 import GroupingPanel from "../GroupingPanel/GroupingPanel";
 import { getCombinedTables } from "../../utils/sorting/getCombinedTables";
@@ -71,6 +71,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const handleGroupingMethodChange = (event: CustomEvent<{ method: GroupingMethod }>) => {
       setGroupingMethod(event.detail.method);
+      console.log('group method changed!')
     };
     window.addEventListener('groupingMethodChanged', handleGroupingMethodChange as EventListener);
 
@@ -78,7 +79,7 @@ const Home: React.FC = () => {
       window.removeEventListener('groupingMethodChanged', handleGroupingMethodChange as EventListener);
     };
   });
-
+/*
   const onDragEnd = (result: DropResult) => {
     const { source, destination, combine } = result;
 
@@ -101,9 +102,9 @@ const Home: React.FC = () => {
     const reorderedTables = Array.from(tables);
     const [removed] = reorderedTables.splice(source.index, 1);
     reorderedTables.splice(destination.index, 0, removed);
-
+    console.log(reorderedTables);
     setTables(reorderedTables);
-  };
+  }; */
 
   if (loading) {
     return <Loading />;
@@ -113,14 +114,15 @@ const Home: React.FC = () => {
   const singleTables = combinedTableGroups.filter(group => group.length === 1).flat();
   const groupedTables = combinedTableGroups.filter(group => group.length > 1);
 
+
   return (
     <div>
       <Row>
         <SortingPanel sortingMethod={sortingMethod} />
         <GroupingPanel groupingMethod={groupingMethod}/>
       </Row>
-      <DragDropContext onDragEnd={onDragEnd}>
-        {groupingMethod === 'none' ? (
+      {/*<DragDropContext onDragEnd={onDragEnd}> */}
+        {groupingMethod === 'none' ? (      
           <TableGroup tables={tables} groupType='none' />
         ) : (
           <>
@@ -132,10 +134,10 @@ const Home: React.FC = () => {
             )}
           </>
         )}
-      </DragDropContext>
+      {/*</DragDropContext>*/}
       <Row>
         <TableForm />
-        <CombineTablesForm />
+        {/*<CombineTablesForm />*/}
       </Row>
     </div>
   );

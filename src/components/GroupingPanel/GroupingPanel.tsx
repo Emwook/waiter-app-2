@@ -13,6 +13,7 @@ const GroupingPanel: React.FC<GroupingPanelProps> = ({ groupingMethod }) => {
     const handleSelect = (eventKey: string | null) => {
         if (eventKey) {
             dispatchGroupingMethodEvent(eventKey as GroupingMethod);
+            console.log('group method changed from ', eventKey, 'to', groupingMethod);
         }
     };
 
