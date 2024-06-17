@@ -15,6 +15,8 @@ import { sortTables } from "../../utils/sorting/sortTables";
 import TableGroup from "../TableGroup/TableGroup";
 import GroupingPanel from "../GroupingPanel/GroupingPanel";
 import { getCombinedTables } from "../../utils/sorting/getCombinedTables";
+import { getSortedTables } from "../../utils/sorting/getSortedTables";
+import SelectButton from "../SelectButton/SelectButton";
 
 const Home: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -23,6 +25,7 @@ const Home: React.FC = () => {
   const [tables, setTables] = useState<Table[]>(tablesData);
   const [sortingMethod, setSortingMethod] = useState<keyof Table>(defaultSortingMethod);
   const [groupingMethod, setGroupingMethod] = useState<GroupingMethod>(defaultGroupingMethod);
+  const [selectMode, setSelectMode] = useState<boolean>(false);
 
   useEffect(() => {
     if (loadingTables || loadingNextTable) {
@@ -71,7 +74,6 @@ const Home: React.FC = () => {
   useEffect(() => {
     const handleGroupingMethodChange = (event: CustomEvent<{ method: GroupingMethod }>) => {
       setGroupingMethod(event.detail.method);
-      console.log('group method changed!')
     };
     window.addEventListener('groupingMethodChanged', handleGroupingMethodChange as EventListener);
 
@@ -111,8 +113,11 @@ const Home: React.FC = () => {
   }
 
   const combinedTableGroups = getCombinedTables(tables);
-  const singleTables = combinedTableGroups.filter(group => group.length === 1).flat();
-  const groupedTables = combinedTableGroups.filter(group => group.length > 1);
+  const statusTableGroups = getSortedTables(tables);
+  const singleTables = combinedTableGroups.filter(group => group.length === 1).flat()
+  const groupedTables = (groupingMethod === 'combined')
+                        ?combinedTableGroups.filter(group => group.length > 1)
+                        :statusTableGroups;
 
 
   return (
@@ -120,20 +125,30 @@ const Home: React.FC = () => {
       <Row>
         <SortingPanel sortingMethod={sortingMethod} />
         <GroupingPanel groupingMethod={groupingMethod}/>
+        <SelectButton selectMode={selectMode} setSelectMode={setSelectMode}/>
       </Row>
+      <div>
       {/*<DragDropContext onDragEnd={onDragEnd}> */}
         {groupingMethod === 'none' ? (      
-          <TableGroup tables={tables} groupType='none' />
-        ) : (
+          <TableGroup tables={tables} groupingMethod='none' selectMode={selectMode}/>
+        ) : ((groupingMethod === 'combined')?(
           <>
             {groupedTables.map((group, index) => (
-              <TableGroup key={`group-${index}`} tables={group} groupType='combined' />
+              <TableGroup key={`group-${index}`} tables={group} groupingMethod='combined' selectMode={selectMode}/>
             ))}
             {singleTables.length > 0 && (
-              <TableGroup tables={singleTables} groupType='none' />
+              <TableGroup tables={singleTables} groupingMethod='none' selectMode={selectMode}/>
             )}
-          </>
-        )}
+          </>)
+          :(
+            <>
+            {groupedTables.map((group, index) => (
+              <TableGroup key={`group-${index}`} tables={group} groupingMethod='status' selectMode={selectMode}/>
+            ))}
+          </>)
+          )
+        }
+      </div>
       {/*</DragDropContext>*/}
       <Row>
         <TableForm />

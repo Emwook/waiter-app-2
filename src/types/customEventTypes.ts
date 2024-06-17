@@ -20,4 +20,8 @@ export interface CombinedTablesEvent {
 export interface GroupingMethodEvent {
     method: GroupingMethod;
 }
+
+export interface SelectedTableEvent {
+    table: Table;
+}
   
