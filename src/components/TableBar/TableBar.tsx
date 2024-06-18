@@ -40,6 +40,11 @@ const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus, sele
             break;
         }
     }
+    /*
+    if(!selectMode){
+        setSelected(false);
+    }
+    */
     const handleSelect = () => {
         setSelected(!selected)
         dispatchSelectedTableEvent(Table);

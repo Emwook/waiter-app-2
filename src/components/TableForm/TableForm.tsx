@@ -1,15 +1,22 @@
-import React, {useState} from "react";
-import { Row, Col, Button, Form } from 'react-bootstrap'
+import React, { useState } from "react";
+import { Row, Col, Button, Form } from 'react-bootstrap';
 import StatusInput from "../StatusInput/StatusInput";
 import PeopleInput from "../PeopleInput/PeopleInput";
 import { Table, TableStatus } from "../../types/tableTypes";
 import useNextTable from "../../utils/sorting/useNextTable";
 import { mostNumOfPeople, leastNumOfPeople, defaultNewTable } from "../../config/settings";
-import { addNewTable } from "../../utils/store/addNewTable";
 import { dispatchTableAddedEvent } from "../../utils/events/eventDispatcher";
 import useTables from "../../utils/store/useTables";
+import { requestTableAdd } from "../../store/actions/tablesActions";
+import { connect } from "react-redux";
+import { ThunkDispatch } from "redux-thunk";
+import { addNewTable } from "../../utils/store/addNewTable";
 
-const TableForm: React.FC = () => {
+interface Props {
+    requestTableAdd: (table: Table) => void;
+}
+
+const TableForm: React.FC<Props> = ({ requestTableAdd }) => {
     const newTable: Table = defaultNewTable;
     const { tables, loadingTables } = useTables();
     const [selectedStatus, setSelectedStatus] = useState<TableStatus>(newTable.status); 
@@ -23,7 +30,8 @@ const TableForm: React.FC = () => {
         newTable.status = selectedStatus;
         newTable.numOfPeople = displayedNumOfPeople;
         newTable.maxNumOfPeople = displayedMaxNumOfPeople;
-        !loadingNextTable?(newTable.tableNumber = nextTableNumber):(newTable.tableNumber = tables.length);
+        !loadingNextTable ? (newTable.tableNumber = nextTableNumber) : (newTable.tableNumber = tables.length);
+        requestTableAdd(newTable);
         addNewTable(newTable);
         dispatchTableAddedEvent(newTable);
     };
@@ -36,9 +44,8 @@ const TableForm: React.FC = () => {
         const targetValue = Number(event.target.value);
         if (targetValue >= leastNumOfPeople && targetValue <= mostNumOfPeople) {
             if (targetValue <= displayedMaxNumOfPeople) {
-                setDisplayedNumOfPeople(targetValue)
-            }
-            else {
+                setDisplayedNumOfPeople(targetValue);
+            } else {
                 setDisplayedNumOfPeople(displayedMaxNumOfPeople);
             }
         }
@@ -46,41 +53,46 @@ const TableForm: React.FC = () => {
 
     const updateDisplayedMaxNumOfPeople = (event: React.ChangeEvent<HTMLInputElement>) => {
         const targetValue = Number(event.target.value);
-        if (targetValue >= leastNumOfPeople && targetValue <= mostNumOfPeople) { 
+        if (targetValue >= leastNumOfPeople && targetValue <= mostNumOfPeople) {
             if (targetValue <= displayedNumOfPeople) {
-                setDisplayedNumOfPeople(targetValue)
+                setDisplayedNumOfPeople(targetValue);
             }
             setDisplayedMaxNumOfPeople(targetValue);
         }
     };
     
-    return(
+    return (
         <Col xs={6}>
-        <Row className="text-dark mx-1 mt-4 mb-5 p-3 justify-content-center bg-light d-flex align-items-center border-bottom border-dark">
-            <Col xs={12} className="d-flex justify-content-left">
-                <Form onSubmit={handleSubmit}>
-                    <Row className="my-2">
-                        <Col xs={4}><span className="h2">Table {nextTableNumber}</span></Col>
-                        <StatusInput
-                            inDetailsComponent={false}
-                            table={!loadingNextTable?(nextTable): defaultNewTable}
-                            updateSelectedStatus={updateSelectedStatus}/>
-                        <PeopleInput   
-                            table={!loadingNextTable?(nextTable): defaultNewTable}
-                            updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
-                            updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
-                            displayedNumOfPeople={displayedNumOfPeople}
-                            displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                        {(!loadingNextTable || !loadingTables) && (
-                        <Button size="sm" variant="primary" type="submit">
-                            add table
-                        </Button>
-                    )}
-                    </Row>
-                </Form>
-            </Col>
-        </Row>
+            <Row className="text-dark mx-1 mt-4 mb-5 p-3 justify-content-center bg-light d-flex align-items-center border-bottom border-dark">
+                <Col xs={12} className="d-flex justify-content-left">
+                    <Form onSubmit={handleSubmit}>
+                        <Row className="my-2">
+                            <Col xs={4}><span className="h2">Table {nextTableNumber}</span></Col>
+                            <StatusInput
+                                inDetailsComponent={false}
+                                table={!loadingNextTable ? (nextTable) : defaultNewTable}
+                                updateSelectedStatus={updateSelectedStatus}/>
+                            <PeopleInput   
+                                table={!loadingNextTable ? (nextTable) : defaultNewTable}
+                                updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
+                                updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
+                                displayedNumOfPeople={displayedNumOfPeople}
+                                displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
+                            {(!loadingNextTable || !loadingTables) && (
+                                <Button size="sm" variant="primary" type="submit">
+                                    add table
+                                </Button>
+                            )}
+                        </Row>
+                    </Form>
+                </Col>
+            </Row>
         </Col>
-    )
-}
-export default TableForm
+    );
+};
+
+const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>): Props => ({
+    requestTableAdd: (table: Table) => dispatch(requestTableAdd(table)),
+});
+
+export default connect(null, mapDispatchToProps)(TableForm);
