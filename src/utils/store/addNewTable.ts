@@ -1,5 +1,5 @@
 import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../../config/firebase'; 
+import { db } from '../../store/store'; 
 import { Table } from '../../types/tableTypes';
 
 export const addNewTable = async (newTable:Table) => {

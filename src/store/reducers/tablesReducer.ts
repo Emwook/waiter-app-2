@@ -2,19 +2,27 @@ import { Table } from "../../types/tableTypes";
 import { ADD_TABLE, CHANGE_TABLE_DETAILS, REMOVE_TABLE, TablesActionTypes, UPDATE_TABLES } from '../actions/tablesActions';
 
 // Define the shape of the state
-interface AppState {
+export interface FirestoreState {
   tables: Table[];
 }
 
+export interface AppState {
+  firestore: FirestoreState;
+}
+
+
+
 // Selectors
 export const getTableByTableNumber = (state: AppState, tableNumber: number): Table | undefined =>
-  state.tables.find(table => table.tableNumber === tableNumber);
+  state.firestore.tables.find(table => table.tableNumber === tableNumber);
 
-export const getAllTables = (state: AppState): Table[] =>
-  state.tables;
+export const getAllTables = ((state: AppState) => state.firestore.tables);
 
 // Reducer
-const tablesReducer = (state: Table[] = [], action: TablesActionTypes): Table[] => {
+
+const initialState: Table[] = [];
+
+const tablesReducer = (state: Table[] = initialState, action: TablesActionTypes): Table[] => {
   switch (action.type) {
     case UPDATE_TABLES:
       return [...action.payload as Table[]];

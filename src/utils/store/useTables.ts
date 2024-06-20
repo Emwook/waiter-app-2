@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { getDocs, collection } from "firebase/firestore";
-import { db } from '../../config/firebase';  
+import { db } from '../../store/store';  
 import { Table } from "../../types/tableTypes";
 import { sortTables } from "../sorting/sortTables";
 import { defaultNewTable } from "../../config/settings";
 import {  defaultSortingMethod } from "../../config/settings";
 import { dispatchRefetchTablesEvent } from "../events/eventDispatcher";
+import { useSelector } from "react-redux";
+import { getAllTables } from "../../store/reducers/tablesReducer";
 
 const useTables = () => {
     const [tables, setTables] = useState<Table[]>([]);
@@ -26,18 +28,19 @@ const useTables = () => {
             } catch (err) {
                 console.error(err);
             }
+
         };
         getTables();
         const handleUpdate = (event: CustomEvent<{ table: Table }>) => {
             getTables();
             dispatchRefetchTablesEvent(table);
         };
-        /*
-        const handleUpdateFromTablesList = (event: CustomEvent<{ tables: Table[] }>) => {
-            getTables();
-            dispatchRefetchTablesEvent(table);
-        };
-        */
+        //
+        // const handleUpdateFromTablesList = (event: CustomEvent<{ tables: Table[] }>) => {
+        //     getTables();
+        //     dispatchRefetchTablesEvent(table);
+        // };
+        //  /|\
     
         window.addEventListener('tableRemoved', handleUpdate as EventListener);
         window.addEventListener('tableAdded', handleUpdate as EventListener);
@@ -53,4 +56,16 @@ const useTables = () => {
     return { tables, loadingTables };
 };
 
+/*
+const useTables = () => {
+    const tables = useSelector(getAllTables);
+    const [loadingTables, setLoadingTables] = useState<boolean>(true);
+
+    if(tables){
+        setLoadingTables(false)
+    }
+
+    return {tables, loadingTables}
+}
+*/
 export default useTables;

@@ -1,12 +1,10 @@
 import { Dispatch } from "redux";
 import { ThunkAction } from "redux-thunk";
 import { Table } from "../../types/tableTypes"; // Assuming TablesActionTypes and Table are defined in your types
-import { getFirestore } from "redux-firestore";
+import { AppState } from "../reducers/tablesReducer";
 
 // Action creators types
-interface AppState {
-    tables: Table[]
-}
+
 interface UpdateTablesAction {
   type: typeof UPDATE_TABLES;
   payload: Table[];
@@ -69,7 +67,7 @@ export const requestTableRemove = (data: { tableNumber: number }): ThunkAction<v
     }
   };
 };
-
+/*
 export const requestTableAdd = (data: Table): ThunkAction<void, AppState, unknown, TablesActionTypes> => {
   return async (dispatch: Dispatch<TablesActionTypes>, getState, { getFirebase, getFirestore }) => {
     try {
@@ -81,3 +79,4 @@ export const requestTableAdd = (data: Table): ThunkAction<void, AppState, unknow
     }
   };
 };
+*/

@@ -1,5 +1,5 @@
 import { doc, updateDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../../config/firebase'; 
+import { db } from '../../store/store'; 
 import { Table } from '../../types/tableTypes';
 
 export const updateTable = async (tableNumber: number, newData: Partial<Table>) => {

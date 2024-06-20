@@ -1,5 +1,5 @@
 import { collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
-import { db } from '../../config/firebase'; // Import your Firestore configuration
+import { db } from '../../store/store';
 import { Table } from '../../types/tableTypes';
 
 export const removeSelectedTable = async (table: Table) => {

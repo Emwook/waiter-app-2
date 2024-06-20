@@ -7,16 +7,16 @@ import useNextTable from "../../utils/sorting/useNextTable";
 import { mostNumOfPeople, leastNumOfPeople, defaultNewTable } from "../../config/settings";
 import { dispatchTableAddedEvent } from "../../utils/events/eventDispatcher";
 import useTables from "../../utils/store/useTables";
-import { requestTableAdd } from "../../store/actions/tablesActions";
-import { connect } from "react-redux";
-import { ThunkDispatch } from "redux-thunk";
+//import { requestTableAdd } from "../../store/actions/tablesActions";
+//import { connect } from "react-redux";
+//import { ThunkDispatch } from "redux-thunk";
 import { addNewTable } from "../../utils/store/addNewTable";
 
-interface Props {
-    requestTableAdd: (table: Table) => void;
-}
+//interface Props {
+//    requestTableAdd: (table: Table) => void;
+//}
 
-const TableForm: React.FC<Props> = ({ requestTableAdd }) => {
+const TableForm: React.FC = () => {
     const newTable: Table = defaultNewTable;
     const { tables, loadingTables } = useTables();
     const [selectedStatus, setSelectedStatus] = useState<TableStatus>(newTable.status); 
@@ -31,7 +31,7 @@ const TableForm: React.FC<Props> = ({ requestTableAdd }) => {
         newTable.numOfPeople = displayedNumOfPeople;
         newTable.maxNumOfPeople = displayedMaxNumOfPeople;
         !loadingNextTable ? (newTable.tableNumber = nextTableNumber) : (newTable.tableNumber = tables.length);
-        requestTableAdd(newTable);
+        //requestTableAdd(newTable);
         addNewTable(newTable);
         dispatchTableAddedEvent(newTable);
     };
@@ -90,9 +90,11 @@ const TableForm: React.FC<Props> = ({ requestTableAdd }) => {
         </Col>
     );
 };
-
+/*
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>): Props => ({
     requestTableAdd: (table: Table) => dispatch(requestTableAdd(table)),
 });
+*/
 
-export default connect(null, mapDispatchToProps)(TableForm);
+// export default connect(null, mapDispatchToProps)(TableForm);
+export default TableForm;

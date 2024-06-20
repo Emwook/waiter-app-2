@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getDocs, collection, query, where } from "firebase/firestore";
-import { db } from '../../config/firebase';  
+import { db } from '../../store/store';  
 import { Table } from "../../types/tableTypes";
 import { defaultNewTable } from "../../config/settings";
 
