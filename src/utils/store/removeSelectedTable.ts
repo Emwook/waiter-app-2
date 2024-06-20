@@ -1,9 +1,9 @@
 import { collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
-import { db } from '../../store/store';
+import { firestore } from '../../store/store';  
 import { Table } from '../../types/tableTypes';
 
 export const removeSelectedTable = async (table: Table) => {
-    const tablesCollectionRef = collection(db, 'tables');
+    const tablesCollectionRef = collection(firestore, 'tables');
     const q = query(tablesCollectionRef, where('tableNumber', '==', table.tableNumber));
 
     try {

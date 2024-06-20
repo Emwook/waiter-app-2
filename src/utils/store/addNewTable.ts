@@ -1,9 +1,9 @@
 import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../../store/store'; 
+import { firestore } from '../../store/store';  
 import { Table } from '../../types/tableTypes';
 
 export const addNewTable = async (newTable:Table) => {
-  const tablesCollection = collection(db, 'tables');
+  const tablesCollection = collection(firestore, 'tables');
   try {
       await addDoc(tablesCollection, newTable);
       console.log('document added successfully');

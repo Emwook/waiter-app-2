@@ -1,47 +1,37 @@
 
-//import { Provider } from 'react-redux'
-//import { render } from 'react-dom'
-import { createStore, combineReducers } from 'redux'
-//import {ThunkMiddleware, withExtraArgument} from 'redux-thunk';
-//import { configureStore } from '@reduxjs/toolkit'
+import { firebaseConfig } from '../config/firebaseConfig'
+import tablesReducer from './reducers/tablesReducer';
+import { createStore, combineReducers, compose } from 'redux';
+import { reduxFirestore, firestoreReducer } from 'redux-firestore';
+import {initializeApp} from 'firebase/app';
+import {getFirestore} from 'firebase/firestore';
 
-//import { reduxFirestore, getFirestore } from "redux-firestore";
-import { createFirestoreInstance, firestoreReducer } from 'redux-firestore'
-import {  firebaseReducer } from 'react-redux-firebase'
-
-import { getFirestore } from 'firebase/firestore';
-import { initializeApp } from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
 import 'firebase/firestore';
-import 'firebase/auth'
 
-import tablesReducer from "./reducers/tablesReducer";
-import { firebaseConfig } from "../config/firebaseConfig";
+const rfConfig = {}; // optional redux-firestore Config Options
 
-const rrfConfig = {
-  userProfile: 'users'
-}
+// Initialize firebase instance
 const app = initializeApp(firebaseConfig);
+// Initialize Cloud Firestore through Firebase
+export const firestore = getFirestore(app);
 
-const db = getFirestore(app);
+// Add reduxFirestore store enhancer to store creator
+const createStoreWithFirebase = compose(
+  reduxFirestore(app, rfConfig), // firebase instance as first argument, rfConfig as optional second
+)(createStore);
 
-// Define rootReducer combining firestoreReducer and custom reducers
+// Add Firebase to reducers
 const rootReducer = combineReducers({
-  firebase: firebaseReducer,
+  tablesReducer: tablesReducer,
   firestore: firestoreReducer,
-  tables: tablesReducer,
 });
 
-// Define initial state and create Redux store
+export type AppState = ReturnType<typeof rootReducer>;
+
+// Create store with reducers and initial state
 const initialState = {};
-const store = createStore(rootReducer, initialState)
+const store = createStoreWithFirebase(rootReducer, initialState);
 
-const rrfProps = {
-  firebase: app,
-  config: rrfConfig,
-  dispatch: store.dispatch,
-  createFirestoreInstance 
-}
-
-export { store, rrfProps };
-export { db };
 export default store;

@@ -16,7 +16,7 @@ jest.mock("firebase/firestore", () => ({
 }));
 
 jest.mock("../../config/firebase", () => ({
-  db: {},
+  firestore: {},
 }));
 
 const mockTablesData: Table[] = [
