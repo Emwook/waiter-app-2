@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getDocs, collection } from "firebase/firestore";
-import { firestore } from '../../store/store';  
+import { db } from '../../config/firebaseConfig';  
 import { Table } from "../../types/tableTypes";
 import { sortTables } from "../sorting/sortTables";
 import { defaultNewTable } from "../../config/settings";
@@ -17,7 +17,7 @@ const useTables = () => {
     useEffect(() => {
         const getTables = async () => {
             try {
-                const tablesCollectionRef = collection(firestore, "tables");
+                const tablesCollectionRef = collection(db, "tables");
                 const data = await getDocs(tablesCollectionRef);
                 const filteredData: Table[] = data.docs.map((doc) => ({
                     ...doc.data(), 

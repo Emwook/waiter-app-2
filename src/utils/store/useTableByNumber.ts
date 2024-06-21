@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getDocs, collection, query, where } from "firebase/firestore";
-import { firestore } from '../../store/store';  
+import { db } from '../../config/firebaseConfig';  
 import { Table } from "../../types/tableTypes";
 import { defaultNewTable } from "../../config/settings";
 
@@ -10,7 +10,7 @@ const useTableByNumber = (tableNumber: number) => {
     useEffect(() => {
         const getTable = async () => {
             try {
-                const tablesCollectionRef = collection(firestore, "tables");
+                const tablesCollectionRef = collection(db, "tables");
                 const q = query(tablesCollectionRef, where("tableNumber", "==", tableNumber));
                 const querySnapshot = await getDocs(q);
                 const tableData = querySnapshot.docs.map(doc => ({

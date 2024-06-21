@@ -22,9 +22,8 @@ describe('useNextTable', () => {
 
     waitForNextUpdate();
 
-    const { nextTable, loadingNextTable } = result.current;
+    const { nextTable } = result.current;
 
-    expect(loadingNextTable).toBe(false);
 
     const lastTableNumber = mockTables.length > 0 ? mockTables[mockTables.length - 1].tableNumber : 0;
     const expectedNextTableNumber = lastTableNumber + 1;

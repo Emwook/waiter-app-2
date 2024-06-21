@@ -5,24 +5,24 @@ import PeopleInput from "../PeopleInput/PeopleInput";
 import { Table, TableStatus } from "../../types/tableTypes";
 import useNextTable from "../../utils/sorting/useNextTable";
 import { mostNumOfPeople, leastNumOfPeople, defaultNewTable } from "../../config/settings";
-import { dispatchTableAddedEvent } from "../../utils/events/eventDispatcher";
-import useTables from "../../utils/store/useTables";
 //import { requestTableAdd } from "../../store/actions/tablesActions";
 //import { connect } from "react-redux";
 //import { ThunkDispatch } from "redux-thunk";
-import { addNewTable } from "../../utils/store/addNewTable";
+import { getAllTables, requestTableAdd } from "../../store/reducers/tablesReducer";
+import { useDispatch, useSelector } from "react-redux";
 
 //interface Props {
 //    requestTableAdd: (table: Table) => void;
 //}
 
 const TableForm: React.FC = () => {
+    const dispatch = useDispatch();
     const newTable: Table = defaultNewTable;
-    const { tables, loadingTables } = useTables();
+    const tables: Table[] = useSelector(getAllTables);
     const [selectedStatus, setSelectedStatus] = useState<TableStatus>(newTable.status); 
     const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(newTable.numOfPeople);
     const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(newTable.maxNumOfPeople);
-    const { nextTable, loadingNextTable } = useNextTable();
+    const { nextTable } = useNextTable();
     const nextTableNumber = nextTable.tableNumber;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,10 +30,8 @@ const TableForm: React.FC = () => {
         newTable.status = selectedStatus;
         newTable.numOfPeople = displayedNumOfPeople;
         newTable.maxNumOfPeople = displayedMaxNumOfPeople;
-        !loadingNextTable ? (newTable.tableNumber = nextTableNumber) : (newTable.tableNumber = tables.length);
-        //requestTableAdd(newTable);
-        addNewTable(newTable);
-        dispatchTableAddedEvent(newTable);
+        nextTable ? (newTable.tableNumber = nextTableNumber) : (newTable.tableNumber = tables.length);
+        dispatch(requestTableAdd(newTable) as any);
     };
 
     const updateSelectedStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -70,15 +68,15 @@ const TableForm: React.FC = () => {
                             <Col xs={4}><span className="h2">Table {nextTableNumber}</span></Col>
                             <StatusInput
                                 inDetailsComponent={false}
-                                table={!loadingNextTable ? (nextTable) : defaultNewTable}
+                                table={(nextTable) ? (nextTable) : defaultNewTable}
                                 updateSelectedStatus={updateSelectedStatus}/>
                             <PeopleInput   
-                                table={!loadingNextTable ? (nextTable) : defaultNewTable}
+                                table={(nextTable) ? (nextTable) : defaultNewTable}
                                 updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
                                 updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
                                 displayedNumOfPeople={displayedNumOfPeople}
                                 displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                            {(!loadingNextTable || !loadingTables) && (
+                            {(nextTable) && (
                                 <Button size="sm" variant="primary" type="submit">
                                     add table
                                 </Button>

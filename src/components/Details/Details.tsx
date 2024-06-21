@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Container, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import useTables from "../../utils/store/useTables";
 import StatusInput from "../StatusInput/StatusInput";
 import { updateTable } from "../../utils/store/UpdateTable";
 import PeopleInput from "../PeopleInput/PeopleInput";
@@ -9,6 +8,8 @@ import Loading from "../Loading/Loading";
 import { mostNumOfPeople, leastNumOfPeople, maxBill, defaultNewTable } from "../../config/settings";
 import BillInput from "../BillInput/BillInput";
 import { Table, TableStatus } from "../../types/tableTypes";
+import { useSelector } from "react-redux";
+import { getAllTables } from "../../store/reducers/tablesReducer";
 
 interface DetailsProps {
     tableNumber: number;
@@ -16,7 +17,7 @@ interface DetailsProps {
 
 const Details: React.FC<DetailsProps> = ({ tableNumber }) => {    
     const navigate = useNavigate();
-    const { tables } = useTables();
+    const tables: Table[]  = useSelector(getAllTables);
     const table: Table = tables?.find(table => table.tableNumber === tableNumber) ?? defaultNewTable;
     const [loading, setLoading] = useState<boolean>(true);
 

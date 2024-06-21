@@ -4,25 +4,27 @@ import useTables from "../../utils/store/useTables";
 import { Table } from "../../types/tableTypes";
 import combineTables from "../../utils/store/combineTables";
 import { dispatchCombinedTablesEvent } from "../../utils/events/eventDispatcher";
+import { useSelector } from "react-redux";
+import { getAllTables } from "../../store/reducers/tablesReducer";
 
 const CombineTablesForm: React.FC = () => {
-    const { tables: tableList, loadingTables } = useTables();
+    const tables: Table[] = useSelector(getAllTables);
     const [selectedTables, setSelectedTables] = useState<number[]>([]);
     const [tableOptions, setTableOptions] = useState<Table[][]>([[], []]);
 
-    useEffect(() => {
-        if (!loadingTables && tableList.length > 0) {
-            setTableOptions([tableList, tableList]);
-        }
-    }, [loadingTables, tableList]);
+    // useEffect(() => {
+    //     if (!loadingTables && tables.length > 0) {
+    //         setTableOptions([tables, tables]);
+    //     }
+    // }, [loadingTables, tables]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (selectedTables.length === 2) {
-            const table1 = tableList.find(table => table.tableNumber === selectedTables[0]);
-            const table2 = tableList.find(table => table.tableNumber === selectedTables[1]);
+            const table1 = tables.find((table: Table) => table.tableNumber === selectedTables[0]);
+            const table2 = tables.find((table: Table) => table.tableNumber === selectedTables[1]);
             if (table1 && table2) {
-                combineTables(table1, table2, tableList);
+                combineTables(table1, table2, tables);
                 dispatchCombinedTablesEvent([table1, table2]);
             }
         } else {

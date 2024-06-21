@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useFirestoreConnect, isLoaded, isEmpty } from 'react-redux-firebase';
@@ -9,27 +9,20 @@ import Menu from './components/Menu/Menu';
 import Layout from './components/Layout/Layout';
 import Details from './components/Details/Details';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { setTables } from './store/actions/tablesActions';
-import { AppState } from './store/store';
 import { Table } from './types/tableTypes';
-import { getAllTables } from './store/reducers/tablesReducer';
+import { fetchAllTableData, getAllTables } from './store/reducers/tablesReducer';
+import { sortTables } from './utils/sorting/sortTables';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
 
-  // Use FirestoreConnect to fetch data from Firestore
-  useFirestoreConnect([{ collection: 'tables' }]); // Adjust the collection name if necessary
-
-  // Get the tables data from the Redux state
-  const tables = useSelector(getAllTables);
-  console.log('tables from firestore :   ', tables);
-
   // Dispatch the setTables action when the data is loaded
   useEffect(() => {
-    if (isLoaded(tables) && !isEmpty(tables)) {
-      dispatch(setTables(tables) as any); // Ensure tables type is correctly handled
-    }
-  }, [dispatch, tables]);
+      dispatch(fetchAllTableData() as any);
+  }, [dispatch]);
+
+  const tables: Table[] = useSelector(getAllTables);
+  //const [tables, setTables] = useState<Table[]>(tablesData);
 
   return (
     <main>
@@ -38,7 +31,6 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/*" element={<Home />} />
           <Route path="/layout" element={<Layout />} />
-          {/*
           {tables.map((table: Table) => (
             <Route
               key={table.tableNumber} // Assuming table has an id field
@@ -46,7 +38,6 @@ const App: React.FC = () => {
               element={<Details tableNumber={table.tableNumber} />}
             />
           ))}
-          */}
         </Routes>
       </Container>
     </main>
