@@ -5,11 +5,13 @@ import { Dispatch } from 'redux';
 import { addDoc, collection, deleteDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 
-const initialState: Table[] = [];
+type TablesState = Table[];
+
+const initialState: TablesState = [];
 
 interface SetTablesAction {
   type: typeof SET_TABLES;
-  payload: Table[];
+  payload: TablesState;
 }
 interface AddTableAction {
   type: typeof ADD_TABLE;
@@ -22,15 +24,12 @@ interface RemoveTableAction {
 
 interface UpdateTablesAction {
   type: typeof UPDATE_TABLES;
-  payload: Table[];
+  payload: TablesState;
 }
 interface ChangeTableDetailsAction {
   type: typeof CHANGE_TABLE_DETAILS;
   payload: Partial<Table> & { tableNumber: number };
 }
-
-
-
 
 export type TablesActionTypes = UpdateTablesAction | ChangeTableDetailsAction 
                                | RemoveTableAction | AddTableAction | SetTablesAction;
@@ -43,11 +42,11 @@ export const REMOVE_TABLE = createActionName('REMOVE_TABLE');
 export const UPDATE_TABLES = createActionName('UPDATE_TABLES');
 export const CHANGE_TABLE_DETAILS = createActionName('CHANGE_TABLE_DETAILS');
 
-export const setTables = (payload: Table[]): SetTablesAction => ({ type: SET_TABLES, payload });
+export const setTables = (payload: TablesState): SetTablesAction => ({ type: SET_TABLES, payload });
 export const addTable = (payload: Table): AddTableAction => ({ type: ADD_TABLE, payload });
 export const removeTable = (payload: { tableNumber: number }): RemoveTableAction => ({ type: REMOVE_TABLE, payload });
 
-export const updateTables = (payload: Table[]): UpdateTablesAction => ({ type: UPDATE_TABLES, payload });
+export const updateTables = (payload: TablesState): UpdateTablesAction => ({ type: UPDATE_TABLES, payload });
 
 
 export const fetchAllTableData = (): ThunkAction<void, AppState, unknown, TablesActionTypes> => {
@@ -78,7 +77,7 @@ export const requestTableAdd = (data: Table): ThunkAction<void, AppState, unknow
   };
 };
 
-export const requestTableRemove = (table: Table ): ThunkAction<void, AppState, unknown, TablesActionTypes> => {
+export const requestTableRemove = (table: Table ): ThunkAction<void, TablesState, unknown, TablesActionTypes> => {
   return async (dispatch: Dispatch<TablesActionTypes>) => {
     const tablesCollectionRef = collection(db, 'tables');
     const q = query(tablesCollectionRef, where('tableNumber', '==', table.tableNumber));
@@ -102,10 +101,10 @@ export const requestTableRemove = (table: Table ): ThunkAction<void, AppState, u
 const tablesReducer = (
   state = initialState,
   action: TablesActionTypes
-): Table[] => {
+): TablesState => {
   switch (action.type) {
     case SET_TABLES:
-      return [...action.payload as Table[]];
+      return [...action.payload as TablesState];
     case ADD_TABLE:
       return [...state, action.payload as Table];
       case REMOVE_TABLE:
