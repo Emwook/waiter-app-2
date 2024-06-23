@@ -2,7 +2,7 @@ import { Table } from '../../types/tableTypes';
 import { ThunkAction } from 'redux-thunk';
 import { AppState } from '../store';
 import { Dispatch } from 'redux';
-import { addDoc, collection, deleteDoc, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 
 type TablesState = Table[];
@@ -22,32 +22,23 @@ interface RemoveTableAction {
   payload: { tableNumber: number };
 }
 
-interface UpdateTablesAction {
-  type: typeof UPDATE_TABLES;
-  payload: TablesState;
-}
 interface ChangeTableDetailsAction {
   type: typeof CHANGE_TABLE_DETAILS;
-  payload: Partial<Table> & { tableNumber: number };
+  payload: Table;
 }
 
-export type TablesActionTypes = UpdateTablesAction | ChangeTableDetailsAction 
-                               | RemoveTableAction | AddTableAction | SetTablesAction;
+export type TablesActionTypes = ChangeTableDetailsAction | RemoveTableAction | AddTableAction | SetTablesAction;
 
 const createActionName = (actionName: string) => `app/tables/${actionName}`;
 export const SET_TABLES = createActionName('SET_TABLES');
 export const ADD_TABLE = createActionName('ADD_TABLE');
 export const REMOVE_TABLE = createActionName('REMOVE_TABLE');
-
-export const UPDATE_TABLES = createActionName('UPDATE_TABLES');
 export const CHANGE_TABLE_DETAILS = createActionName('CHANGE_TABLE_DETAILS');
 
 export const setTables = (payload: TablesState): SetTablesAction => ({ type: SET_TABLES, payload });
 export const addTable = (payload: Table): AddTableAction => ({ type: ADD_TABLE, payload });
 export const removeTable = (payload: { tableNumber: number }): RemoveTableAction => ({ type: REMOVE_TABLE, payload });
-
-export const updateTables = (payload: TablesState): UpdateTablesAction => ({ type: UPDATE_TABLES, payload });
-
+export const changeTableDetails = (payload: Table): ChangeTableDetailsAction => ({ type: CHANGE_TABLE_DETAILS, payload });
 
 export const fetchAllTableData = (): ThunkAction<void, AppState, unknown, TablesActionTypes> => {
   return async (dispatch: Dispatch<TablesActionTypes>) => {
@@ -58,7 +49,6 @@ export const fetchAllTableData = (): ThunkAction<void, AppState, unknown, Tables
             ...doc.data(), 
         } as Table));
         dispatch(setTables(filteredData));
-        console.log(filteredData);
       }  catch (error) {
       console.error("Error fetching tables:", error);
     }
@@ -98,6 +88,27 @@ export const requestTableRemove = (table: Table ): ThunkAction<void, TablesState
   };
 };
 
+export const requestChangeTableDetails = (table: Table): ThunkAction<void, TablesState, unknown, TablesActionTypes> => {
+  return async (dispatch: Dispatch<TablesActionTypes>) => {
+    const tablesCollectionRef = collection(db, 'tables');
+    const q = query(tablesCollectionRef, where('tableNumber', '==', table.tableNumber));
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (doc) => {
+        try {
+          await updateDoc(doc.ref, table as any);
+          dispatch(changeTableDetails(table));
+          console.log('Document updated successfully');
+        } catch (error) {
+          console.error('Error updating document:', error);
+        }
+      });
+    } catch (error) {
+      console.error('Error querying documents:', error);
+    }
+  };
+};
+
 const tablesReducer = (
   state = initialState,
   action: TablesActionTypes
@@ -107,8 +118,15 @@ const tablesReducer = (
       return [...action.payload as TablesState];
     case ADD_TABLE:
       return [...state, action.payload as Table];
-      case REMOVE_TABLE:
+    case REMOVE_TABLE:
       return state.filter(table => table.tableNumber !== (action.payload as Table).tableNumber );
+    case CHANGE_TABLE_DETAILS:
+      if ('tableNumber' in action.payload) {
+        return state.map(table =>
+          table.tableNumber === (action.payload as Table ).tableNumber ? action.payload : table
+        ) as TablesState;
+      }
+      return state;
     default:
       return state;
   }

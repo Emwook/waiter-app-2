@@ -1,21 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import { Col, Dropdown } from 'react-bootstrap';
 import { GroupingMethod } from "../../types/tableTypes";
-import { dispatchGroupingMethodEvent } from "../../utils/events/eventDispatcher";
+import { getGroupingMethod, setGrouping } from "../../store/reducers/methodsReducer";
+import { useDispatch, useSelector } from "react-redux";
 
-interface GroupingPanelProps {
-    groupingMethod: GroupingMethod;
-}
-
-const GroupingPanel: React.FC<GroupingPanelProps> = ({ groupingMethod }) => {
+const GroupingPanel: React.FC = () => {
     const possibleGroupingMethods: (GroupingMethod)[] = ['none', 'status', 'combined'];
-
+    const dispatch = useDispatch();
+    const [groupingMethod, setGroupingMethod] = useState<GroupingMethod>(useSelector(getGroupingMethod));
+    
     const handleSelect = (eventKey: string | null) => {
-        if (eventKey) {
-            dispatchGroupingMethodEvent(eventKey as GroupingMethod);
-            console.log('group method changed from ', eventKey, 'to', groupingMethod);
-        }
-    };
+        const newGroupingMethod = eventKey as GroupingMethod;
+        if(newGroupingMethod){
+            setGroupingMethod(newGroupingMethod);
+            dispatch(setGrouping(newGroupingMethod) as any);
+        };
+    }
 
     return (
             <Col xs={3} className="mt-4 d-flex justify-content-start">

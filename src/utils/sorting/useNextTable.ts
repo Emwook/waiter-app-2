@@ -12,40 +12,31 @@ const useNextTable = () => {
 
     useEffect(() => {
         const updateNextTableNumber = () => {
-            if (tables) {
-                if (tables.length === 0) {
-                    setNextTable(prevTable => ({
-                        ...prevTable,
-                        tableNumber: 1
-                    }));
-                } else {
-                    const sortedTables = sortTables([...tables], 'tableNumber');
-                    const lastTableNumber = sortedTables[sortedTables.length - 1].tableNumber;
-                    let nextTableNumber = lastTableNumber + 1;
-                    if (lastTableNumber > sortedTables.length) {
-                        nextTableNumber = determineNextTableNumber(sortedTables);
-                    }
-                    const table: Table = (defaultNewTable);
-                    table.tableNumber = nextTableNumber;
-                    setNextTable(table);
+            if (tables.length === 0) { // Changed from if(tables) and updated to handle empty table case
+                setNextTable({
+                    ...defaultNewTable,
+                    tableNumber: 1 // Directly setting tableNumber to 1 if no tables
+                });
+            } else {
+                const sortedTables = sortTables([...tables], 'tableNumber'); // Sorting tables by tableNumber
+                const lastTableNumber = sortedTables[sortedTables.length - 1].tableNumber;
+                let nextTableNumber = lastTableNumber + 1;
+
+                if (lastTableNumber > sortedTables.length) { // Handling case where lastTableNumber is greater
+                    nextTableNumber = determineNextTableNumber(sortedTables);
                 }
+
+                setNextTable({
+                    ...defaultNewTable,
+                    tableNumber: nextTableNumber // Setting nextTableNumber directly
+                });
             }
         };
 
-        updateNextTableNumber();
-
-        const handleUpdate = (event: CustomEvent<{ table: Table }>) => {
-            updateNextTableNumber();
-        };
-
-        window.addEventListener('tableRefetched', handleUpdate as EventListener);
-
-        return () => {
-            window.removeEventListener('tableRefetched', handleUpdate as EventListener);
-        };
+        updateNextTableNumber(); // Updated to always call this function whenever `tables` changes
     }, [tables]);
 
-    return { nextTable };
+    return nextTable;
 };
 
 export default useNextTable;

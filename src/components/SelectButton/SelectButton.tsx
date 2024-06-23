@@ -1,69 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Col } from 'react-bootstrap';
 import { Button } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { checkSelectMode, enterSelect, getSelected } from "../../store/reducers/selectModeReducer";
 import { Table } from "../../types/tableTypes";
-//import { dispatchGroupingMethodEvent } from "../../utils/events/eventDispatcher";
+import { changeTableDetails, getAllTables } from "../../store/reducers/tablesReducer";
+import combineTables from "../../utils/store/combineTables";
 
-interface SelectButtonProps {
-    selectMode: boolean;
-    setSelectMode: React.Dispatch<React.SetStateAction<boolean>>;
-}
+const SelectButton: React.FC = () => {
+    const dispatch = useDispatch();
+    const [selectMode, setSelectMode] = useState<boolean>(useSelector(checkSelectMode));
+    const selectedTables: Table[] = useSelector(getSelected);
+    const tableList = useSelector(getAllTables);
 
-const SelectButton: React.FC<SelectButtonProps> = ({ selectMode, setSelectMode }) => {
-    const [selectedTables, setSelectedTables] =useState<Table[]>([]);
-
-    useEffect(() => {
-        const handleSelectedTables = (event: CustomEvent<{ table: Table }>) => {
-            if(selectedTables.includes(event.detail.table as Table)){
-                setSelectedTables(selectedTables.filter(table => table.tableNumber !== event.detail.table.tableNumber));
-            }
-            else {
-                setSelectedTables([...selectedTables, (event.detail.table)]);
-            }
-        };
-        window.addEventListener('selectedTable', handleSelectedTables as EventListener);
-    
-        return () => {
-          window.removeEventListener('selectedTable', handleSelectedTables as EventListener);
-        };
-      });
-
-    //from combineTablesForm for handleCombine:
-    /*
-      const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (selectedTables.length === 2) {
-            const table1 = tableList.find(table => table.tableNumber === selectedTables[0]);
-            const table2 = tableList.find(table => table.tableNumber === selectedTables[1]);
-            if (table1 && table2) {
-                combineTables(table1, table2, tableList);
-                dispatchCombinedTablesEvent([table1, table2]);
-            }
-        } else {
-            console.log("Please select two tables to combine.");
-        }
-        };
-    */
+    const toggleSelect = () => {
+        setSelectMode(!selectMode);
+        dispatch(enterSelect() as any);
+    }
 
     const handleCombine = () => {
+        if (selectedTables.length === 2){
+            const table1 = selectedTables[0];
+            const table2 = selectedTables[1];
+            if (table1 && table2) {
+                const tablesToCombine: Table[] = combineTables(table1, table2, tableList);
+                for(let table of tablesToCombine){
+                    dispatch(changeTableDetails(table) as any);
+                    console.log('table to combine dispatched: ', table);
+                }
+            }
+        }
         console.log(selectedTables);
     };
 
-    //similar to handleCombine should be implementedinto handleCombine
-    const handleDecombine = () => {
-        console.log(selectedTables);
-    }; 
-    //from RemoveTable for handleRemove
-    /*
-    const handleRemove = (e: React.FormEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        removeSelectedTable(tableToRemove);
-        dispatchTableRemovedEvent(tableToRemove);
-    }; 
-    */
-
     const handleRemove = () => {
-        console.log(selectedTables);
+        console.log(selectMode);
     };
 
     return (
@@ -73,7 +44,7 @@ const SelectButton: React.FC<SelectButtonProps> = ({ selectMode, setSelectMode }
                     <Button variant='success' className={`border mx-1 ${selectMode?'border-light':'border-primary'}`} onClick={handleCombine} >
                         <i className="bi bi-link"></i>
                     </Button>
-                    <Button variant='warning' className={`border mx-1 ${selectMode?'border-light':'border-primary'}`} onClick={handleDecombine}>
+                    <Button variant='warning' className={`border mx-1 ${selectMode?'border-light':'border-primary'}`}>
                     <i className="bi bi-x-square"></i>
                     </Button>
                     <Button variant='danger' className={`border mx-1 ${selectMode?'border-light':'border-primary'}`} onClick={handleRemove}>
@@ -81,7 +52,7 @@ const SelectButton: React.FC<SelectButtonProps> = ({ selectMode, setSelectMode }
                     </Button>
                     </>
                 )}
-                <Button className={`ml-3 border ${selectMode?'border-light':'border-primary'}`} variant={selectMode?'primary':'light'} onClick={e => setSelectMode(!selectMode)}>
+                <Button className={`ml-3 border ${selectMode?'border-light':'border-primary'}`} variant={selectMode?'primary':'light'} onClick={toggleSelect}>
                     Select
                 </Button>
             </Col>

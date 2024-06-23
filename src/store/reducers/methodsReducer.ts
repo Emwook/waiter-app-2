@@ -1,10 +1,5 @@
 import { GroupingMethod, Table } from '../../types/tableTypes';
-import { ThunkAction } from 'redux-thunk';
-import { Dispatch } from 'redux';
-import { addDoc, collection, deleteDoc, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../../config/firebaseConfig';
 import { defaultGroupingMethod, defaultSortingMethod } from '../../config/settings';
-import { SortingMethodEvent } from '../../types/customEventTypes';
 
 interface MethodsState {
     groupingMethod: GroupingMethod;
@@ -29,28 +24,11 @@ interface SetSortingAction {
 export type MethodsActionTypes = SetGroupingAction | SetSortingAction; 
 
 const createActionName = (actionName: string) => `app/methods/${actionName}`;
+export const SET_GROUPING = createActionName('SET_GROUPING');
 export const SET_SORTING = createActionName('SET_SORTING');
-export const SET_GROUPING = createActionName('SET_SORTING');
 
 export const setGrouping = (payload: GroupingMethod): SetGroupingAction => ({ type: SET_GROUPING, payload });
 export const setSorting = (payload: keyof Table): SetSortingAction => ({ type: SET_SORTING, payload });
-
-export const fetchMethods = (): ThunkAction<void, MethodsState, unknown, MethodsActionTypes> => {
-  return async (dispatch: Dispatch<MethodsActionTypes>) => {
-    try {
-        const methodsCollectionRef = collection(db,'methods');
-        const q = query(methodsCollectionRef, where('id','==', 'methods'))
-        const data = await getDocs(q);
-        const filteredData: { groupingMethod, sortingMethod} = data.docs.map((doc) => ({
-            ...doc.data(), 
-        })); // here you havent finished yet ma'am /\ :P
-        dispatch(setSorting(filteredData.sortingMethod))
-        dispatch(setGrouping(filteredData.groupingMethod))
-      }  catch (error) {
-      console.error("Error fetching methods:", error);
-    }
-  };
-};
 
 const methodsReducer = (
   state = initialState,
@@ -66,7 +44,7 @@ const methodsReducer = (
   }
 };
 
-export const getGroupingMethod = (state: any) => state.groupingMethod;
-export const getSortingMethid = (state: any) => state.sortingMethod;
+export const getGroupingMethod = (state: any) => state.methods.groupingMethod;
+export const getSortingMethod = (state: any) => state.methods.sortingMethod;
 
 export default methodsReducer;

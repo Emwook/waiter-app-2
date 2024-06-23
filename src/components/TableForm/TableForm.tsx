@@ -5,24 +5,16 @@ import PeopleInput from "../PeopleInput/PeopleInput";
 import { Table, TableStatus } from "../../types/tableTypes";
 import useNextTable from "../../utils/sorting/useNextTable";
 import { mostNumOfPeople, leastNumOfPeople, defaultNewTable } from "../../config/settings";
-//import { requestTableAdd } from "../../store/actions/tablesActions";
-//import { connect } from "react-redux";
-//import { ThunkDispatch } from "redux-thunk";
-import { getAllTables, requestTableAdd } from "../../store/reducers/tablesReducer";
-import { useDispatch, useSelector } from "react-redux";
-
-//interface Props {
-//    requestTableAdd: (table: Table) => void;
-//}
+import { useDispatch } from "react-redux";
+import { requestTableAdd } from "../../store/reducers/tablesReducer";
 
 const TableForm: React.FC = () => {
     const dispatch = useDispatch();
     const newTable: Table = defaultNewTable;
-    const tables: Table[] = useSelector(getAllTables);
     const [selectedStatus, setSelectedStatus] = useState<TableStatus>(newTable.status); 
     const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(newTable.numOfPeople);
     const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(newTable.maxNumOfPeople);
-    const { nextTable } = useNextTable();
+    let nextTable: Table = useNextTable();
     const nextTableNumber = nextTable.tableNumber;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -30,7 +22,7 @@ const TableForm: React.FC = () => {
         newTable.status = selectedStatus;
         newTable.numOfPeople = displayedNumOfPeople;
         newTable.maxNumOfPeople = displayedMaxNumOfPeople;
-        nextTable ? (newTable.tableNumber = nextTableNumber) : (newTable.tableNumber = tables.length);
+        newTable.tableNumber = nextTableNumber;
         dispatch(requestTableAdd(newTable) as any);
     };
 
@@ -68,19 +60,17 @@ const TableForm: React.FC = () => {
                             <Col xs={4}><span className="h2">Table {nextTableNumber}</span></Col>
                             <StatusInput
                                 inDetailsComponent={false}
-                                table={(nextTable) ? (nextTable) : defaultNewTable}
+                                table={nextTable}
                                 updateSelectedStatus={updateSelectedStatus}/>
                             <PeopleInput   
-                                table={(nextTable) ? (nextTable) : defaultNewTable}
+                                table={nextTable}
                                 updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
                                 updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
                                 displayedNumOfPeople={displayedNumOfPeople}
                                 displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                            {(nextTable) && (
-                                <Button size="sm" variant="primary" type="submit">
-                                    add table
-                                </Button>
-                            )}
+                            <Button size="sm" variant="primary" type="submit">
+                                add table
+                            </Button>
                         </Row>
                     </Form>
                 </Col>
@@ -88,11 +78,5 @@ const TableForm: React.FC = () => {
         </Col>
     );
 };
-/*
-const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>): Props => ({
-    requestTableAdd: (table: Table) => dispatch(requestTableAdd(table)),
-});
-*/
 
-// export default connect(null, mapDispatchToProps)(TableForm);
 export default TableForm;

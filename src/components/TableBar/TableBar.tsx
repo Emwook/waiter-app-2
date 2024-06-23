@@ -3,65 +3,66 @@ import { Col, Button, Form } from 'react-bootstrap';
 import { NavLink } from "react-router-dom";
 import { Table } from "../../types/tableTypes";
 import RemoveTable from "../RemoveTable/RemoveTable";
-//import { Draggable } from "react-beautiful-dnd";
-import { dispatchSelectedTableEvent } from "../../utils/events/eventDispatcher";
+import { useDispatch } from "react-redux";
+import { checkSelectMode, getSelected, toggleSelected } from "../../store/reducers/selectModeReducer";
+import { useSelector } from "react-redux";
 
 interface TableBarProps {
     Table: Table;
     index: number;
     inGroupByStatus: boolean;
-    selectMode: boolean;
 }
 
-const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus, selectMode }) => {
-    const [selected, setSelected] = useState<boolean>(false);
-    let borderStyle: string = 'border-dark';
-    let textColor: string = 'text-dark';
+const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus }) => {
+    const dispatch = useDispatch();
+    const selectMode = useSelector(checkSelectMode);
+    const selectedTables: Table[] = useSelector(getSelected);
+    
 
-    if(inGroupByStatus){
-    switch( Table.status ){
+    let borderStyle: string = 'border-dark';
+    let statusColor: string = 'text-dark';
+
+    switch(Table.status){
         case 'busy':
             borderStyle = 'border-danger';
-            textColor = 'text-danger';
+            statusColor = 'text-danger';
             break;
         case 'free':
             borderStyle = 'border-success';
-            textColor = 'text-success';
+            statusColor = 'text-success';
             break;
         case 'reserved':
             borderStyle = 'border-warning';
-            textColor = 'text-warning';
+            statusColor = 'text-warning';
             break;
         case 'cleaning':
             borderStyle = 'border-info';
-            textColor = 'text-info';
+            statusColor = 'text-info';
             break;
         default:
             break;
         }
-    }
     /*
     if(!selectMode){
         setSelected(false);
     }
     */
     const handleSelect = () => {
-        setSelected(!selected)
-        dispatchSelectedTableEvent(Table);
+        dispatch(toggleSelected(Table) as any);
+        console.log('selected: ',selectedTables);
     };
 
     return (
         <div className={`mt-1 pb-2 pt-4 px-3 d-flex justify-content-between align-items-center border-bottom
-                        ${borderStyle} ${selected?'bg-light':'bg-none'}`}
-
+                        border-secondary 'bg-none'`}
         >
             {(selectMode) && (
             <Form className="mx-1">
                 <Form.Check type="checkbox" onClick={handleSelect} />
             </Form>
             )}
-            <Col xs={2} className={textColor}><h2>Table {Table ? Table.tableNumber : ''}</h2></Col>
-            <Col><span className="text-muted">{Table ? Table.status : ''}</span></Col>
+            <Col xs={2} ><h2>Table {Table ? Table.tableNumber : ''}</h2></Col>
+            <Col><span className={statusColor}>{Table ? Table.status : ''}</span></Col>
             <Col><span className="text-muted">${Table ? Table.bill : ''}</span></Col>
             <Col><span className="text-muted">{Table ? Table.numOfPeople : ''}/{Table ? Table.maxNumOfPeople : ''}</span></Col>
             <Col>

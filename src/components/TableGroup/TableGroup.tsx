@@ -1,16 +1,13 @@
 import React from "react";
 import { GroupingMethod, Table } from "../../types/tableTypes";
-//import { Droppable } from "react-beautiful-dnd";
 import TableBar from "../TableBar/TableBar";
-//import { Col } from "react-bootstrap";
 
 interface TableGroupProps {
     tables: Table[];
     groupingMethod: GroupingMethod;
-    selectMode: boolean;
 }
 
-const TableGroup:React.FC<TableGroupProps> = ({groupingMethod, tables, selectMode}) =>{
+const TableGroup:React.FC<TableGroupProps> = ({groupingMethod, tables}) =>{
   let borderStyle: string = 'border-dark';
   if(groupingMethod === 'status'){
   switch( tables[0].status){
@@ -34,22 +31,9 @@ const TableGroup:React.FC<TableGroupProps> = ({groupingMethod, tables, selectMod
       <div className={`p-1 mx-1 my-4 border rounded ${borderStyle}`}> 
         {tables.map((table, index) => (
           <TableBar Table={table} index={index} 
-          inGroupByStatus={(groupingMethod === 'status')?true:false}
-          selectMode={selectMode} />))}
+          inGroupByStatus={(groupingMethod === 'status')?true:false} />))}
       </div>
        )
       }
-        /*<Droppable droppableId={`group-${tables[0]}`} >
-          {(provided) => (
-              <div> 
-                {/* ref={provided.innerRef} 
-                {...provided.droppableProps}
-                className={`p-1 my-4 border-dark border`}
-                {tables.map((table, index) => (<TableBar Table={table} index={index} />))}
-                {/*{provided.placeholder}
-              </div>
-             )}
-       </Droppable>*/
-
 
 export default TableGroup;

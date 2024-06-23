@@ -1,6 +1,6 @@
 import { Table } from "../../types/tableTypes";
 
-export const getSortedTables = (arr: Table[]): Table[][] => {
+export const getStatusTables = (arr: Table[]): Table[][] => {
     const groups: { [status: string]: Table[] } = {};
 
     arr.forEach(table => {

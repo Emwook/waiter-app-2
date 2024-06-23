@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Col, Dropdown } from 'react-bootstrap';
 import { Table } from "../../types/tableTypes";
-import { dispatchSortingMethodEvent } from "../../utils/events/eventDispatcher";
+import { useDispatch } from "react-redux";
+import { getSortingMethod, setSorting } from "../../store/reducers/methodsReducer";
+import { useSelector } from "react-redux";
 
-interface SortingPanelProps {
-    sortingMethod: keyof Table;
-}
-
-const SortingPanel: React.FC<SortingPanelProps> = ({ sortingMethod }) => {
+const SortingPanel: React.FC= () => {
     const possibleSortingMethods: (keyof Table)[] = ['tableNumber', 'status', 'numOfPeople', 'bill', 'maxNumOfPeople'];
-
+    const dispatch = useDispatch();
+    const [sortingMethod, setSortingMethod] = useState<keyof Table>(useSelector(getSortingMethod));
+    
     const handleSelect = (eventKey: string | null) => {
-        if (eventKey) {
-            dispatchSortingMethodEvent(eventKey as keyof Table);
+        const newSortingMethod = eventKey as keyof Table;
+        if(newSortingMethod) {
+            setSortingMethod(newSortingMethod);
+            dispatch(setSorting(newSortingMethod) as any);
         }
     };
 
