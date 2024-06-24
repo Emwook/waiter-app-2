@@ -14,15 +14,19 @@ const TableForm: React.FC = () => {
     const [selectedStatus, setSelectedStatus] = useState<TableStatus>(newTable.status); 
     const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(newTable.numOfPeople);
     const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(newTable.maxNumOfPeople);
-    let nextTable: Table = useNextTable();
+    const nextTable: Table = useNextTable();
     const nextTableNumber = nextTable.tableNumber;
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        newTable.status = selectedStatus;
-        newTable.numOfPeople = displayedNumOfPeople;
-        newTable.maxNumOfPeople = displayedMaxNumOfPeople;
-        newTable.tableNumber = nextTableNumber;
+        const newTable: Table = {
+            bill: 0,
+            tableNumber: nextTableNumber,
+            status: selectedStatus,
+            numOfPeople: displayedNumOfPeople,
+            maxNumOfPeople: displayedMaxNumOfPeople,
+            combinedWith: []
+        };
         dispatch(requestTableAdd(newTable) as any);
     };
 

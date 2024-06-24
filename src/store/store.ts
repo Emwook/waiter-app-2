@@ -1,10 +1,12 @@
-import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
+import { createStore, combineReducers, applyMiddleware,  } from 'redux';
 import { thunk } from 'redux-thunk';
 import tablesReducer from './reducers/tablesReducer';
 import { GroupingMethod, Table } from '../types/tableTypes';
 import methodsReducer from './reducers/methodsReducer';
 import { defaultGroupingMethod, defaultSortingMethod } from '../config/settings';
 import selectModeReducer from './reducers/selectModeReducer';
+import { composeWithDevTools } from 'redux-devtools-extension';
+
 
 
 export interface AppState {
@@ -41,7 +43,7 @@ const initialState: AppState = {
 const store = createStore(
   reducer,
   initialState as any,
-  compose(
+  composeWithDevTools(
     applyMiddleware(thunk)
   )
 );

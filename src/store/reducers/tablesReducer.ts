@@ -43,13 +43,13 @@ export const changeTableDetails = (payload: Table): ChangeTableDetailsAction => 
 export const fetchAllTableData = (): ThunkAction<void, AppState, unknown, TablesActionTypes> => {
   return async (dispatch: Dispatch<TablesActionTypes>) => {
     try {
-        const tablesCollectionRef = collection(db, "tables");
-        const data = await getDocs(tablesCollectionRef);
-        const filteredData: Table[] = data.docs.map((doc) => ({
-            ...doc.data(), 
-        } as Table));
-        dispatch(setTables(filteredData));
-      }  catch (error) {
+      const tablesCollectionRef = collection(db, "tables");
+      const data = await getDocs(tablesCollectionRef);
+      const filteredData: Table[] = data.docs.map((doc) => ({
+        ...doc.data(),
+      } as Table));
+      dispatch(setTables(filteredData));
+    } catch (error) {
       console.error("Error fetching tables:", error);
     }
   };
@@ -67,28 +67,7 @@ export const requestTableAdd = (data: Table): ThunkAction<void, AppState, unknow
   };
 };
 
-export const requestTableRemove = (table: Table ): ThunkAction<void, TablesState, unknown, TablesActionTypes> => {
-  return async (dispatch: Dispatch<TablesActionTypes>) => {
-    const tablesCollectionRef = collection(db, 'tables');
-    const q = query(tablesCollectionRef, where('tableNumber', '==', table.tableNumber));
-    try {
-        const querySnapshot = await getDocs(q);
-        querySnapshot.forEach(async (doc) => {
-            try {
-                await deleteDoc(doc.ref);
-                dispatch(removeTable(table));
-                console.log('Document removed successfully');
-            } catch (error) {
-                console.error('Error removing document:', error);
-            }
-        });
-    } catch (error) {
-        console.error('Error querying documents:', error);
-    }
-  };
-};
-
-export const requestChangeTableDetails = (table: Table): ThunkAction<void, TablesState, unknown, TablesActionTypes> => {
+export const requestTableRemove = (table: Table): ThunkAction<void, TablesState, unknown, TablesActionTypes> => {
   return async (dispatch: Dispatch<TablesActionTypes>) => {
     const tablesCollectionRef = collection(db, 'tables');
     const q = query(tablesCollectionRef, where('tableNumber', '==', table.tableNumber));
@@ -96,11 +75,32 @@ export const requestChangeTableDetails = (table: Table): ThunkAction<void, Table
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach(async (doc) => {
         try {
-          await updateDoc(doc.ref, table as any);
-          dispatch(changeTableDetails(table));
-          console.log('Document updated successfully');
+          await deleteDoc(doc.ref);
+          dispatch(removeTable(table));
+          console.log('Document removed successfully');
         } catch (error) {
-          console.error('Error updating document:', error);
+          console.error('Error removing document:', error);
+        }
+      });
+    } catch (error) {
+      console.error('Error querying documents:', error);
+    }
+  };
+};
+
+export const requestTableCombined = (table: Table): ThunkAction<void, TablesState, unknown, TablesActionTypes> => {
+  return async (dispatch: Dispatch<TablesActionTypes>) => {
+    const tablesCollectionRef = collection(db, 'tables');
+    const q = query(tablesCollectionRef, where('tableNumber', '==', table.tableNumber));
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (doc) => {
+        try {
+          updateDoc(doc.ref, {...table}); //not actually working :[
+          dispatch(changeTableDetails(table));
+          console.log('Document details changed successfully');
+        } catch (error) {
+          console.error('Error changing document details:', error);
         }
       });
     } catch (error) {
@@ -119,11 +119,11 @@ const tablesReducer = (
     case ADD_TABLE:
       return [...state, action.payload as Table];
     case REMOVE_TABLE:
-      return state.filter(table => table.tableNumber !== (action.payload as Table).tableNumber );
+      return state.filter(table => table.tableNumber !== (action.payload as Table).tableNumber);
     case CHANGE_TABLE_DETAILS:
       if ('tableNumber' in action.payload) {
         return state.map(table =>
-          table.tableNumber === (action.payload as Table ).tableNumber ? action.payload : table
+          table.tableNumber === (action.payload as Table).tableNumber ? action.payload : table
         ) as TablesState;
       }
       return state;

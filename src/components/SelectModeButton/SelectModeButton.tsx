@@ -4,7 +4,7 @@ import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { checkSelectMode, enterSelect, getSelected } from "../../store/reducers/selectModeReducer";
 import { Table } from "../../types/tableTypes";
-import { changeTableDetails, getAllTables } from "../../store/reducers/tablesReducer";
+import { requestTableCombined, getAllTables } from "../../store/reducers/tablesReducer";
 import combineTables from "../../utils/store/combineTables";
 
 const SelectModeButton: React.FC = () => {
@@ -19,26 +19,26 @@ const SelectModeButton: React.FC = () => {
     }
 
     const handleCombine = () => {
-        if (selectedTables.length === 2){
+        toggleSelect();
+        if (selectedTables.length === 2) {
             const table1 = selectedTables[0];
             const table2 = selectedTables[1];
             if (table1 && table2) {
                 const tablesToCombine: Table[] = combineTables(table1, table2, tableList);
-                for(let table of tablesToCombine){
-                    dispatch(changeTableDetails(table) as any);
-                    console.log('table to combine dispatched: ', table);
-                }
+                tablesToCombine.forEach(table => {
+                    dispatch(requestTableCombined(table) as any);
+                });
             }
         }
-        console.log(selectedTables);
-    };
+        //dispatch(enterSelect() as any);;
+    };    
 
     const handleRemove = () => {
         console.log(selectMode);
     };
 
     return (
-            <Col xs={6} className="mt-4 d-flex justify-content-end">
+            <Col xs={2} className="mt-4">
                 {(selectMode) && (
                     <>
                     <Button variant='success' className={`border mx-1 ${selectMode?'border-light':'border-primary'}`} onClick={handleCombine} >

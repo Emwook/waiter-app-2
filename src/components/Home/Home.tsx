@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { GroupingMethod, Table } from "../../types/tableTypes";
 import TableForm from "../TableForm/TableForm";
 import SortingPanel from "../SortingPanel/SortingPanel";
@@ -12,10 +12,10 @@ import { useSelector } from "react-redux";
 import { getAllTables } from "../../store/reducers/tablesReducer";
 import { sortTables } from "../../utils/sorting/sortTables";
 import { getGroupingMethod, getSortingMethod } from "../../store/reducers/methodsReducer";
+//import AlertBar from "../AlertBar/AlertBar";
 
 const Home: React.FC = () => {
   const tablesData: Table[] = useSelector(getAllTables);
-
   const sortingMethod: keyof Table = useSelector(getSortingMethod);
   const groupingMethod: GroupingMethod = useSelector(getGroupingMethod);
 
@@ -34,6 +34,7 @@ const Home: React.FC = () => {
       <Row>
         <SortingPanel/>
         <GroupingPanel/>
+        {/*<AlertBar/>*/}
         <SelectButton/>
       </Row>
       <div>
