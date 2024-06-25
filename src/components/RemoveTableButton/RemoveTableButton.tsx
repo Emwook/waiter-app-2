@@ -4,11 +4,11 @@ import { Table } from "../../types/tableTypes";
 import { useDispatch } from "react-redux";
 import { requestTableRemove } from "../../store/reducers/tablesReducer";
 
-interface RemoveTableProps {
+interface RemoveTableButtonProps {
     table: Table;
 }
 
-const RemoveTable:React.FC<RemoveTableProps> = ({table}) =>{
+const RemoveTableButton:React.FC<RemoveTableButtonProps> = ({table}) =>{
     const dispatch = useDispatch();
     const tableToRemove: Table = table;
 
@@ -24,4 +24,4 @@ const RemoveTable:React.FC<RemoveTableProps> = ({table}) =>{
     </Button>
     )
 }
-export default RemoveTable;
+export default RemoveTableButton;

@@ -1,25 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { Col } from 'react-bootstrap';
 import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { checkSelectMode, enterSelect, getSelected } from "../../store/reducers/selectModeReducer";
 import { Table } from "../../types/tableTypes";
-import { requestTableCombined, getAllTables } from "../../store/reducers/tablesReducer";
+import { requestTableCombined, getAllTables, requestTableRemove } from "../../store/reducers/tablesReducer";
 import combineTables from "../../utils/store/combineTables";
 
 const SelectModeButton: React.FC = () => {
     const dispatch = useDispatch();
-    const [selectMode, setSelectMode] = useState<boolean>(useSelector(checkSelectMode));
+    const selectMode = (useSelector(checkSelectMode));
     const selectedTables: Table[] = useSelector(getSelected);
     const tableList = useSelector(getAllTables);
 
     const toggleSelect = () => {
-        setSelectMode(!selectMode);
         dispatch(enterSelect() as any);
     }
 
     const handleCombine = () => {
-        toggleSelect();
         if (selectedTables.length === 2) {
             const table1 = selectedTables[0];
             const table2 = selectedTables[1];
@@ -30,15 +28,21 @@ const SelectModeButton: React.FC = () => {
                 });
             }
         }
-        //dispatch(enterSelect() as any);;
+        dispatch(enterSelect() as any);
     };    
 
     const handleRemove = () => {
-        console.log(selectMode);
+        for(let table of selectedTables){
+            dispatch(requestTableRemove(table) as any);
+        }
+        dispatch(enterSelect() as any);
     };
 
     return (
-            <Col xs={2} className="mt-4">
+            <Col xs={6} className="mt-4">
+                <Button className={`ml-3 border ${selectMode?'border-light':'border-primary'}`} variant={selectMode?'primary':'light'} onClick={toggleSelect}>
+                    Select
+                </Button>
                 {(selectMode) && (
                     <>
                     <Button variant='success' className={`border mx-1 ${selectMode?'border-light':'border-primary'}`} onClick={handleCombine} >
@@ -52,9 +56,6 @@ const SelectModeButton: React.FC = () => {
                     </Button>
                     </>
                 )}
-                <Button className={`ml-3 border ${selectMode?'border-light':'border-primary'}`} variant={selectMode?'primary':'light'} onClick={toggleSelect}>
-                    Select
-                </Button>
             </Col>
     );
 };

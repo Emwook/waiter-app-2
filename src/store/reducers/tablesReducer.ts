@@ -96,7 +96,7 @@ export const requestTableCombined = (table: Table): ThunkAction<void, TablesStat
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach(async (doc) => {
         try {
-          updateDoc(doc.ref, {...table}); //not actually working :[
+          updateDoc(doc.ref, {...table});
           dispatch(changeTableDetails(table));
           console.log('Document details changed successfully');
         } catch (error) {

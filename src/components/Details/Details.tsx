@@ -88,6 +88,7 @@ const Details: React.FC<DetailsProps> = ({ tableNumber }) => {
                     table={table}
                     updateSelectedStatus={updateSelectedStatus}/>
                 <PeopleInput
+                    selectedStatus={selectedStatus}
                     table={table}  
                     updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
                     updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}

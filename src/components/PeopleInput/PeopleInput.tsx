@@ -8,36 +8,37 @@ interface PeopleInputProps {
     updateDisplayedMaxNumOfPeople: (event: React.ChangeEvent<HTMLInputElement>) => void;
     displayedNumOfPeople: number;
     displayedMaxNumOfPeople: number;
-    
+    selectedStatus: string;
 }
 
 const PeopleInput: React.FC<PeopleInputProps> = (
     { table, updateDisplayedNumOfPeople, 
         updateDisplayedMaxNumOfPeople,
-        displayedNumOfPeople, displayedMaxNumOfPeople, 
+        displayedNumOfPeople, displayedMaxNumOfPeople, selectedStatus 
         }) => {
 
     return (
         <Form.Group className="w-100">
             <Row className="my-2">
-                <Col xs={3}><Form.Label>People: </Form.Label></Col>
-                <Col xs={3} md={2}>
+                <Col xs={2}><Form.Label>People: </Form.Label></Col>
+                <Col xs={3}>
                     <Form.Control 
                         type="number" 
                         size="sm" 
                         name={`numOfPeople${table.tableNumber}`}
                         className="border-dark text-center" 
-                        value = {displayedNumOfPeople}
+                        value = {(selectedStatus === 'busy')?(displayedNumOfPeople):(0)}
                         onChange={updateDisplayedNumOfPeople}
+                        disabled={selectedStatus !== 'busy'}
                     />
                 </Col>    
                 <Col xs={1}><span className="px-2 fs-5 text-center lead">/</span></Col>
-                <Col xs={3} md={2}>
+                <Col xs={3}>
                     <Form.Control 
                         type="number" 
                         size="sm" 
                         name={`MaxNumOfPeople${table.tableNumber}`}
-                        className="border-dark text-center" 
+                        className={"border-dark text-center"} 
                         value = {displayedMaxNumOfPeople}
                         onChange={updateDisplayedMaxNumOfPeople}
                     />

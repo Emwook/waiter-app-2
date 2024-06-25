@@ -36,12 +36,15 @@ const TableForm: React.FC = () => {
 
     const updateDisplayedNumOfPeople = (event: React.ChangeEvent<HTMLInputElement>) => {
         const targetValue = Number(event.target.value);
-        if (targetValue >= leastNumOfPeople && targetValue <= mostNumOfPeople) {
+        if (targetValue >= leastNumOfPeople && targetValue <= mostNumOfPeople && selectedStatus === 'busy') {
             if (targetValue <= displayedMaxNumOfPeople) {
                 setDisplayedNumOfPeople(targetValue);
             } else {
                 setDisplayedNumOfPeople(displayedMaxNumOfPeople);
             }
+        }
+        else {
+            setDisplayedNumOfPeople(0);
         }
     };
 
@@ -56,30 +59,37 @@ const TableForm: React.FC = () => {
     };
     
     return (
-        <Col xs={6}>
-            <Row className="text-dark mx-1 mt-4 mb-5 p-3 justify-content-center bg-light d-flex align-items-center border-bottom border-dark">
-                <Col xs={12} className="d-flex justify-content-left">
+        <div className={`border rounded border-dark`}> 
+            <Row className="`mt-1 pb-1 pt-4 px-3 d-flex justify-content-between align-items-center">
+                <Col xs={12} className="border-bottom border-dark">
                     <Form onSubmit={handleSubmit}>
-                        <Row className="my-2">
-                            <Col xs={4}><span className="h2">Table {nextTableNumber}</span></Col>
-                            <StatusInput
-                                inDetailsComponent={false}
-                                table={nextTable}
-                                updateSelectedStatus={updateSelectedStatus}/>
-                            <PeopleInput   
-                                table={nextTable}
-                                updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
-                                updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
-                                displayedNumOfPeople={displayedNumOfPeople}
-                                displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                            <Button size="sm" variant="primary" type="submit">
-                                add table
-                            </Button>
+                        <Row>
+                            <Col xs={2}><span className="h2">Table {nextTableNumber}</span></Col>
+                            <Col xs={4}>
+                                <StatusInput
+                                    inDetailsComponent={false}
+                                    table={nextTable}
+                                    updateSelectedStatus={updateSelectedStatus}/>
+                                </Col>
+                            <Col xs={4}>
+                                <PeopleInput   
+                                    table={nextTable}
+                                    selectedStatus={selectedStatus}
+                                    updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
+                                    updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
+                                    displayedNumOfPeople={displayedNumOfPeople}
+                                    displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
+                                </Col>
+                            <Col className="d-flex justify-content-end align-content-center">
+                                <Button size="lg" variant="primary" type="submit" className="py-1 my-auto border-light text-right ml-auto">
+                                    <i className="bi bi-plus"/>
+                                </Button>
+                            </Col>
                         </Row>
                     </Form>
                 </Col>
             </Row>
-        </Col>
+        </div>
     );
 };
 

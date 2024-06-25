@@ -7,11 +7,11 @@ import TableGroup from "../TableGroup/TableGroup";
 import GroupingPanel from "../GroupingPanel/GroupingPanel";
 import { getCombinedTables } from "../../utils/sorting/getCombinedTables";
 import { getStatusTables } from "../../utils/sorting/getStatusTables";
-import SelectButton from "../SelectButton/SelectButton";
 import { useSelector } from "react-redux";
 import { getAllTables } from "../../store/reducers/tablesReducer";
 import { sortTables } from "../../utils/sorting/sortTables";
 import { getGroupingMethod, getSortingMethod } from "../../store/reducers/methodsReducer";
+import SelectModeButton from "../SelectModeButton/SelectModeButton";
 //import AlertBar from "../AlertBar/AlertBar";
 
 const Home: React.FC = () => {
@@ -35,7 +35,7 @@ const Home: React.FC = () => {
         <SortingPanel/>
         <GroupingPanel/>
         {/*<AlertBar/>*/}
-        <SelectButton/>
+        <SelectModeButton/>
       </Row>
       <div>
         {groupingMethod === 'none' ? (      
@@ -58,8 +58,8 @@ const Home: React.FC = () => {
           )
         }
       </div>
+      <TableForm />
       <Row>
-        <TableForm />
         {/*<CombineTablesForm />*/}
       </Row>
     </div>
