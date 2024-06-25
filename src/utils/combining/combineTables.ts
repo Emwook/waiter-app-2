@@ -10,7 +10,6 @@ const combineTables = (table1: Table, table2: Table, tableList: Table[]): Table[
 
     const combinedSet = new Set([...table1.combinedWith, ...table2.combinedWith, table1.tableNumber, table2.tableNumber]);
 
-    // Check and update table1 and table2
     if (table1.combinedWith.includes(table2.tableNumber) && table2.combinedWith.includes(table1.tableNumber)) {
         table1.combinedWith = table1.combinedWith.filter(num => num !== table2.tableNumber);
         table2.combinedWith = table2.combinedWith.filter(num => num !== table1.tableNumber);
@@ -26,14 +25,12 @@ const combineTables = (table1: Table, table2: Table, tableList: Table[]): Table[
 
     const combinedArray = Array.from(combinedSet);
 
-    // Update combinedWith for each table in combinedArray
     tableList.forEach(table => {
         if (combinedArray.includes(table.tableNumber)) {
             updateCombinedWith(table, combinedArray);
         }
     });
 
-    // Remove the table's own number from combinedWith array
     updateCombinedWith(table1, combinedArray);
     updateCombinedWith(table2, combinedArray);
 

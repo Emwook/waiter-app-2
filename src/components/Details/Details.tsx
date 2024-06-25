@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Form, Container, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import StatusInput from "../StatusInput/StatusInput";
-import { updateTable } from "../../utils/store/UpdateTable";
 import PeopleInput from "../PeopleInput/PeopleInput";
 import Loading from "../Loading/Loading";
 import { mostNumOfPeople, leastNumOfPeople, maxBill, defaultNewTable } from "../../config/settings";
@@ -38,7 +37,7 @@ const Details: React.FC<DetailsProps> = ({ tableNumber }) => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        updateTable(tableNumber, { status: selectedStatus, numOfPeople: displayedNumOfPeople, maxNumOfPeople: displayedMaxNumOfPeople, bill: displayedBill });
+        //updateTable(tableNumber, { status: selectedStatus, numOfPeople: displayedNumOfPeople, maxNumOfPeople: displayedMaxNumOfPeople, bill: displayedBill });
         navigate('/');
     };
 

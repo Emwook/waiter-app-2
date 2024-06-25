@@ -3,6 +3,7 @@ import { Col, Dropdown } from 'react-bootstrap';
 import { GroupingMethod } from "../../types/tableTypes";
 import { getGroupingMethod, setGrouping } from "../../store/reducers/methodsReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { convertToGroupingMethodName } from "../../utils/grouping/convertToGroupingMethodName";
 
 const GroupingPanel: React.FC = () => {
     const possibleGroupingMethods: (GroupingMethod)[] = ['none', 'status', 'combined'];
@@ -26,7 +27,7 @@ const GroupingPanel: React.FC = () => {
                     <Dropdown.Menu className="w-100 border-secondary ml-auto text-center">
                         {possibleGroupingMethods.map((possibleMethod: GroupingMethod) => (
                             <Dropdown.Item key={possibleMethod} eventKey={possibleMethod} active={groupingMethod === possibleMethod}>
-                                {possibleMethod}
+                                {convertToGroupingMethodName(possibleMethod)}
                             </Dropdown.Item>
                         ))}
                     </Dropdown.Menu>

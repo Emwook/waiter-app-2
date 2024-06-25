@@ -4,6 +4,7 @@ import { Table } from "../../types/tableTypes";
 import { useDispatch } from "react-redux";
 import { getSortingMethod, setSorting } from "../../store/reducers/methodsReducer";
 import { useSelector } from "react-redux";
+import { convertToSortingMethodName } from "../../utils/sorting/convertToSortingMethodName";
 
 const SortingPanel: React.FC= () => {
     const possibleSortingMethods: (keyof Table)[] = ['tableNumber', 'status', 'numOfPeople', 'bill', 'maxNumOfPeople'];
@@ -27,7 +28,7 @@ const SortingPanel: React.FC= () => {
                     <Dropdown.Menu className="w-100 border-secondary ml-auto text-center">
                         {possibleSortingMethods.map((possibleMethod: keyof Table) => (
                             <Dropdown.Item key={possibleMethod} eventKey={possibleMethod} active={sortingMethod === possibleMethod}>
-                                {possibleMethod}
+                                {convertToSortingMethodName(possibleMethod)}
                             </Dropdown.Item>
                         ))}
                     </Dropdown.Menu>

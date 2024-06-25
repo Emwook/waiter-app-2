@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { checkSelectMode, enterSelect, getSelected } from "../../store/reducers/selectModeReducer";
 import { Table } from "../../types/tableTypes";
 import { requestTableCombined, getAllTables, requestTableRemove } from "../../store/reducers/tablesReducer";
-import combineTables from "../../utils/store/combineTables";
+import combineTables from "../../utils/combining/combineTables";
 
 const SelectModeButton: React.FC = () => {
     const dispatch = useDispatch();
