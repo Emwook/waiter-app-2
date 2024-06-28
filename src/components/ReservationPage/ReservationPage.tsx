@@ -1,5 +1,6 @@
 import React from "react";
 import RepeatingReservations from "../RepeatingReservations/ReapeatingReservations";
+import ReservationOverview from "../ReservationOverview/ReservationOverview";
 
 const ReservationPage = () => {
     return (
@@ -11,6 +12,7 @@ const ReservationPage = () => {
                 <li>detailed view - todays reservations sorted by table then hour</li>
             </ul>
             <RepeatingReservations/>
+            <ReservationOverview/>
         </div>
     )
 }

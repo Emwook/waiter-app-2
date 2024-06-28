@@ -4,7 +4,6 @@ import { AppState } from '../store';
 import { Dispatch } from 'redux';
 import { addDoc, collection, deleteDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
-import { formatDate } from '../../utils/reservations/formatDate';
 import { createSelector } from 'reselect';
 
 
@@ -53,7 +52,7 @@ export const fetchAllReservationData = (): ThunkAction<void, AppState, unknown, 
       const data = await getDocs(reservationsCollectionRef);
       const filteredData: Reservation[] = data.docs.map((doc) => ({
         ...doc.data(),
-        dateStart: formatDate(doc.data().dateStart)
+        //dateStart: formatDate(doc.data().dateStart)
       } as Reservation));
       dispatch(setReservations(filteredData));
     } catch (error) {
@@ -141,9 +140,17 @@ const reservationsReducer = (
 };
 
 export const getAllReservations = (state: any) => state.reservations;
+
 export const getRepeatingReservations = createSelector(
     [getAllReservations],
     (reservations: Reservation[]) => reservations.filter(reservation => reservation.repeat !== 'false')
-  );
+);
+
+export const getReservationsByDate = (selectedDate: string) => createSelector(
+  [getAllReservations],
+  (reservations: Reservation[]) => reservations.filter(
+    (reservation) => reservation.dateStart === selectedDate
+  )
+);
 
 export default reservationsReducer;
