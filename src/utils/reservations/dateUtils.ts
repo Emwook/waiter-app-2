@@ -6,8 +6,12 @@ export const formatDate = (timestamp: { seconds: number; nanoseconds: number }):
   return `${day}/${month}/${year}`;
 };
 
-export const parseDate = (dateString: string): Date => {
+export const parseDate = (dateString: string, hour: number): Date => {
   const [day, month, year] = dateString.split('/').map(Number);
-  return new Date(`20${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T00:00:00`);
+  
+  const hourInt = Math.floor(hour); // Get the integer part of the hour
+  const minute = (hour - hourInt) * 60; // Calculate the minutes from the fractional part
+
+  return new Date(`20${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hourInt).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`);
 };
 

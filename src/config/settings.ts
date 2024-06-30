@@ -9,8 +9,13 @@ export const defaultSortingMethod = 'tableNumber';
 export const defaultCombined = [];
 export const defaultGroupingMethod = 'none';
 
-export const openFrom = "12:00"; 
-export const openTo = "24:00"; 
+
+export const openFrom = new Date()
+openFrom.setHours(12);
+openFrom.setMinutes(0);
+export const openTo = new Date()
+openTo.setHours(23);
+openTo.setMinutes(59);
 
 export const defaultNewTable: Table = {
     status: 'free',
