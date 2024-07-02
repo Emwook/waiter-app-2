@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getAllReservations,
@@ -16,6 +16,12 @@ import { Table } from "../../types/tableTypes";
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import { openFrom, openTo } from "../../config/settings";
 
+// Define the Resource type
+interface Resource {
+  resourceId: number;
+  resourceTitle: string;
+}
+
 const ReservationOverview: React.FC = () => {
   const dispatch = useDispatch();
   const DnDCalendar = withDragAndDrop(Calendar);
@@ -23,14 +29,12 @@ const ReservationOverview: React.FC = () => {
   const resList: Reservation[] = useSelector(getAllReservations);
 
   const calculateStartTime = (reservation: Reservation): Date => {
-    const startTime = parseDate(reservation.dateStart, reservation.hour);
-    return startTime;
+    return parseDate(reservation.dateStart, reservation.hour);
   };
 
   const calculateEndTime = (reservation: Reservation): Date => {
     const startTime = parseDate(reservation.dateStart, reservation.hour);
-    const endTime = new Date(startTime.getTime() + reservation.duration * 60 * 60 * 1000);
-    return endTime;
+    return new Date(startTime.getTime() + reservation.duration * 60 * 60 * 1000);
   };
 
   const events = resList.map((reservation) => ({
@@ -46,11 +50,11 @@ const ReservationOverview: React.FC = () => {
     const clickedDate = moment(start).format("DD/MM/YY");
     const startHour = moment(start).hours();
     const startMinute = moment(start).minutes();
-    const duration = moment(end).diff(moment(start), 'hours', true); // Duration in hours, with fractional part
+    const duration = moment(end).diff(moment(start), 'hours', true);
     const newReservation: Reservation = {
       id: Math.random().toString(36).substr(2, 9),
       dateStart: clickedDate,
-      hour: startHour + startMinute / 60, // Calculate hour with fractional part
+      hour: startHour + startMinute / 60,
       duration,
       tableNumber: resourceId,
       repeat: 'false',
@@ -58,37 +62,35 @@ const ReservationOverview: React.FC = () => {
     dispatch(requestReservationAdd(newReservation) as any);
   };
 
-  const handleEventResize = (resizeInfo: any) => {
-    const { event } = resizeInfo;
+  const handleEventResize = ({ event, start, end }: any) => {
     const updatedReservation: Reservation = {
       id: event.id,
-      dateStart: moment(event.start).format("DD/MM/YY"),
-      hour: moment(event.start).hours() + moment(event.start).minutes() / 60,
-      duration: moment(event.end).diff(moment(event.start), 'hours', true),
+      dateStart: moment(start).format("DD/MM/YY"),
+      hour: moment(start).hours() + moment(start).minutes() / 60,
+      duration: moment(end).diff(moment(start), 'hours', true),
       tableNumber: parseInt(event.resourceId, 10),
-      repeat: (event.repeat),
+      repeat: event.repeat,
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
 
-  const handleEventDrop = (dropInfo: any) => {
-    const { event } = dropInfo;
+  const handleEventDrop = ({ event, start, end, resourceId }: any) => {
     const updatedReservation: Reservation = {
       id: event.id,
-      dateStart: moment(event.start).format("DD/MM/YY"),
-      hour: moment(event.start).hours(),
-      duration: moment(event.end).diff(moment(event.start), 'hours'),
-      tableNumber: parseInt(event.resourceId, 10),
-      repeat: 'false',
+      dateStart: moment(start).format("DD/MM/YY"),
+      hour: moment(start).hours() + moment(start).minutes() / 60,
+      duration: moment(end).diff(moment(start), 'hours', true),
+      tableNumber: parseInt(resourceId, 10),
+      repeat: event.repeat,
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
 
   const tables: Table[] = useSelector(getAllTables);
   const sortedTables = sortTables(tables, 'tableNumber');
-  const resources = sortedTables.map((table) => ({
-    id: table.tableNumber,
-    title: `Table ${table.tableNumber}`
+  const resources: Resource[] = sortedTables.map((table) => ({
+    resourceId: table.tableNumber,
+    resourceTitle: `Table ${table.tableNumber}`
   }));
 
   const { defaultDate, scrollToTime } = useMemo(
@@ -97,29 +99,30 @@ const ReservationOverview: React.FC = () => {
       scrollToTime: new Date(1972, 0, 1, 8),
     }),
     []
-  )
-  console.log(events);
+  );
+
   return (
     <div>
       <h2>Reservation Overview</h2>
       <DnDCalendar
         defaultDate={defaultDate}
-        scrollToTime={scrollToTime}
-        localizer={momentLocalizer(moment)}
-        events={events}
-        resources={resources}
-        selectable
-        resizable
         defaultView={Views.DAY}
+        events={events}
+        localizer={momentLocalizer(moment)}
+        onEventDrop={handleEventDrop}
+        onEventResize={handleEventResize}
+        resizable
+        resources={resources}
+        resourceIdAccessor={resource => ((resource as Resource).resourceId as number)}
+        resourceTitleAccessor={resource => ((resource as Resource).resourceTitle as string)}
+        scrollToTime={scrollToTime}
+        selectable
         views={['day', 'month']}
         onSelectSlot={handleSelectSlot}
-        onEventResize={handleEventResize}
-        onEventDrop={handleEventDrop}
-        style={{ height: 750 }}
         min={openFrom}
         max={openTo}
-        step={30}
-        timeslots={1}
+        step={15}
+        timeslots={4}
       />
     </div>
   );

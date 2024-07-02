@@ -1,6 +1,7 @@
 import React from "react";
 import RepeatingReservations from "../RepeatingReservations/ReapeatingReservations";
 import ReservationOverview from "../ReservationOverview/ReservationOverview";
+import { Container } from "react-bootstrap";
 
 const ReservationPage = () => {
     return (
@@ -11,8 +12,10 @@ const ReservationPage = () => {
                 <li>overview - yesterday/today/tomorrow card view</li>
                 <li>detailed view - todays reservations sorted by table then hour</li>
             </ul>
-            <RepeatingReservations/>
-            <ReservationOverview/>
+            <Container>
+                <ReservationOverview/>
+                <RepeatingReservations/>
+            </Container>
         </div>
     )
 }
