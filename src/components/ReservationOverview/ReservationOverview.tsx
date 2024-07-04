@@ -15,6 +15,7 @@ import { sortTables } from "../../utils/sorting/sortTables";
 import { Table } from "../../types/tableTypes";
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import { openFrom, openTo } from "../../config/settings";
+import { generateReservationId } from "../../utils/reservations/generateReservationId";
 
 // Define the Resource type
 interface Resource {
@@ -52,12 +53,12 @@ const ReservationOverview: React.FC = () => {
     const startMinute = moment(start).minutes();
     const duration = moment(end).diff(moment(start), 'hours', true);
     const newReservation: Reservation = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: generateReservationId(clickedDate, 'false'),  // until repeating reservations are configured
       dateStart: clickedDate,
       hour: startHour + startMinute / 60,
       duration,
       tableNumber: resourceId,
-      repeat: 'false',
+      repeat: 'false',  // until repeating reservations are configured
     };
     dispatch(requestReservationAdd(newReservation) as any);
   };
@@ -69,7 +70,7 @@ const ReservationOverview: React.FC = () => {
       hour: moment(start).hours() + moment(start).minutes() / 60,
       duration: moment(end).diff(moment(start), 'hours', true),
       tableNumber: parseInt(event.resourceId, 10),
-      repeat: event.repeat,
+      repeat: 'false', // until repeating reservations are configured
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
@@ -81,7 +82,7 @@ const ReservationOverview: React.FC = () => {
       hour: moment(start).hours() + moment(start).minutes() / 60,
       duration: moment(end).diff(moment(start), 'hours', true),
       tableNumber: parseInt(resourceId, 10),
-      repeat: event.repeat,
+      repeat: 'false',  // until repeating reservations are configured
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
@@ -95,7 +96,7 @@ const ReservationOverview: React.FC = () => {
 
   const { defaultDate, scrollToTime } = useMemo(
     () => ({
-      defaultDate: new Date(2024, 5, 30),
+      defaultDate: new Date(2024, 6, 4),
       scrollToTime: new Date(1972, 0, 1, 8),
     }),
     []
@@ -103,7 +104,7 @@ const ReservationOverview: React.FC = () => {
 
   return (
     <div>
-      <h2>Reservation Overview</h2>
+      <h2>Reservation overview - calendar</h2>
       <DnDCalendar
         defaultDate={defaultDate}
         defaultView={Views.DAY}

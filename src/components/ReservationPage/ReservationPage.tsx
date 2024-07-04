@@ -8,9 +8,10 @@ const ReservationPage = () => {
         <div>
             <h1> reservations coming here!</h1>
             <ul>
-                <li>repeating reservations</li>
-                <li>overview - yesterday/today/tomorrow card view</li>
-                <li>detailed view - todays reservations sorted by table then hour</li>
+                <li>repeating reservations - list type group of repeating reservations</li>
+                <li>search - search window to look for a reservation by its id</li>
+                <li>overview - calendar view with DnD for editablitiy</li>
+                <li>detailed view - editable single reservation for variables different than time and duration</li>
             </ul>
             <Container>
                 <ReservationOverview/>

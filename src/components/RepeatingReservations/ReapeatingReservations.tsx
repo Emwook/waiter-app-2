@@ -9,10 +9,10 @@ import { formatHour } from "../../utils/reservations/formatHour";
 const RepeatingReservations = () => {
     const repResList:Reservation[] = useSelector(getRepeatingReservations);
     return (
-        <Row className="bg-light p-4">
+        <Row className="bg-none p-4">
             <h2>repeating reservations:</h2>
             {repResList.map(res => (
-                <Col xs={4} className="p-3 mx-2 border border-dark rounded bg-white">
+                <Col xs={4} className="p-3 mx-2 border border-dark rounded bg-light">
                     <Row><h3>Table {res.tableNumber}</h3></Row>
                     <Row><h4>{res.repeat} {formatHour(res.hour)} - {formatHour(Number(res.hour) + res.duration)}</h4></Row>
                     <Row><h5>reservation id: {res.id}</h5></Row>

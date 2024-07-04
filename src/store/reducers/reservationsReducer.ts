@@ -2,7 +2,7 @@ import { Reservation } from '../../types/reservationTypes'; // Import Reservatio
 import { ThunkAction } from 'redux-thunk';
 import { AppState } from '../store';
 import { Dispatch } from 'redux';
-import { addDoc, collection, deleteDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { createSelector } from 'reselect';
 
@@ -60,20 +60,23 @@ export const fetchAllReservationData = (): ThunkAction<void, AppState, unknown, 
     }
   };
 };
-
 export const requestReservationAdd = (data: Reservation): ThunkAction<void, AppState, unknown, ReservationsActionTypes> => {
   return async (dispatch: Dispatch<ReservationsActionTypes>) => {
     const reservationsCollection = collection(db, 'reservations');
     try {
-      const docRef = await addDoc(reservationsCollection, data);
-      const newReservation = { ...data, id: docRef.id }; //change to custom id generated manually
-      dispatch(addReservation(newReservation));
+      // Create a document reference with a custom ID
+      const docRef = doc(reservationsCollection, data.id);
+
+      // Use setDoc to set the document with the custom ID
+      await setDoc(docRef, data);
+
+      // Dispatch the action with the new reservation
+      dispatch(addReservation(data));
     } catch (error) {
       console.error("Error adding reservation:", error);
     }
   };
 };
-
 export const requestReservationRemove = (reservation: Reservation): ThunkAction<void, ReservationsState, unknown, ReservationsActionTypes> => {
   return async (dispatch: Dispatch<ReservationsActionTypes>) => {
     const reservationsCollectionRef = collection(db, 'reservations');
@@ -103,11 +106,12 @@ export const requestChangeReservationDetails = (reservation: Reservation): Thunk
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach(async (doc) => {
         try {
-          await updateDoc(doc.ref, { ...reservation });
+          updateDoc(doc.ref, { ...reservation });
           dispatch(changeReservationDetails(reservation));
           console.log('Reservation details changed successfully');
         } catch (error) {
           console.error('Error changing reservation details:', error);
+          console.log(reservation);
         }
       });
     } catch (error) {
