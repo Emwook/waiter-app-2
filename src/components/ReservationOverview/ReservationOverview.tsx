@@ -3,24 +3,36 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   getAllReservations,
   requestReservationAdd,
-  requestChangeReservationDetails
+  requestChangeReservationDetails,
+  requestReservationRemove, // Make sure this action is defined in your reducer
 } from "../../store/reducers/reservationsReducer";
 import { Reservation } from "../../types/reservationTypes";
-import { Calendar, Views, momentLocalizer } from 'react-big-calendar';
+import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { parseDate } from "../../utils/reservations/dateUtils";
 import { getAllTables } from "../../store/reducers/tablesReducer";
 import { sortTables } from "../../utils/sorting/sortTables";
 import { Table } from "../../types/tableTypes";
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { openFrom, openTo } from "../../config/settings";
 import { generateReservationId } from "../../utils/reservations/generateReservationId";
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
+import { Button } from "react-bootstrap";
 
-// Define the Resource type
 interface Resource {
   resourceId: number;
   resourceTitle: string;
+}
+
+interface Event {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  resourceId: number;
+  allDay: boolean;
+  isDraggable: boolean;
 }
 
 const ReservationOverview: React.FC = () => {
@@ -38,27 +50,28 @@ const ReservationOverview: React.FC = () => {
     return new Date(startTime.getTime() + reservation.duration * 60 * 60 * 1000);
   };
 
-  const events = resList.map((reservation) => ({
+  const events: Event[] = resList.map((reservation) => ({
     id: reservation.id,
-    title: `Table ${reservation.tableNumber} - ${reservation.id}`,
+    title: `${reservation.id}`,
     start: calculateStartTime(reservation),
     end: calculateEndTime(reservation),
     resourceId: reservation.tableNumber,
     allDay: false,
+    isDraggable: true,
   }));
 
   const handleSelectSlot = ({ start, end, resourceId }: any) => {
     const clickedDate = moment(start).format("DD/MM/YY");
     const startHour = moment(start).hours();
     const startMinute = moment(start).minutes();
-    const duration = moment(end).diff(moment(start), 'hours', true);
+    const duration = moment(end).diff(moment(start), "hours", true);
     const newReservation: Reservation = {
-      id: generateReservationId(clickedDate, 'false'),  // until repeating reservations are configured
+      id: generateReservationId(clickedDate, "false"),
       dateStart: clickedDate,
       hour: startHour + startMinute / 60,
       duration,
       tableNumber: resourceId,
-      repeat: 'false',  // until repeating reservations are configured
+      repeat: "false",
     };
     dispatch(requestReservationAdd(newReservation) as any);
   };
@@ -68,9 +81,9 @@ const ReservationOverview: React.FC = () => {
       id: event.id,
       dateStart: moment(start).format("DD/MM/YY"),
       hour: moment(start).hours() + moment(start).minutes() / 60,
-      duration: moment(end).diff(moment(start), 'hours', true),
+      duration: moment(end).diff(moment(start), "hours", true),
       tableNumber: parseInt(event.resourceId, 10),
-      repeat: 'false', // until repeating reservations are configured
+      repeat: "false",
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
@@ -80,18 +93,50 @@ const ReservationOverview: React.FC = () => {
       id: event.id,
       dateStart: moment(start).format("DD/MM/YY"),
       hour: moment(start).hours() + moment(start).minutes() / 60,
-      duration: moment(end).diff(moment(start), 'hours', true),
+      duration: moment(end).diff(moment(start), "hours", true),
       tableNumber: parseInt(resourceId, 10),
-      repeat: 'false',  // until repeating reservations are configured
+      repeat: "false",
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
 
+  const handleEventRemove = (event: Event) => {
+    const reservation = resList.filter(res => (res.id  === event.title))
+    dispatch(requestReservationRemove(reservation[0]) as any);
+    console.log(event.title)
+  };
+
+  const eventPropGetter = (event: Event) => {
+    return {
+      style: {
+        backgroundColor: event.isDraggable ? "#3174ad" : "#d9534f",
+      },
+    };
+  };
+
+  const EventComponent = (event: Event) => {
+    return (
+      <div>
+          <span style={{fontSize: '11px'}} className="my-0">
+            {event.title}
+          </span>
+          <Button
+            onClick={() => handleEventRemove(event)}
+            className="mt-0 bg-danger py-0 px-2"
+            size="sm"
+            style={{marginLeft: '5px'}}
+          >
+             <i className="bi bi-trash" style={{fontSize: '10px'}}/>
+          </Button>
+      </div>
+    );
+  };
+
   const tables: Table[] = useSelector(getAllTables);
-  const sortedTables = sortTables(tables, 'tableNumber');
+  const sortedTables = sortTables(tables, "tableNumber");
   const resources: Resource[] = sortedTables.map((table) => ({
     resourceId: table.tableNumber,
-    resourceTitle: `Table ${table.tableNumber}`
+    resourceTitle: `Table ${table.tableNumber}`,
   }));
 
   const { defaultDate, scrollToTime } = useMemo(
@@ -113,12 +158,18 @@ const ReservationOverview: React.FC = () => {
         onEventDrop={handleEventDrop}
         onEventResize={handleEventResize}
         resizable
+        resourceIdAccessor={(resource) => (resource as Resource).resourceId}
+        resourceTitleAccessor={(resource)=> (resource as Resource).resourceTitle}
+        draggableAccessor={(event) => (event as Event).isDraggable}
+        resizableAccessor={(event) => true}
+        eventPropGetter={(event)=>eventPropGetter(event as Event)}
+        components={{
+          event: EventComponent as any,
+        }}
         resources={resources}
-        resourceIdAccessor={resource => ((resource as Resource).resourceId as number)}
-        resourceTitleAccessor={resource => ((resource as Resource).resourceTitle as string)}
         scrollToTime={scrollToTime}
         selectable
-        views={['day', 'month']}
+        views={["day", "month"]}
         onSelectSlot={handleSelectSlot}
         min={openFrom}
         max={openTo}

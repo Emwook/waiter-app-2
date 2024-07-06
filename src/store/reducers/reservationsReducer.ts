@@ -2,7 +2,7 @@ import { Reservation } from '../../types/reservationTypes'; // Import Reservatio
 import { ThunkAction } from 'redux-thunk';
 import { AppState } from '../store';
 import { Dispatch } from 'redux';
-import { addDoc, collection, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { createSelector } from 'reselect';
 
@@ -42,7 +42,7 @@ export const CHANGE_RESERVATION_DETAILS = createActionName('CHANGE_RESERVATION_D
 
 export const setReservations = (payload: ReservationsState): SetReservationsAction => ({ type: SET_RESERVATIONS, payload });
 export const addReservation = (payload: Reservation): AddReservationAction => ({ type: ADD_RESERVATION, payload });
-export const removeReservation = (payload: { id: string }): RemoveReservationAction => ({ type: REMOVE_RESERVATION, payload });
+export const removeReservation = (payload: Reservation): RemoveReservationAction => ({ type: REMOVE_RESERVATION, payload });
 export const changeReservationDetails = (payload: Reservation): ChangeReservationDetailsAction => ({ type: CHANGE_RESERVATION_DETAILS, payload });
 
 export const fetchAllReservationData = (): ThunkAction<void, AppState, unknown, ReservationsActionTypes> => {
@@ -77,26 +77,18 @@ export const requestReservationAdd = (data: Reservation): ThunkAction<void, AppS
     }
   };
 };
-export const requestReservationRemove = (reservation: Reservation): ThunkAction<void, ReservationsState, unknown, ReservationsActionTypes> => {
+export const requestReservationRemove = (reservation: Reservation): ThunkAction<void, AppState, unknown, ReservationsActionTypes> => {
   return async (dispatch: Dispatch<ReservationsActionTypes>) => {
-    const reservationsCollectionRef = collection(db, 'reservations');
-    const q = query(reservationsCollectionRef, where('id', '==', reservation.id));
+    const reservationsCollection = collection(db, 'reservations');
     try {
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(async (doc) => {
-        try {
-          await deleteDoc(doc.ref);
-          dispatch(removeReservation({ id: reservation.id }));
-          console.log('Reservation removed successfully');
-        } catch (error) {
-          console.error('Error removing reservation:', error);
-        }
-      });
+      await deleteDoc(doc(reservationsCollection, reservation.id)); // Ensure Firestore doc deletion
+      dispatch(removeReservation(reservation)); // Your deleteReservation action
     } catch (error) {
-      console.error('Error querying reservations:', error);
+      console.error("Error deleting reservation:", error);
     }
   };
 };
+
 
 export const requestChangeReservationDetails = (reservation: Reservation): ThunkAction<void, ReservationsState, unknown, ReservationsActionTypes> => {
   return async (dispatch: Dispatch<ReservationsActionTypes>) => {
