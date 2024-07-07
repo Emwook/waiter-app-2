@@ -1,10 +1,16 @@
-export const formatDate = (timestamp: { seconds: number; nanoseconds: number }): string => {
-  const date = new Date(timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000);
+export const formatDate = (date: Date): { dateString: string; hour: number } => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() is zero-based
   const year = String(date.getFullYear()).slice(-2); // get last two digits of the year
-  return `${day}/${month}/${year}`;
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const hourDecimal = hour + minute / 60;
+
+  const dateString = `${day}/${month}/${year}`;
+
+  return { dateString, hour: hourDecimal };
 };
+
 
 export const parseDate = (dateString: string, hour: number): Date => {
   if (!dateString) {

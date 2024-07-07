@@ -52,7 +52,6 @@ export const fetchAllReservationData = (): ThunkAction<void, AppState, unknown, 
       const data = await getDocs(reservationsCollectionRef);
       const filteredData: Reservation[] = data.docs.map((doc) => ({
         ...doc.data(),
-        //dateStart: formatDate(doc.data().dateStart)
       } as Reservation));
       dispatch(setReservations(filteredData));
     } catch (error) {
@@ -60,6 +59,25 @@ export const fetchAllReservationData = (): ThunkAction<void, AppState, unknown, 
     }
   };
 };
+
+export const fetchReservationsByDate = (selectedDate: string): ThunkAction<void, AppState, unknown, ReservationsActionTypes> => {
+  return async (dispatch: Dispatch<ReservationsActionTypes>) => {
+    try {
+      const reservationsCollectionRef = collection(db, "reservations");
+      const q = query(reservationsCollectionRef, where('dateStart', '==', selectedDate));
+      const querySnapshot = await getDocs(q);
+      const filteredReservations: Reservation[] = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as Reservation));
+      dispatch(setReservations(filteredReservations));
+      console.error("Error fetching reservations:", filteredReservations);
+    } catch (error) {
+      console.error("Error fetching reservations:", error);
+    }
+  };
+};
+
 export const requestReservationAdd = (data: Reservation): ThunkAction<void, AppState, unknown, ReservationsActionTypes> => {
   return async (dispatch: Dispatch<ReservationsActionTypes>) => {
     const reservationsCollection = collection(db, 'reservations');
@@ -88,8 +106,6 @@ export const requestReservationRemove = (reservation: Reservation): ThunkAction<
     }
   };
 };
-
-
 export const requestChangeReservationDetails = (reservation: Reservation): ThunkAction<void, ReservationsState, unknown, ReservationsActionTypes> => {
   return async (dispatch: Dispatch<ReservationsActionTypes>) => {
     const reservationsCollectionRef = collection(db, 'reservations');
@@ -142,11 +158,10 @@ export const getRepeatingReservations = createSelector(
     (reservations: Reservation[]) => reservations.filter(reservation => reservation.repeat !== 'false')
 );
 
-export const getReservationsByDate = (selectedDate: string) => createSelector(
-  [getAllReservations],
-  (reservations: Reservation[]) => reservations.filter(
-    (reservation) => reservation.dateStart === selectedDate
-  )
-);
+export const getReservationsByDate = (selectedDate: string) => {
+  const reservationsCollectionRef = collection(db, 'reservations');
+  const q = query(reservationsCollectionRef, where('dateStart', '==', selectedDate));
+  return q;
+};
 
 export default reservationsReducer;

@@ -10,19 +10,15 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Table } from './types/tableTypes';
 import { fetchAllTableData, getAllTables } from './store/reducers/tablesReducer';
 import ReservationPage from './components/ReservationPage/ReservationPage';
-import { fetchAllReservationData } from './store/reducers/reservationsReducer';
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
 
-  // Dispatch the setTables action when the data is loaded
   useEffect(() => {
       dispatch(fetchAllTableData() as any);
-      dispatch(fetchAllReservationData() as any);
   }, [dispatch]);
 
   const tables: Table[] = useSelector(getAllTables);
-  //const [tables, setTables] = useState<Table[]>(tablesData);
 
   return (
     <main>

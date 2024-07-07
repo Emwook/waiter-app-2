@@ -35,15 +35,20 @@ const CalendarToolbar: React.FC<CalendarToolbarProps> = ({ date, onNavigate, onS
   return (
     <Row className='d-flex mb-2'>
         <Col xs={6}>
-            <Button variant="primary" onClick={goToToday}>
+            <Button variant="light" onClick={goToToday} className='w-25'>
                 Today
             </Button>
         </Col>
         <Col xs={6} className='justify-content-end d-flex'>
-            <Button variant="light" onClick={goToBack} className='px-auto'>
+            <Button variant="light" onClick={goToBack} className='px-auto '>
                 <i className="bi bi-arrow-left" />
             </Button>
-            <DatePicker selected={date} onChange={date => handleDateChange(date as Date)} className="text-center form-control w-100" />
+            <DatePicker 
+                selected={date} 
+                onChange={date => handleDateChange(date as Date)} 
+                className="text-center form-control"
+                dateFormat="dd/MM/yyyy"
+            />
             <Button variant="light" onClick={goToNext} className='px-auto'>
                 <i className="bi bi-arrow-right" />
             </Button>

@@ -1,16 +1,16 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getAllReservations,
   requestReservationAdd,
   requestChangeReservationDetails,
-  requestReservationRemove, // Make sure this action is defined in your reducer
+  requestReservationRemove,
 } from "../../store/reducers/reservationsReducer";
 import { Reservation } from "../../types/reservationTypes";
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { parseDate } from "../../utils/reservations/dateUtils";
+import { formatDate, parseDate } from "../../utils/reservations/dateUtils";
 import { getAllTables } from "../../store/reducers/tablesReducer";
 import { sortTables } from "../../utils/sorting/sortTables";
 import { Table } from "../../types/tableTypes";
@@ -18,9 +18,10 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { openFrom, openTo } from "../../config/settings";
 import { generateReservationId } from "../../utils/reservations/generateReservationId";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { Button, Container } from "react-bootstrap";
+import { Button, Container, Row, Col } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarToolbar from "../CalendarToolbar/CalendarToolbar";
+import { formatHour } from "../../utils/reservations/formatHour";
 
 interface Resource {
   resourceId: number;
@@ -37,12 +38,20 @@ interface Event {
   isDraggable: boolean;
 }
 
-const ReservationOverview: React.FC = () => {
-  const [startDate, setStartDate] = useState(new Date());
+interface ReservationOverviewProps {
+  setDate: React.Dispatch<React.SetStateAction<Date>>
+}
+
+const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
+  const [startDate, setStartDate] = useState<Date>(new Date());
   const dispatch = useDispatch();
   const DnDCalendar = withDragAndDrop(Calendar);
+  const resListToday: Reservation[] = useSelector(getAllReservations);
+  const [showSelectedRes, setShowSelectedRes] = useState<Boolean>(false);
+  const [selectedRes, setSelectedRes] = useState<Reservation>(resListToday[0]);
+  useEffect(() => { setDate(startDate); setSelectedRes(resListToday[0]); setShowSelectedRes(false) }, [startDate, setDate, resListToday]);
 
-  const resList: Reservation[] = useSelector(getAllReservations);
+  console.log('reslist today: ',resListToday);
 
   const calculateStartTime = (reservation: Reservation): Date => {
     return parseDate(reservation.dateStart, reservation.hour);
@@ -53,7 +62,7 @@ const ReservationOverview: React.FC = () => {
     return new Date(startTime.getTime() + reservation.duration * 60 * 60 * 1000);
   };
 
-  const events: Event[] = resList.map((reservation) => ({
+  const events: Event[] = resListToday.map((reservation) => ({
     id: reservation.id,
     title: `${reservation.id}`,
     start: calculateStartTime(reservation),
@@ -62,6 +71,8 @@ const ReservationOverview: React.FC = () => {
     allDay: false,
     isDraggable: true,
   }));
+
+
 
   const handleSelectSlot = ({ start, end, resourceId }: any) => {
     const clickedDate = moment(start).format("DD/MM/YY");
@@ -77,6 +88,7 @@ const ReservationOverview: React.FC = () => {
       repeat: "false",
     };
     dispatch(requestReservationAdd(newReservation) as any);
+    setSelectedRes(newReservation);
   };
 
   const handleEventResize = ({ event, start, end }: any) => {
@@ -89,6 +101,7 @@ const ReservationOverview: React.FC = () => {
       repeat: "false",
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
+    handleSelectEvent(event);
   };
 
   const handleEventDrop = ({ event, start, end, resourceId }: any) => {
@@ -104,9 +117,8 @@ const ReservationOverview: React.FC = () => {
   };
 
   const handleEventRemove = (event: Event) => {
-    const reservation = resList.filter(res => (res.id  === event.title))
+    const reservation = resListToday.filter(res => (res.id  === event.title))
     dispatch(requestReservationRemove(reservation[0]) as any);
-    console.log(event.title)
   };
 
   const eventPropGetter = (event: Event) => {
@@ -152,10 +164,21 @@ const ReservationOverview: React.FC = () => {
     []
   );
 
-  const handleSelectEvent = useCallback(
-    (event: Object) => window.alert((event as Event).id),
-    []
-  )
+  const handleSelectEvent = (event:Object) => {
+    const e = event as Event;
+    const startDate = formatDate(e.start);
+    const endDate = formatDate(e.end);
+    const res: Reservation = {
+      id: e.id,
+      dateStart: startDate.dateString,
+      hour: startDate.hour,
+      duration: (endDate.hour-startDate.hour),
+      tableNumber: e.resourceId,
+      repeat: 'false', //hardcoded false for now, until i get to redoing the whole repeating res thing
+    }
+    setSelectedRes(res);
+    setShowSelectedRes(true);
+  }
 
   const handleNavigate = (action: 'prev' | 'next' | 'today' | 'date', newDate: Date): void => {
     setStartDate(newDate);
@@ -163,7 +186,8 @@ const ReservationOverview: React.FC = () => {
 
 
   return (
-    <Container className="mb-5">
+    <Container className="mb-3">
+      
       <CalendarToolbar
         date={startDate}
         onNavigate={handleNavigate}
@@ -199,6 +223,26 @@ const ReservationOverview: React.FC = () => {
           step={15}
           timeslots={4}
         />
+      </div>
+      <div className=" bg-none p-2 w-100 border border-gray mt-2 text-center" style={{minHeight:'100px'}}>
+          {showSelectedRes &&
+          <>
+          <Row className="px-3 py-auto mb-2 mx-2 border-dark border-bottom">
+              <Col><h5 className=" pr-2">id</h5></Col>
+              <Col><h5>Table</h5></Col>
+              <Col><h5>date</h5></Col>
+              <Col><h5>time</h5></Col>
+              <Col><h5>repeating</h5></Col>
+          </Row>
+          <Row className="px-3 mx-2">
+              <Col><h5 className="pr-2">{selectedRes?.id}</h5></Col>
+              <Col><h5>{selectedRes?.tableNumber}</h5></Col>
+              <Col><h5>{selectedRes?.dateStart}</h5></Col>
+              <Col><h5>{formatHour(selectedRes?.hour)} - {formatHour(Number(selectedRes?.hour) + selectedRes?.duration)}</h5></Col>
+              <Col><h5>{selectedRes?.repeat}</h5></Col>
+          </Row>
+          </>
+          }
       </div>
     </Container>
   );

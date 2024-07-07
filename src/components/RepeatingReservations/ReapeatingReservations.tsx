@@ -9,7 +9,7 @@ import { formatHour } from "../../utils/reservations/formatHour";
 const RepeatingReservations = () => {
     const repResList:Reservation[] = useSelector(getRepeatingReservations);
     return (
-        <Row className="bg-none p-4">
+        <Row className="bg-none px-4">
             <h2>repeating reservations:</h2>
             {repResList.map(res => (
                 <Col xs={4} className="p-3 mx-2 border border-dark rounded bg-light">
