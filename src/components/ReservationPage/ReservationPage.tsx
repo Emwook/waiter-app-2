@@ -14,8 +14,8 @@ const ReservationPage = () => {
                 <li>detailed view - editable single reservation for variables different than time and duration</li>
             </ul>
             <Container>
-                <ReservationOverview/>
                 <RepeatingReservations/>
+                <ReservationOverview/>
             </Container>
         </div>
     )

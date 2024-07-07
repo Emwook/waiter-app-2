@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   getAllReservations,
@@ -18,7 +18,9 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { openFrom, openTo } from "../../config/settings";
 import { generateReservationId } from "../../utils/reservations/generateReservationId";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { Button } from "react-bootstrap";
+import { Button, Container } from "react-bootstrap";
+import "react-datepicker/dist/react-datepicker.css";
+import CalendarToolbar from "../CalendarToolbar/CalendarToolbar";
 
 interface Resource {
   resourceId: number;
@@ -36,6 +38,7 @@ interface Event {
 }
 
 const ReservationOverview: React.FC = () => {
+  const [startDate, setStartDate] = useState(new Date());
   const dispatch = useDispatch();
   const DnDCalendar = withDragAndDrop(Calendar);
 
@@ -109,20 +112,22 @@ const ReservationOverview: React.FC = () => {
   const eventPropGetter = (event: Event) => {
     return {
       style: {
-        backgroundColor: event.isDraggable ? "#3174ad" : "#d9534f",
+        backgroundColor: event.isDraggable ? "#f8f9fa" : "#6c757d",
+        marginLeft: "4px",
+        color: "#212529",
       },
     };
   };
 
   const EventComponent = (event: Event) => {
     return (
-      <div>
-          <span style={{fontSize: '11px'}} className="my-0">
+      <div className="text-dark">
+          <span style={{fontSize: '11px'}} className="my-0 text-primary">
             {event.title}
           </span>
           <Button
             onClick={() => handleEventRemove(event)}
-            className="mt-0 bg-danger py-0 px-2"
+            className="mt-0 bg-danger py-0 px-2 border-0"
             size="sm"
             style={{marginLeft: '5px'}}
           >
@@ -147,36 +152,55 @@ const ReservationOverview: React.FC = () => {
     []
   );
 
+  const handleSelectEvent = useCallback(
+    (event: Object) => window.alert((event as Event).id),
+    []
+  )
+
+  const handleNavigate = (action: 'prev' | 'next' | 'today' | 'date', newDate: Date): void => {
+    setStartDate(newDate);
+  };  
+
+
   return (
-    <div>
-      <h2>Reservation overview - calendar</h2>
-      <DnDCalendar
-        defaultDate={defaultDate}
-        defaultView={Views.DAY}
-        events={events}
-        localizer={momentLocalizer(moment)}
-        onEventDrop={handleEventDrop}
-        onEventResize={handleEventResize}
-        resizable
-        resourceIdAccessor={(resource) => (resource as Resource).resourceId}
-        resourceTitleAccessor={(resource)=> (resource as Resource).resourceTitle}
-        draggableAccessor={(event) => (event as Event).isDraggable}
-        resizableAccessor={(event) => true}
-        eventPropGetter={(event)=>eventPropGetter(event as Event)}
-        components={{
-          event: EventComponent as any,
-        }}
-        resources={resources}
-        scrollToTime={scrollToTime}
-        selectable
-        views={["day", "month"]}
-        onSelectSlot={handleSelectSlot}
-        min={openFrom}
-        max={openTo}
-        step={15}
-        timeslots={4}
+    <Container className="mb-5">
+      <CalendarToolbar
+        date={startDate}
+        onNavigate={handleNavigate}
+        onSetDate={setStartDate}
       />
-    </div>
+      <div className="z-0">
+        <DnDCalendar
+          defaultDate={defaultDate}
+          defaultView={Views.DAY}
+          events={events}
+          onSelectEvent={handleSelectEvent}
+          localizer={momentLocalizer(moment)}
+          onEventDrop={handleEventDrop}
+          onEventResize={handleEventResize}
+          resizable
+          resourceIdAccessor={(resource) => (resource as Resource).resourceId}
+          resourceTitleAccessor={(resource)=> (resource as Resource).resourceTitle}
+          draggableAccessor={(event) => (event as Event).isDraggable}
+          resizableAccessor={(event) => true}
+          eventPropGetter={(event)=>eventPropGetter(event as Event)}
+          components={{
+            event: EventComponent as any,
+            toolbar: () => <></>,
+          }}
+          resources={resources}
+          scrollToTime={scrollToTime}
+          selectable
+          views={["day"]}
+          onSelectSlot={handleSelectSlot}
+          min={openFrom}
+          max={openTo}
+          date={startDate}
+          step={15}
+          timeslots={4}
+        />
+      </div>
+    </Container>
   );
 };
 
