@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import RepeatingReservations from "../RepeatingReservations/ReapeatingReservations";
 import ReservationOverview from "../ReservationOverview/ReservationOverview";
-import { Container } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { formatDate } from "../../utils/reservations/dateUtils";
-import { fetchReservationsByDate } from "../../store/reducers/reservationsReducer";
+import { fetchAllReservationData, fetchReservationsByDate } from "../../store/reducers/reservationsReducer";
 
 const ReservationPage = () => {
     const dispatch = useDispatch();
@@ -14,6 +13,7 @@ const ReservationPage = () => {
     // Dispatch the setTables action when the data is loaded
     useEffect(() => {
         dispatch(fetchReservationsByDate(formattedDate.dateString) as any);
+        //dispatch(fetchAllReservationData() as any);
     }, [dispatch, formattedDate]);
   
     return (

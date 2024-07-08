@@ -18,10 +18,10 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { openFrom, openTo } from "../../config/settings";
 import { generateReservationId } from "../../utils/reservations/generateReservationId";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { Button, Container, Row, Col } from "react-bootstrap";
+import { Button, Container} from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarToolbar from "../CalendarToolbar/CalendarToolbar";
-import { formatHour } from "../../utils/reservations/formatHour";
+import SelectedResDetails from "../SelectedResDetails/SelectedResDetails";
 
 interface Resource {
   resourceId: number;
@@ -47,11 +47,17 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
   const dispatch = useDispatch();
   const DnDCalendar = withDragAndDrop(Calendar);
   const resListToday: Reservation[] = useSelector(getAllReservations);
+  const [localResListToday, setLocalResListToday] = useState<Reservation[]>(resListToday);
   const [showSelectedRes, setShowSelectedRes] = useState<Boolean>(false);
   const [selectedRes, setSelectedRes] = useState<Reservation>(resListToday[0]);
-  useEffect(() => { setDate(startDate); setSelectedRes(resListToday[0]); setShowSelectedRes(false) }, [startDate, setDate, resListToday]);
 
-  console.log('reslist today: ',resListToday);
+  useEffect(() => {
+    setDate(startDate);
+    setSelectedRes(resListToday[0]);
+    setShowSelectedRes(false);
+    setLocalResListToday(resListToday);
+  }, [startDate, setDate, resListToday]);
+
 
   const calculateStartTime = (reservation: Reservation): Date => {
     return parseDate(reservation.dateStart, reservation.hour);
@@ -62,7 +68,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
     return new Date(startTime.getTime() + reservation.duration * 60 * 60 * 1000);
   };
 
-  const events: Event[] = resListToday.map((reservation) => ({
+  const events: Event[] = localResListToday.map((reservation) => ({
     id: reservation.id,
     title: `${reservation.id}`,
     start: calculateStartTime(reservation),
@@ -71,8 +77,6 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
     allDay: false,
     isDraggable: true,
   }));
-
-
 
   const handleSelectSlot = ({ start, end, resourceId }: any) => {
     const clickedDate = moment(start).format("DD/MM/YY");
@@ -88,6 +92,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       repeat: "false",
     };
     dispatch(requestReservationAdd(newReservation) as any);
+    setLocalResListToday([...localResListToday, newReservation]);
     setSelectedRes(newReservation);
   };
 
@@ -101,6 +106,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       repeat: "false",
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
+    setLocalResListToday(localResListToday.map(res => res.id === event.id ? updatedReservation : res));
     handleSelectEvent(event);
   };
 
@@ -114,11 +120,13 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       repeat: "false",
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
+    setLocalResListToday(localResListToday.map(res => res.id === event.id ? updatedReservation : res));
   };
 
   const handleEventRemove = (event: Event) => {
-    const reservation = resListToday.filter(res => (res.id  === event.title))
+    const reservation = localResListToday.filter(res => (res.id === event.title))
     dispatch(requestReservationRemove(reservation[0]) as any);
+    setLocalResListToday(localResListToday.filter(res => res.id !== event.title));
   };
 
   const eventPropGetter = (event: Event) => {
@@ -134,17 +142,17 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
   const EventComponent = (event: Event) => {
     return (
       <div className="text-dark">
-          <span style={{fontSize: '11px'}} className="my-0 text-primary">
-            {event.title}
-          </span>
-          <Button
-            onClick={() => handleEventRemove(event)}
-            className="mt-0 bg-danger py-0 px-2 border-0"
-            size="sm"
-            style={{marginLeft: '5px'}}
-          >
-             <i className="bi bi-trash" style={{fontSize: '10px'}}/>
-          </Button>
+        <span style={{ fontSize: '11px' }} className="my-0 text-primary">
+          {event.title}
+        </span>
+        <Button
+          onClick={() => handleEventRemove(event)}
+          className="mt-0 bg-danger py-0 px-2 border-0"
+          size="sm"
+          style={{ marginLeft: '5px' }}
+        >
+          <i className="bi bi-trash" style={{ fontSize: '10px' }} />
+        </Button>
       </div>
     );
   };
@@ -164,7 +172,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
     []
   );
 
-  const handleSelectEvent = (event:Object) => {
+  const handleSelectEvent = (event: Object) => {
     const e = event as Event;
     const startDate = formatDate(e.start);
     const endDate = formatDate(e.end);
@@ -172,7 +180,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       id: e.id,
       dateStart: startDate.dateString,
       hour: startDate.hour,
-      duration: (endDate.hour-startDate.hour),
+      duration: (endDate.hour - startDate.hour),
       tableNumber: e.resourceId,
       repeat: 'false', //hardcoded false for now, until i get to redoing the whole repeating res thing
     }
@@ -182,12 +190,11 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
 
   const handleNavigate = (action: 'prev' | 'next' | 'today' | 'date', newDate: Date): void => {
     setStartDate(newDate);
-  };  
-
+  };
 
   return (
     <Container className="mb-3">
-      
+
       <CalendarToolbar
         date={startDate}
         onNavigate={handleNavigate}
@@ -204,10 +211,10 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
           onEventResize={handleEventResize}
           resizable
           resourceIdAccessor={(resource) => (resource as Resource).resourceId}
-          resourceTitleAccessor={(resource)=> (resource as Resource).resourceTitle}
+          resourceTitleAccessor={(resource) => (resource as Resource).resourceTitle}
           draggableAccessor={(event) => (event as Event).isDraggable}
           resizableAccessor={(event) => true}
-          eventPropGetter={(event)=>eventPropGetter(event as Event)}
+          eventPropGetter={(event) => eventPropGetter(event as Event)}
           components={{
             event: EventComponent as any,
             toolbar: () => <></>,
@@ -224,25 +231,10 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
           timeslots={4}
         />
       </div>
-      <div className=" bg-none p-2 w-100 border border-gray mt-2 text-center" style={{minHeight:'100px'}}>
-          {showSelectedRes &&
-          <>
-          <Row className="px-3 py-auto mb-2 mx-2 border-dark border-bottom">
-              <Col><h5 className=" pr-2">id</h5></Col>
-              <Col><h5>Table</h5></Col>
-              <Col><h5>date</h5></Col>
-              <Col><h5>time</h5></Col>
-              <Col><h5>repeating</h5></Col>
-          </Row>
-          <Row className="px-3 mx-2">
-              <Col><h5 className="pr-2">{selectedRes?.id}</h5></Col>
-              <Col><h5>{selectedRes?.tableNumber}</h5></Col>
-              <Col><h5>{selectedRes?.dateStart}</h5></Col>
-              <Col><h5>{formatHour(selectedRes?.hour)} - {formatHour(Number(selectedRes?.hour) + selectedRes?.duration)}</h5></Col>
-              <Col><h5>{selectedRes?.repeat}</h5></Col>
-          </Row>
-          </>
-          }
+      <div className=" bg-none p-2 w-100 border border-gray mt-2 text-center" style={{ minHeight: '100px' }}>
+        {showSelectedRes &&
+         <SelectedResDetails selectedRes={selectedRes}/>
+        }
       </div>
     </Container>
   );

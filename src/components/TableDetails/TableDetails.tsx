@@ -10,11 +10,11 @@ import { Table, TableStatus } from "../../types/tableTypes";
 import { useSelector } from "react-redux";
 import { getAllTables } from "../../store/reducers/tablesReducer";
 
-interface DetailsProps {
+interface TableDetailsProps {
     tableNumber: number;
 }
 
-const Details: React.FC<DetailsProps> = ({ tableNumber }) => {    
+const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {    
     const navigate = useNavigate();
     const tables: Table[]  = useSelector(getAllTables);
     const table: Table = tables?.find(table => table.tableNumber === tableNumber) ?? defaultNewTable;
@@ -105,4 +105,4 @@ const Details: React.FC<DetailsProps> = ({ tableNumber }) => {
     );
 }
 
-export default Details;
+export default TableDetails;
