@@ -6,5 +6,5 @@ export const formatHour = (hour: number): string => {
     const formattedHour = hours.toString().padStart(2, '0');
     const formattedMinutes = minutes.toString().padStart(2, '0');
 
-    return `${formattedHour}:${formattedMinutes}`;
+    return `${formattedHour}:${formattedMinutes}:00`;
 }

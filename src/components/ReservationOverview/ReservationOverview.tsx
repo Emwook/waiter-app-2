@@ -53,8 +53,6 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
 
   useEffect(() => {
     setDate(startDate);
-    setSelectedRes(resListToday[0]);
-    setShowSelectedRes(false);
     setLocalResListToday(resListToday);
   }, [startDate, setDate, resListToday]);
 
@@ -93,7 +91,9 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
     };
     dispatch(requestReservationAdd(newReservation) as any);
     setLocalResListToday([...localResListToday, newReservation]);
+    setShowSelectedRes(false);
     setSelectedRes(newReservation);
+    setShowSelectedRes(true);
   };
 
   const handleEventResize = ({ event, start, end }: any) => {
@@ -159,11 +159,11 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
 
   const tables: Table[] = useSelector(getAllTables);
   const sortedTables = sortTables(tables, "tableNumber");
-  const resources: Resource[] = sortedTables.map((table) => ({
-    resourceId: table.tableNumber,
-    resourceTitle: `Table ${table.tableNumber}`,
+  const tableNumbers = sortedTables.map((table) => table.tableNumber);
+  const resources: Resource[] = tableNumbers.map((num) => ({
+    resourceId: num,
+    resourceTitle: `Table ${num}`,
   }));
-
   const { defaultDate, scrollToTime } = useMemo(
     () => ({
       defaultDate: new Date(2024, 6, 4),
@@ -233,7 +233,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       </div>
       <div className=" bg-none p-2 w-100 border border-gray mt-2 text-center" style={{ minHeight: '100px' }}>
         {showSelectedRes &&
-         <SelectedResDetails selectedRes={selectedRes}/>
+         <SelectedResDetails reservation={selectedRes} tableNumbers={tableNumbers}/>
         }
       </div>
     </Container>

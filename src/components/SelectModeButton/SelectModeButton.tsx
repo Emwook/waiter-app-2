@@ -48,9 +48,6 @@ const SelectModeButton: React.FC = () => {
                     <Button variant='success' className={`border mx-1 ${selectMode?'border-light':'border-primary'}`} onClick={handleCombine} >
                         <i className="bi bi-link"></i>
                     </Button>
-                    <Button variant='warning' className={`border mx-1 ${selectMode?'border-light':'border-primary'}`}>
-                    <i className="bi bi-x-square"></i>
-                    </Button>
                     <Button variant='danger' className={`border mx-1 ${selectMode?'border-light':'border-primary'}`} onClick={handleRemove}>
                         <i className="bi bi-trash"></i>
                     </Button>

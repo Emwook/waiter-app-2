@@ -15,12 +15,12 @@ export const formatDate = (date: Date): { dateString: string; hour: number } => 
 export const parseDate = (dateString: string, hour: number): Date => {
   if (!dateString) {
     console.error("parseDate received an undefined or invalid dateString, corresponding date hour:", hour);
-    return new Date(); // or handle it appropriately
+    return new Date();
   }
 
   const [day, month, year] = dateString.split('/').map(Number);
   
-  const hourInt = Math.floor(hour); // Get the integer part of the hour
-  const minute = (hour - hourInt) * 60; // Calculate the minutes from the fractional part
+  const hourInt = Math.floor(hour);
+  const minute = (hour - hourInt) * 60;
   return new Date(`20${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hourInt).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`);
 };

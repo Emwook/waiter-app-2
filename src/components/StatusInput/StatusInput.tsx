@@ -20,7 +20,7 @@ const StatusInput: React.FC<StatusInputProps> = ({
                 <Col xs={6} md={5} lg={4}>
                     <Form.Select 
                         name="status" data-bs-theme="light" 
-                        size="sm" className="border-dark">
+                        size="sm" className="border-dark" value={table.status}>
                         {possibleStatusList.map(possibleStatus => 
                             <option
                                 key={possibleStatus}
