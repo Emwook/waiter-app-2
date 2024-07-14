@@ -34,6 +34,8 @@ interface Event {
   start: Date;
   end: Date;
   resourceId: number;
+  repeat: string;
+  name: string;
   allDay: boolean;
   isDraggable: boolean;
 }
@@ -72,6 +74,8 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
     start: calculateStartTime(reservation),
     end: calculateEndTime(reservation),
     resourceId: reservation.tableNumber,
+    repeat: reservation.repeat,
+    name: reservation.name,
     allDay: false,
     isDraggable: true,
   }));
@@ -88,6 +92,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       duration,
       tableNumber: resourceId,
       repeat: "false",
+      name: '',
     };
     dispatch(requestReservationAdd(newReservation) as any);
     setLocalResListToday([...localResListToday, newReservation]);
@@ -104,6 +109,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       duration: moment(end).diff(moment(start), "hours", true),
       tableNumber: parseInt(event.resourceId, 10),
       repeat: "false",
+      name: event.name,
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
     setLocalResListToday(localResListToday.map(res => res.id === event.id ? updatedReservation : res));
@@ -117,7 +123,8 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       hour: moment(start).hours() + moment(start).minutes() / 60,
       duration: moment(end).diff(moment(start), "hours", true),
       tableNumber: parseInt(resourceId, 10),
-      repeat: "false",
+      repeat: event.repeat,
+      name: event.name
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
     setLocalResListToday(localResListToday.map(res => res.id === event.id ? updatedReservation : res));
@@ -164,7 +171,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
     resourceId: num,
     resourceTitle: `Table ${num}`,
   }));
-  
+
   const { defaultDate, scrollToTime } = useMemo(
     () => ({
       defaultDate: new Date(2024, 6, 4),
@@ -183,7 +190,8 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       hour: startDate.hour,
       duration: (endDate.hour - startDate.hour),
       tableNumber: e.resourceId,
-      repeat: 'false', //hardcoded false for now, until i get to redoing the whole repeating res thing
+      repeat: e.repeat,
+      name: e.name,
     }
     setSelectedRes(res);
     setShowSelectedRes(true);

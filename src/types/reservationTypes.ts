@@ -5,5 +5,5 @@ export interface Reservation {
     duration: number;
     repeat: string;
     tableNumber: number;
-    name?: string;
+    name: string;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Reservation } from "../../types/reservationTypes";
 import { formatHour } from "../../utils/reservations/formatHour";
@@ -23,21 +23,23 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     return hours + decimalMinutes;
   };
 
-  const [date, setDate] = React.useState<Date>(parseDate(reservation.dateStart, reservation.hour));
-  const [tableNumber, setTableNumber] = React.useState<number>(reservation.tableNumber);
-  const [hour, setHour] = React.useState<string>(formatHour(reservation.hour));
-  const [hourEnd, setHourEnd] = React.useState<string>(formatHour(reservation.hour + reservation.duration));
-  const [repeat, setRepeat] = React.useState<string>(reservation.repeat);
-  const [name, setName] = React.useState<string>('');
+  const [date, setDate] = useState<Date>(parseDate(reservation.dateStart, reservation.hour));
+  const [tableNumber, setTableNumber] = useState<number>(reservation.tableNumber);
+  const [hour, setHour] = useState<string>(formatHour(reservation.hour));
+  const [hourEnd, setHourEnd] = useState<string>(formatHour(reservation.hour + reservation.duration));
+  const [repeat, setRepeat] = useState<string>(reservation.repeat);
+  const [name, setName] =  useState<string>(reservation.name as string);
 
 
   useEffect(() => {
+    setName('');
     setDate(parseDate(reservation.dateStart, reservation.hour));
     setTableNumber(reservation.tableNumber);
     setHour(formatHour(reservation.hour));
     setHourEnd(formatHour(reservation.hour + reservation.duration));
-    (reservation.name) && setName(reservation.name);
-  }, [reservation]);
+    setRepeat(reservation.repeat);
+    setName(reservation.name || '');
+  }, [reservation,name ]);
 
   const handleDateChange = (selectedDate: Date) => {
     const { dateString } = formatDate(selectedDate);
@@ -72,6 +74,7 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     // setReservation(updatedReservation);
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
+
   const handleHourEndChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const hourString = event.target.value;
     const duration: number = convertTimeToDecimal(hourString) - convertTimeToDecimal(hour);
@@ -93,17 +96,16 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     // setReservation(updatedReservation);
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
+
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const name = event.target.value as string;
+    const newName = event.target.value as string;
     const updatedReservation: Reservation = {
       ...reservation,
-      name: name,
+      name: newName,
     };
-    setName(name);
-    // setReservation(updatedReservation);
+    setName(newName);
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
-  };
-
+    };
   return (
     <>
       <Row className="px-3 py-auto mb-2 mx-2 text-start">
@@ -111,14 +113,14 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
         <Col xs={4}><h5 className="pr-2 text-secondary">{reservation?.id}</h5></Col>
         <Col xs={2}><h5 className=" pr-2">Name:</h5></Col>
         <Col xs={4}>
-          <Form.Control 
-              type="text" 
-              name={`name`}
-              className={"border-gray text-left w-50"} 
-              value = {reservation?.name}
-              onChange={handleNameChange}
-              placeholder = {reservation.name?name:'abc'}
-          />
+            <Form.Control
+                type="text"
+                name="name"
+                className="border-gray text-left w-50"
+                value={name}
+                onChange={handleNameChange}
+                //placeholder={reservation.name ? reservation.name : 'abc'}
+            />
         </Col>
       </Row>
       <Row className="px-3 py-auto mb-2 mx-2 text-start">

@@ -60,6 +60,14 @@ const Home: React.FC = () => {
       </div>
       <TableForm />
       <Row>
+      <ul className="mt-4 border-top border-dark">
+                    <li>form checking in table form<i className="bi bi-dash"></i></li>
+                    <li>combination and decombination of tables  <i className="bi bi-plus-slash-minus"></i></li>
+                    <li>messages for wrong data insertion <i className="bi bi-dash"></i></li>
+                    <li>user authentication <i className="bi bi-dash"></i></li>
+                    <li>log page of all changes done by a user<i className="bi bi-dash"></i></li>
+                    <li>advanced details for a table page with logs of changes and list of products ordered<i className="bi bi-dash"></i></li>
+                </ul>
         {/*<CombineTablesForm />*/}
       </Row>
     </div>
