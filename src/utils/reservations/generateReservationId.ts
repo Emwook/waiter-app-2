@@ -11,37 +11,12 @@ export const generateReservationId = (
   date: string,
   repeat: string
 ): string => {
-  // Convert date from 'dd/mm/yy' to 'ddmmyy'
-  const dateParts = date.split('/');
-  const formattedDate = dateParts.join('');
-
-  // Map the repeat string to its corresponding single character
-  let repeatChar: string;
-  switch (repeat.toLowerCase()) {
-    case 'false':
-      repeatChar = 'F';
-      break;
-    case 'daily':
-      repeatChar = 'D';
-      break;
-    case 'weekly':
-      repeatChar = 'W';
-      break;
-    case 'monthly':
-      repeatChar = 'M';
-      break;
-    case 'yearly':
-      repeatChar = 'Y';
-      break;
-    default:
-      repeatChar = 'U'; // Unknown
-  }
-
   // Generate a random 5-letter identifier
-  const randomIdentifier = generateRandomLetters(6);
+  const randomIdentifier1 = generateRandomLetters(3);
+  const randomIdentifier2 = generateRandomLetters(4);
 
   // Combine all parts into a single string with hyphens as separators
-  const reservationId = `${repeatChar}${formattedDate}${randomIdentifier}`;
+  const reservationId = `${randomIdentifier1}-${randomIdentifier2}`;
 
   return reservationId;
 };

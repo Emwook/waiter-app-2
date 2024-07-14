@@ -3,11 +3,15 @@ import { Table } from "../types/tableTypes";
 export const mostNumOfPeople = 10;
 export const leastNumOfPeople = 0;
 export const possibleStatusList = ['free', 'busy', 'cleaning', 'reserved'];
+
 export const groupTypes = ['none', 'combined', 'status'];
 export const maxBill = 10000;
 export const defaultSortingMethod = 'tableNumber';
+
 export const defaultCombined = [];
 export const defaultGroupingMethod = 'none';
+
+export const possibleRepeatList = ['false', 'daily', 'weekly', 'monthly', 'annually', 'undefined'];
 
 
 export const openFrom = new Date()

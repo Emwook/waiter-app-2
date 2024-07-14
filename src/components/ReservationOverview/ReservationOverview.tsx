@@ -7,7 +7,7 @@ import {
   requestReservationRemove,
 } from "../../store/reducers/reservationsReducer";
 import { Reservation } from "../../types/reservationTypes";
-import { Calendar, Views, momentLocalizer } from "react-big-calendar";
+import { Calendar, DateLocalizer, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { formatDate, parseDate } from "../../utils/reservations/dateUtils";
@@ -164,6 +164,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
     resourceId: num,
     resourceTitle: `Table ${num}`,
   }));
+  
   const { defaultDate, scrollToTime } = useMemo(
     () => ({
       defaultDate: new Date(2024, 6, 4),
@@ -194,7 +195,6 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
 
   return (
     <Container className="mb-3">
-
       <CalendarToolbar
         date={startDate}
         onNavigate={handleNavigate}

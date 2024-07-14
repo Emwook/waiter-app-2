@@ -155,7 +155,7 @@ export const getAllReservations = (state: any) => state.reservations;
 
 export const getRepeatingReservations = createSelector(
     [getAllReservations],
-    (reservations: Reservation[]) => reservations.filter(reservation => reservation.repeat !== 'false')
+    (reservations: Reservation[]) => reservations.filter(reservation => ((reservation.repeat !== 'false') && ((reservation.repeat !== 'undefined'))))
 );
 
 export const getReservationsByDate = (selectedDate: string) => {
