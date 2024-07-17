@@ -1,38 +1,74 @@
-import { Table } from '../../types/tableTypes';
+import { Table, TableStatus } from '../../types/tableTypes';
 
-const combineTables = (table1: Table, table2: Table, tableList: Table[]): Table[] => {
+const combineTables = (selectedTables: Table[], tableList: Table[]): Table[] => {
     const updatedTables = new Set<Table>();
 
     const updateCombinedWith = (table: Table, combinedNumbers: number[]) => {
-        table.combinedWith = combinedNumbers.filter(num => num !== table.tableNumber);
+        table.combinedWith = combinedNumbers.filter(num => num !== table.tableNumber); // Filter out its own tableNumber
         updatedTables.add(table);
     };
 
-    const combinedSet = new Set([...table1.combinedWith, ...table2.combinedWith, table1.tableNumber, table2.tableNumber]);
+    const allTablesCombined = selectedTables.every(table => 
+        selectedTables.every(otherTable => 
+            table.tableNumber === otherTable.tableNumber || table.combinedWith.includes(otherTable.tableNumber)
+        )
+    );
 
-    if (table1.combinedWith.includes(table2.tableNumber) && table2.combinedWith.includes(table1.tableNumber)) {
-        table1.combinedWith = table1.combinedWith.filter(num => num !== table2.tableNumber);
-        table2.combinedWith = table2.combinedWith.filter(num => num !== table1.tableNumber);
-        console.log(`Tables ${table1.tableNumber} and ${table2.tableNumber} were separated.`);
-    } else if (table1.combinedWith.includes(table2.tableNumber)) {
-        table2.combinedWith.push(table1.tableNumber);
-    } else if (table2.combinedWith.includes(table1.tableNumber)) {
-        table1.combinedWith.push(table2.tableNumber);
+    if (allTablesCombined) {
+        // Clear combinedWith array completely for all selected tables
+        selectedTables.forEach(table => {
+            table.combinedWith = [];
+            updatedTables.add(table);
+        });
+
+        // Update other tables in the list that were part of the combined set to remove references to the decombined tables
+        selectedTables.forEach(table => {
+            tableList.forEach(otherTable => {
+                if (otherTable.combinedWith.includes(table.tableNumber)) {
+                    otherTable.combinedWith = otherTable.combinedWith.filter(num => num !== table.tableNumber);
+                    updatedTables.add(otherTable);
+                }
+            });
+        });
     } else {
-        combinedSet.add(table1.tableNumber);
-        combinedSet.add(table2.tableNumber);
+        const combinedSet = new Set<number>();
+
+        // Add all tables' combined groups to the set
+        selectedTables.forEach(table => {
+            combinedSet.add(table.tableNumber);
+            table.combinedWith.forEach(num => combinedSet.add(num));
+        });
+
+        // Determine the status to inherit
+        let combinedStatus: TableStatus = 'free';
+        selectedTables.forEach(table => {
+            if (table.status !== 'free') {
+                combinedStatus = table.status;
+            }
+        });
+
+        // Combine all selected tables and their properties
+        const combinedTable: Table = {
+            tableNumber: selectedTables[0].tableNumber, // Keep the original table number
+            status: combinedStatus,
+            numOfPeople: selectedTables.reduce((total, table) => total + table.numOfPeople, 0),
+            maxNumOfPeople: selectedTables.reduce((max, table) => Math.max(max, table.maxNumOfPeople), 0),
+            bill: selectedTables.reduce((total, table) => total + table.bill, 0),
+            combinedWith: Array.from(combinedSet).filter(num => num !== selectedTables[0].tableNumber) // Filter out its own tableNumber
+        };
+
+        // Update each selected table to reflect the combined state
+        selectedTables.forEach(table => {
+            updateCombinedWith(table, Array.from(combinedSet));
+            tableList.forEach(otherTable => {
+                if (combinedSet.has(otherTable.tableNumber)) {
+                    updateCombinedWith(otherTable, Array.from(combinedSet));
+                }
+            });
+        });
+
+        updatedTables.add(combinedTable);
     }
-
-    const combinedArray = Array.from(combinedSet);
-
-    tableList.forEach(table => {
-        if (combinedArray.includes(table.tableNumber)) {
-            updateCombinedWith(table, combinedArray);
-        }
-    });
-
-    updateCombinedWith(table1, combinedArray);
-    updateCombinedWith(table2, combinedArray);
 
     return Array.from(updatedTables);
 };

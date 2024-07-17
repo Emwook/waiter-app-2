@@ -69,8 +69,10 @@ const TableForm: React.FC = () => {
                                 <StatusInput
                                     inDetailsComponent={false}
                                     table={nextTable}
-                                    updateSelectedStatus={updateSelectedStatus}/>
-                                </Col>
+                                    updateSelectedStatus={updateSelectedStatus}
+                                    selectedStatus={selectedStatus}
+                                />
+                            </Col>
                             <Col xs={4}>
                                 <PeopleInput   
                                     table={nextTable}

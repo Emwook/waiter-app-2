@@ -8,31 +8,34 @@ interface TableGroupProps {
 }
 
 const TableGroup:React.FC<TableGroupProps> = ({groupingMethod, tables}) =>{
-  let borderStyle: string = 'border-dark';
+  let color: string = 'secondary';
   if(groupingMethod === 'status'){
   switch( tables[0].status){
     case 'busy':
-      borderStyle = 'border-danger';
+      color = 'danger';
       break;
     case 'free':
-      borderStyle = 'border-success';
+      color = 'success';
       break;
     case 'reserved':
-      borderStyle = 'border-warning';
+      color = 'warning';
       break;
     case 'cleaning':
-      borderStyle = 'border-info';
+      color = 'info';
       break;
     default:
         break;
     }
   }
     return(
-      <div className={`p-1 mx-1 my-4 border rounded ${borderStyle}`}> 
+      <>
+      <div className={`p-1 mx-1 mt-2 mb-4 border rounded border-${color}`}> 
+        <span className={`position-absolute start-25 translate-middle bg-white px-2 text-${color}`}>{groupingMethod === 'status' && tables[0]?.status}</span>
         {tables.map((table, index) => (
-          <TableBar Table={table} index={index} 
+          <TableBar Table={table} index={index} key={index}
           inGroupByStatus={(groupingMethod === 'status')?true:false} />))}
       </div>
+      </>
        )
       }
 

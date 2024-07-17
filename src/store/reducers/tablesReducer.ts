@@ -77,7 +77,6 @@ export const requestTableRemove = (table: Table): ThunkAction<void, TablesState,
         try {
           await deleteDoc(doc.ref);
           dispatch(removeTable(table));
-          console.log('Document removed successfully');
         } catch (error) {
           console.error('Error removing document:', error);
         }
@@ -98,7 +97,6 @@ export const requestTableCombined = (table: Table): ThunkAction<void, TablesStat
         try {
           updateDoc(doc.ref, {...table});
           dispatch(changeTableDetails(table));
-          console.log('Document details changed successfully');
         } catch (error) {
           console.error('Error changing document details:', error);
         }

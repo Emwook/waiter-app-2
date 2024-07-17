@@ -7,8 +7,8 @@ import Loading from "../Loading/Loading";
 import { mostNumOfPeople, leastNumOfPeople, maxBill, defaultNewTable } from "../../config/settings";
 import BillInput from "../BillInput/BillInput";
 import { Table, TableStatus } from "../../types/tableTypes";
-import { useSelector } from "react-redux";
-import { getAllTables } from "../../store/reducers/tablesReducer";
+import { useDispatch, useSelector } from "react-redux";
+import { changeTableDetails, getAllTables } from "../../store/reducers/tablesReducer";
 
 interface TableDetailsProps {
     tableNumber: number;
@@ -16,28 +16,39 @@ interface TableDetailsProps {
 
 const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {    
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const tables: Table[]  = useSelector(getAllTables);
     const table: Table = tables?.find(table => table.tableNumber === tableNumber) ?? defaultNewTable;
     const [loading, setLoading] = useState<boolean>(true);
 
-    const [selectedStatus, setSelectedStatus] = useState<TableStatus>('busy'); 
-    const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(0);
-    const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(1); 
-    const [displayedBill, setDisplayedBill] = useState<number>(0); 
+    const [selectedStatus, setSelectedStatus] = useState<TableStatus>(defaultNewTable.status); 
+    const [displayedNumOfPeople, setDisplayedNumOfPeople] = useState<number>(defaultNewTable.numOfPeople);
+    const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(defaultNewTable.maxNumOfPeople); 
+    const [displayedBill, setDisplayedBill] = useState<number>(defaultNewTable.bill);
+    const [displayedCombined, setDisplayedCombined] = useState<number[]>(defaultNewTable.combinedWith);
 
     useEffect(() => {
         if (table) {
-            setSelectedStatus(table.status || 'busy');
-            setDisplayedNumOfPeople(table.numOfPeople || 0);
-            setDisplayedMaxNumOfPeople(table.maxNumOfPeople || 0);
-            setDisplayedBill(table.bill || 0);
+            setSelectedStatus(table.status);
+            setDisplayedNumOfPeople(table.numOfPeople);
+            setDisplayedMaxNumOfPeople(table.maxNumOfPeople);
+            setDisplayedBill(table.bill);
+            setDisplayedCombined(table.combinedWith);
             setLoading(false);
         }
     }, [table]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        //updateTable(tableNumber, { status: selectedStatus, numOfPeople: displayedNumOfPeople, maxNumOfPeople: displayedMaxNumOfPeople, bill: displayedBill });
+        const tableToUpdate: Table = {
+            tableNumber: table.tableNumber,
+            status: selectedStatus,
+            numOfPeople: displayedNumOfPeople,
+            maxNumOfPeople: displayedMaxNumOfPeople,
+            bill: displayedBill,
+            combinedWith: displayedCombined,
+        }
+        dispatch(changeTableDetails(tableToUpdate) as any);
         navigate('/');
     };
 
@@ -83,6 +94,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             <h1 className="py-4">Table {table?.tableNumber}</h1>
             <Form onSubmit={handleSubmit}>
                 <StatusInput
+                    selectedStatus={selectedStatus}
                     inDetailsComponent={true}
                     table={table}
                     updateSelectedStatus={updateSelectedStatus}/>
@@ -97,6 +109,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                     table={table} 
                     displayedBill={displayedBill}
                     updateDisplayedBill={updateDisplayedBill}/>
+                <h5 className="text-primary pb-2">combined with: {displayedCombined}</h5>
                 <Button size="sm" variant="primary" type="submit">
                     Submit
                 </Button>
