@@ -5,6 +5,7 @@ import { Dispatch } from 'redux';
 import { collection, deleteDoc, doc, getDocs, query, setDoc, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { createSelector } from 'reselect';
+import { getNextDate, getPreviousDate } from '../../utils/reservations/dateUtils';
 
 
 type ReservationsState = Reservation[];
@@ -28,22 +29,31 @@ interface ChangeReservationDetailsAction {
   payload: Reservation;
 }
 
+interface SetRepeatingReservationsAction {
+  type: typeof SET_REPEATING_RESERVATIONS;
+  payload: ReservationsState;
+}
+
 export type ReservationsActionTypes = 
   SetReservationsAction | 
   AddReservationAction | 
   RemoveReservationAction | 
-  ChangeReservationDetailsAction;
+  ChangeReservationDetailsAction |
+  SetRepeatingReservationsAction;
 
 const createActionName = (actionName: string) => `app/reservations/${actionName}`;
-export const SET_RESERVATIONS = createActionName('SET_RESERVATIONS');
+const SET_RESERVATIONS = createActionName('SET_RESERVATIONS');
 export const ADD_RESERVATION = createActionName('ADD_RESERVATION');
 export const REMOVE_RESERVATION = createActionName('REMOVE_RESERVATION');
 export const CHANGE_RESERVATION_DETAILS = createActionName('CHANGE_RESERVATION_DETAILS');
+const SET_REPEATING_RESERVATIONS = createActionName('SET_RESERVATIONS');
 
-export const setReservations = (payload: ReservationsState): SetReservationsAction => ({ type: SET_RESERVATIONS, payload });
+const setReservations = (payload: ReservationsState): SetReservationsAction => ({ type: SET_RESERVATIONS, payload });
 export const addReservation = (payload: Reservation): AddReservationAction => ({ type: ADD_RESERVATION, payload });
 export const removeReservation = (payload: Reservation): RemoveReservationAction => ({ type: REMOVE_RESERVATION, payload });
 export const changeReservationDetails = (payload: Reservation): ChangeReservationDetailsAction => ({ type: CHANGE_RESERVATION_DETAILS, payload });
+const setRepeatingReservations = (reservations: Reservation[]): SetRepeatingReservationsAction => ({ type: SET_REPEATING_RESERVATIONS, payload: reservations});
+
 
 export const fetchAllReservationData = (): ThunkAction<void, AppState, unknown, ReservationsActionTypes> => {
   return async (dispatch: Dispatch<ReservationsActionTypes>) => {
@@ -64,31 +74,67 @@ export const fetchReservationsByDate = (selectedDate: string): ThunkAction<void,
   return async (dispatch: Dispatch<ReservationsActionTypes>) => {
     try {
       const reservationsCollectionRef = collection(db, "reservations");
-      const q = query(reservationsCollectionRef, where('dateStart', '==', selectedDate));
-      const querySnapshot = await getDocs(q);
-      const filteredReservations: Reservation[] = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      } as Reservation));
-      dispatch(setReservations(filteredReservations));
-      console.error("Error fetching reservations:", filteredReservations);
+      
+      const adjacentDates = [
+        getPreviousDate(selectedDate), 
+        selectedDate, 
+        getNextDate(selectedDate),
+      ];
+
+      const queriesByDate = adjacentDates.map(date => query(reservationsCollectionRef, where('dateStart', '==', date)));
+      const queryByDateSnapshots = await Promise.all(queriesByDate.map(q => getDocs(q)));
+
+      const allReservations: Reservation[] = [];
+
+      queryByDateSnapshots.forEach(queryByDateSnapshot => {
+        const filteredReservations = queryByDateSnapshot.docs.map(doc => ({
+          ...doc.data()
+        } as Reservation));
+        allReservations.push(...filteredReservations);
+      });
+
+      dispatch(setReservations(allReservations));
+      
     } catch (error) {
       console.error("Error fetching reservations:", error);
     }
   };
 };
 
+export const fetchRepeatingReservations = (): ThunkAction<void, AppState, unknown, ReservationsActionTypes> => {
+  // it executes here idk why :[
+  return async (dispatch: Dispatch<ReservationsActionTypes>) => {
+    try {
+      // some bug, the code doesnt execute in here >:|
+      const reservationsCollectionRef = collection(db, "reservations");
+      
+      const q = query(reservationsCollectionRef, 
+        where('repeat', '!=', 'false')
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      const repeatingReservations: Reservation[] = querySnapshot.docs.map(doc => ({
+        ...doc.data()
+      } as Reservation));
+      console.log(repeatingReservations);
+
+      dispatch(setRepeatingReservations(repeatingReservations));
+    } catch (error) {
+      console.error("Error fetching repeating reservations:", error);
+    }
+  };
+};
+
+
 export const requestReservationAdd = (data: Reservation): ThunkAction<void, AppState, unknown, ReservationsActionTypes> => {
   return async (dispatch: Dispatch<ReservationsActionTypes>) => {
     const reservationsCollection = collection(db, 'reservations');
     try {
-      // Create a document reference with a custom ID
       const docRef = doc(reservationsCollection, data.id);
 
-      // Use setDoc to set the document with the custom ID
       await setDoc(docRef, data);
 
-      // Dispatch the action with the new reservation
       dispatch(addReservation(data));
     } catch (error) {
       console.error("Error adding reservation:", error);
@@ -140,12 +186,15 @@ const reservationsReducer = (
     case REMOVE_RESERVATION:
       return state.filter(reservation => reservation.id !== (action.payload as Reservation).id);
     case CHANGE_RESERVATION_DETAILS:
-        if ('id' in action.payload) {
+      if ('id' in action.payload) {
       return state.map(reservation =>
         reservation.id === (action.payload as Reservation).id ? action.payload : reservation
-      ) as ReservationsState;
-    }
-    return state;
+        ) as ReservationsState;
+      }
+      return state;
+    case SET_REPEATING_RESERVATIONS:
+      console.log('dispatch in the store');
+      return [...state, ...(action.payload as ReservationsState)];
     default:
       return state;
   }

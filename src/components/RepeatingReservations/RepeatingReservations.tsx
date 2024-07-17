@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { getRepeatingReservations } from "../../store/reducers/reservationsReducer";
+import { fetchRepeatingReservations, getRepeatingReservations } from "../../store/reducers/reservationsReducer";
 import { Reservation } from "../../types/reservationTypes";
 import { Col } from "react-bootstrap";
 import { Row } from "react-bootstrap";
 import { formatHour } from "../../utils/reservations/formatHour";
+import { useDispatch } from "react-redux";
 
 const RepeatingReservations = () => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(fetchRepeatingReservations as any);
+        console.log('dispatched repeating');
+    }, [dispatch]);
+  
     const repResList:Reservation[] = useSelector(getRepeatingReservations);
     return (
         <Row className="bg-none px-4">

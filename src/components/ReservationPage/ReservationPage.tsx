@@ -3,16 +3,15 @@ import RepeatingReservations from "../RepeatingReservations/RepeatingReservation
 import ReservationOverview from "../ReservationOverview/ReservationOverview";
 import { useDispatch } from "react-redux";
 import { formatDate } from "../../utils/reservations/dateUtils";
-import { fetchAllReservationData, fetchReservationsByDate } from "../../store/reducers/reservationsReducer";
+import { fetchReservationsByDate } from "../../store/reducers/reservationsReducer";
 
 const ReservationPage = () => {
     const dispatch = useDispatch();
     const [date, setDate] = useState(new Date());
     const formattedDate = formatDate(date);
-    // Dispatch the setTables action when the data is loaded
+
     useEffect(() => {
         dispatch(fetchReservationsByDate(formattedDate.dateString) as any);
-        //dispatch(fetchAllReservationData() as any);
     }, [dispatch, formattedDate]);
   
     return (

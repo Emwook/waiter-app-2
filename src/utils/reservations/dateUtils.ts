@@ -24,3 +24,20 @@ export const parseDate = (dateString: string, hour: number): Date => {
   const minute = (hour - hourInt) * 60;
   return new Date(`20${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hourInt).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`);
 };
+
+
+export const getPreviousDate = (date: string): string => {
+  const dateSource = parseDate(date, 12);
+  const selectedDate = new Date(dateSource);
+  selectedDate.setDate(selectedDate.getDate() - 1);
+  const { dateString } = formatDate(selectedDate)
+  return dateString;
+};
+
+export const getNextDate = (date: string): string => {
+  const dateSource = parseDate(date, 12);
+  const selectedDate = new Date(dateSource);
+  selectedDate.setDate(selectedDate.getDate() + 1);
+  const { dateString } = formatDate(selectedDate)
+  return dateString;
+};
