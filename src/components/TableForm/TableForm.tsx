@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Row, Col, Button, Form } from 'react-bootstrap';
-import StatusInput from "../StatusInput/StatusInput";
-import PeopleInput from "../PeopleInput/PeopleInput";
 import { Table, TableStatus } from "../../types/tableTypes";
 import useNextTable from "../../utils/sorting/useNextTable";
 import { mostNumOfPeople, leastNumOfPeople, defaultNewTable } from "../../config/settings";
 import { useDispatch } from "react-redux";
 import { requestTableAdd } from "../../store/reducers/tablesReducer";
 import { possibleStatusList } from "../../config/settings";
+import clsx from 'clsx';
+import { changeMessage } from "../../store/reducers/messageReducer";
 
 
 const TableForm: React.FC = () => {
@@ -30,6 +30,11 @@ const TableForm: React.FC = () => {
             combinedWith: []
         };
         dispatch(requestTableAdd(newTable) as any);
+    };
+    const handleDisabled = (e: any) => {
+        if (selectedStatus !== 'busy') {
+            dispatch(changeMessage(10) as any);
+        }
     };
 
     const updateSelectedStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -62,11 +67,11 @@ const TableForm: React.FC = () => {
     
     return (
         <div className={`border rounded border-dark`}> 
-            <Row className="`mt-1 pb-1 pt-4 px-3 d-flex justify-content-between align-items-center">
+            <Row className="`mt-1 pb-1 pt-3 px-3 d-flex justify-content-between align-items-center">
                 <Col className="border-bottom border-dark">
                     <Form onSubmit={handleSubmit}>
                         <Row>
-                            <Col xs={2}><span className="h2">Table {nextTableNumber}</span></Col>
+                            <Col xs={2} className="mt-1"><span className="h2 mt-2">Table {nextTableNumber}</span></Col>
                             <Col>
                                  <Form.Group className="w-100">
                                     <Row className="my-2">
@@ -90,12 +95,12 @@ const TableForm: React.FC = () => {
                                 <Form.Group className="w-100">
                                     <Row className="my-2  ">
                                         <Col xs={4}><Form.Label className="fw-light fs-4 p-0 mr-2">People: </Form.Label></Col>
-                                        <Col xs={3}>
+                                        <Col xs={3} onMouseEnter={handleDisabled}>
                                             <Form.Control 
                                                 type="number" 
                                                 size="sm" 
                                                 name={`numOfPeople${nextTable.tableNumber}`}
-                                                className="border-dark text-center mt-1" 
+                                                className={clsx("border-dark text-center mt-1")}
                                                 value = {(selectedStatus === 'busy')?(displayedNumOfPeople):(0)}
                                                 onChange={updateDisplayedNumOfPeople}
                                                 disabled={selectedStatus !== 'busy'}

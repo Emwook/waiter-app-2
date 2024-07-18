@@ -8,6 +8,7 @@ import selectModeReducer from './reducers/selectModeReducer';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { Reservation } from '../types/reservationTypes';
 import reservationsReducer from './reducers/reservationsReducer';
+import messageReducer from './reducers/messageReducer';
 
 export interface AppState {
   tables: Table[],
@@ -20,12 +21,16 @@ export interface AppState {
     selectMode: boolean;
     selected: Table[];
   }
+  message: {
+    messageNumber: number;
+  }
 }
 const subreducers = {
     tables: tablesReducer,
     methods: methodsReducer,
     select: selectModeReducer,
     reservations: reservationsReducer,
+    message: messageReducer,
 }
 
 const reducer = combineReducers(subreducers);
@@ -40,6 +45,9 @@ const initialState: AppState = {
   select: {
     selectMode: false,
     selected: [],
+  },
+  message: {
+    messageNumber: 0,
   }
 
 }

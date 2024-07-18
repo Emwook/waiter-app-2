@@ -17,8 +17,8 @@ const StatusInput: React.FC<StatusInputProps> = ({
     return (
         <Form.Group className="w-100">
             <Row className="my-2">
-            <Col xs={2}><Form.Label className="fw-light fs-3">Status:</Form.Label></Col>
-                <Col xs={3}>
+                <Col xs={3}><Form.Label className="fw-light fs-3">Status:</Form.Label></Col>
+                <Col xs={5}>
                     <Form.Select
                         onChange={updateSelectedStatus} 
                         name="status" data-bs-theme="light" 

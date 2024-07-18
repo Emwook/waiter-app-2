@@ -35,10 +35,7 @@ const SelectModeButton: React.FC = () => {
     };
 
     return (
-        <Col xs={6} className="mt-4">
-            <Button className={`ml-3 border ${selectMode ? 'border-light' : 'border-primary'}`} variant={selectMode ? 'primary' : 'light'} onClick={toggleSelect}>
-                Select
-            </Button>
+        <Col className="mt-4 d-flex justify-content-end">
             {selectMode && (
                 <>
                     <Button variant='success' className={`border mx-1 ${selectMode ? 'border-light' : 'border-primary'}`} onClick={handleCombine} >
@@ -49,6 +46,10 @@ const SelectModeButton: React.FC = () => {
                     </Button>
                 </>
             )}
+            <Button className={`ml-3 border ${selectMode ? 'border-light' : 'border-primary'}`} variant={selectMode ? 'primary' : 'light'} onClick={toggleSelect}>
+                Select
+            </Button>
+            
         </Col>
     );
 };

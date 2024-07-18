@@ -12,6 +12,7 @@ import { getAllTables } from "../../store/reducers/tablesReducer";
 import { sortTables } from "../../utils/sorting/sortTables";
 import { getGroupingMethod, getSortingMethod } from "../../store/reducers/methodsReducer";
 import SelectModeButton from "../SelectModeButton/SelectModeButton";
+import AlertBar from "../MessageBox/MessageBox";
 //import AlertBar from "../AlertBar/AlertBar";
 
 const Home: React.FC = () => {
@@ -31,13 +32,13 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <Row>
+      <Row className="align-content-end">
         <SortingPanel/>
         <GroupingPanel/>
-        {/*<AlertBar/>*/}
+        <AlertBar/>
         <SelectModeButton/>
       </Row>
-      <div>
+      <div className="my-4">
         {groupingMethod === 'none' ? (      
           <TableGroup tables={tables} groupingMethod='none' />
         ) : ((groupingMethod === 'combined')?(

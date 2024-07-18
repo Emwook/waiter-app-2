@@ -1,6 +1,8 @@
 import { Form, Col, Row } from "react-bootstrap";
 import React from "react";
 import { Table } from "../../types/tableTypes";
+import { useDispatch } from "react-redux";
+import { changeMessage } from "../../store/reducers/messageReducer";
 
 interface PeopleInputProps {
     table: Table;
@@ -16,12 +18,18 @@ const PeopleInput: React.FC<PeopleInputProps> = (
         updateDisplayedMaxNumOfPeople,
         displayedNumOfPeople, displayedMaxNumOfPeople, selectedStatus 
         }) => {
+    const dispatch = useDispatch();
+    const handleDisabled = (e: any) => {
+        if (selectedStatus !== 'busy') {
+            dispatch(changeMessage(10) as any);
+        }
+    };  
 
     return (
         <Form.Group className="w-100">
             <Row className="my-2  ">
-                <Col xs={2}><Form.Label className="fw-light fs-3 p-0">People: </Form.Label></Col>
-                <Col xs={1}>
+                <Col xs={3}><Form.Label className="fw-light fs-3 p-0">People: </Form.Label></Col>
+                <Col xs={2} onMouseEnter={handleDisabled}>
                     <Form.Control 
                         type="number" 
                         size="sm" 
@@ -33,7 +41,7 @@ const PeopleInput: React.FC<PeopleInputProps> = (
                     />
                 </Col>    
                 <Col xs={1} className="mt-2 d-flex"><span className="h-75 mt-0 mx-auto w-100 px-3 fs-5 text-center lead">/</span></Col>
-                <Col xs={1} className=" ">
+                <Col xs={2}>
                     <Form.Control 
                         type="number" 
                         size="sm" 

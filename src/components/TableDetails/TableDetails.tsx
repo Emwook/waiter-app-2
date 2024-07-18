@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Container, Button } from "react-bootstrap";
+import { Form, Container, Button, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import StatusInput from "../StatusInput/StatusInput";
 import PeopleInput from "../PeopleInput/PeopleInput";
@@ -9,6 +9,10 @@ import BillInput from "../BillInput/BillInput";
 import { Table, TableStatus } from "../../types/tableTypes";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllTables, requestChangeTableDetails } from "../../store/reducers/tablesReducer";
+import styles from './TableDetails.module.scss';
+import MessageBox from "../MessageBox/MessageBox";
+import { changeMessage } from "../../store/reducers/messageReducer";
+import clsx from "clsx";
 
 interface TableDetailsProps {
     tableNumber: number;
@@ -65,16 +69,18 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             combinedTablesToUpdate.push({...tableToUpdate, tableNumber: tableNumber, combinedWith: combinedWith});
         }
         dispatch(requestChangeTableDetails(tableToUpdate) as any);
-        console.log('dispatched to change: ', tableToUpdate);
         for(let i=0; i<table.combinedWith.length; i++){
             dispatch(requestChangeTableDetails(combinedTablesToUpdate[i]) as any);
-            console.log('dispatched to change: ', combinedTablesToUpdate[i])
         }
-        //navigate('/');
+        navigate('/');
     };
 
     const updateSelectedStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedStatus(event.target.value as TableStatus);
+        const targetValue = (event.target.value);
+        setSelectedStatus(targetValue as TableStatus);
+        if (targetValue !== 'busy'){
+            setDisplayedBill(0);
+        }
     };
 
     const updateDisplayedNumOfPeople = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,6 +91,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             }
             else {
                 setDisplayedNumOfPeople(displayedMaxNumOfPeople);
+                dispatch(changeMessage(11) as any);
             }
         }
     };
@@ -93,9 +100,12 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         const targetValue = Number(event.target.value);
         if (targetValue >= leastNumOfPeople && targetValue <= mostNumOfPeople) { 
             if (targetValue <= displayedNumOfPeople) {
-                setDisplayedNumOfPeople(targetValue)
+                setDisplayedNumOfPeople(targetValue);
             }
             setDisplayedMaxNumOfPeople(targetValue);
+        }
+        else {
+            dispatch(changeMessage(12) as any);
         }
     };
 
@@ -103,6 +113,12 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         const targetValue = Number(event.target.value);
         if (!isNaN(targetValue) && targetValue <= maxBill) {
             setDisplayedBill(targetValue);
+        }
+        else if (isNaN(targetValue)){ 
+            dispatch(changeMessage(13) as any);
+        }
+        else {
+            dispatch(changeMessage(14) as any);
         }
     };
 
@@ -112,35 +128,43 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
     
     return (
         <Container className="mt-4">
-            {displayedCombined.length>0 
-            ? (
-                <h2 className="fw-light fs-1 py-4" >{`combined tables:  ${allCombined}`}</h2> 
-            )
-            : (
-                <h2 className="py-4">Table {table?.tableNumber}</h2>
-            )
-            }
-            <Form onSubmit={handleSubmit}>
-                <StatusInput
-                    selectedStatus={selectedStatus}
-                    inDetailsComponent={true}
-                    table={table}
-                    updateSelectedStatus={updateSelectedStatus}/>
-                <PeopleInput
-                    selectedStatus={selectedStatus}
-                    table={table}  
-                    updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
-                    updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
-                    displayedNumOfPeople={displayedNumOfPeople}
-                    displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                <BillInput
-                    table={table} 
-                    displayedBill={displayedBill}
-                    updateDisplayedBill={updateDisplayedBill}/>
-                <Button size="sm" variant="primary" type="submit">
-                    Submit
-                </Button>
-            </Form>
+            <Row className={styles.messageBox}>
+                <MessageBox/>
+            </Row>
+            <Row className="w-50">
+                <Col xs={12} className={clsx(styles.detailsBox)}>
+                {displayedCombined.length>0 
+                ? (
+                    <h2 className="fw-light fs-1 py-4" >{`combined tables:  ${allCombined}`}</h2> 
+                )
+                : (
+                    <h2 className="py-4">Table {table?.tableNumber}</h2>
+                )
+                }
+                <Form onSubmit={handleSubmit}>
+                    <StatusInput
+                        selectedStatus={selectedStatus}
+                        inDetailsComponent={true}
+                        table={table}
+                        updateSelectedStatus={updateSelectedStatus}/>
+                    <PeopleInput
+                        selectedStatus={selectedStatus}
+                        table={table}  
+                        updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
+                        updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
+                        displayedNumOfPeople={displayedNumOfPeople}
+                        displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
+                    <BillInput
+                        selectedStatus={selectedStatus}
+                        table={table} 
+                        displayedBill={displayedBill}
+                        updateDisplayedBill={updateDisplayedBill}/>
+                    <Button size="sm" variant="primary" type="submit">
+                        Submit
+                    </Button>
+                </Form>
+                </Col>
+            </Row>
         </Container>
     );
 }

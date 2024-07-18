@@ -1,4 +1,6 @@
+
 import { Table } from "../../types/tableTypes";
+
 
 interface SelectModeState {
     selectMode: boolean;

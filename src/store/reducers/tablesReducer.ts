@@ -4,6 +4,7 @@ import { AppState } from '../store';
 import { Dispatch } from 'redux';
 import { addDoc, collection, deleteDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
+import { changeMessage } from './messageReducer';
 
 type TablesState = Table[];
 
@@ -61,6 +62,7 @@ export const requestTableAdd = (data: Table): ThunkAction<void, AppState, unknow
     try {
       await addDoc(tablesCollection, data);
       dispatch(addTable(data));
+      dispatch(changeMessage(1) as any);
     } catch (error) {
       console.error("Error adding table:", error);
     }
@@ -77,6 +79,7 @@ export const requestTableRemove = (table: Table): ThunkAction<void, TablesState,
         try {
           await deleteDoc(doc.ref);
           dispatch(removeTable(table));
+          dispatch(changeMessage(2) as any);
         } catch (error) {
           console.error('Error removing document:', error);
         }
@@ -97,6 +100,7 @@ export const requestTableCombined = (table: Table): ThunkAction<void, TablesStat
         try {
           updateDoc(doc.ref, {...table});
           dispatch(changeTableDetails(table));
+          dispatch(changeMessage(4) as any);
         } catch (error) {
           console.error('Error changing document details:', error);
         }
