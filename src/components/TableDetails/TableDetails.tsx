@@ -8,7 +8,7 @@ import { mostNumOfPeople, leastNumOfPeople, maxBill, defaultNewTable } from "../
 import BillInput from "../BillInput/BillInput";
 import { Table, TableStatus } from "../../types/tableTypes";
 import { useDispatch, useSelector } from "react-redux";
-import { changeTableDetails, getAllTables } from "../../store/reducers/tablesReducer";
+import { getAllTables, requestChangeTableDetails } from "../../store/reducers/tablesReducer";
 
 interface TableDetailsProps {
     tableNumber: number;
@@ -26,7 +26,17 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
     const [displayedMaxNumOfPeople, setDisplayedMaxNumOfPeople] = useState<number>(defaultNewTable.maxNumOfPeople); 
     const [displayedBill, setDisplayedBill] = useState<number>(defaultNewTable.bill);
     const [displayedCombined, setDisplayedCombined] = useState<number[]>(defaultNewTable.combinedWith);
-
+    const allCombined: number[] = [tableNumber, ...displayedCombined];
+    let temp: number;
+    for (let i = 0; i < allCombined.length; i++) {
+        for (let j = 0; j < allCombined.length - 1 - i; j++) {
+        if (allCombined[j] > allCombined[j + 1]) {
+            temp = allCombined[j];
+            allCombined[j] = allCombined[j + 1];
+            allCombined[j + 1] = temp;
+        }
+        }
+    }
     useEffect(() => {
         if (table) {
             setSelectedStatus(table.status);
@@ -48,8 +58,19 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             bill: displayedBill,
             combinedWith: displayedCombined,
         }
-        dispatch(changeTableDetails(tableToUpdate) as any);
-        navigate('/');
+        const combinedTablesToUpdate: Table[] =[]
+        for(let i=0; i<table.combinedWith.length; i++){
+            const tableNumber = table.combinedWith[i];
+            const combinedWith: number[] = tables?.find(table => table.tableNumber === tableNumber)?.combinedWith ?? defaultNewTable.combinedWith ;
+            combinedTablesToUpdate.push({...tableToUpdate, tableNumber: tableNumber, combinedWith: combinedWith});
+        }
+        dispatch(requestChangeTableDetails(tableToUpdate) as any);
+        console.log('dispatched to change: ', tableToUpdate);
+        for(let i=0; i<table.combinedWith.length; i++){
+            dispatch(requestChangeTableDetails(combinedTablesToUpdate[i]) as any);
+            console.log('dispatched to change: ', combinedTablesToUpdate[i])
+        }
+        //navigate('/');
     };
 
     const updateSelectedStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -90,8 +111,15 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
     }
     
     return (
-        <Container>
-            <h1 className="py-4">Table {table?.tableNumber}</h1>
+        <Container className="mt-4">
+            {displayedCombined.length>0 
+            ? (
+                <h2 className="fw-light fs-1 py-4" >{`combined tables:  ${allCombined}`}</h2> 
+            )
+            : (
+                <h2 className="py-4">Table {table?.tableNumber}</h2>
+            )
+            }
             <Form onSubmit={handleSubmit}>
                 <StatusInput
                     selectedStatus={selectedStatus}
@@ -109,7 +137,6 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                     table={table} 
                     displayedBill={displayedBill}
                     updateDisplayedBill={updateDisplayedBill}/>
-                <h5 className="text-primary pb-2">combined with: {displayedCombined}</h5>
                 <Button size="sm" variant="primary" type="submit">
                     Submit
                 </Button>

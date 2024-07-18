@@ -7,6 +7,8 @@ import useNextTable from "../../utils/sorting/useNextTable";
 import { mostNumOfPeople, leastNumOfPeople, defaultNewTable } from "../../config/settings";
 import { useDispatch } from "react-redux";
 import { requestTableAdd } from "../../store/reducers/tablesReducer";
+import { possibleStatusList } from "../../config/settings";
+
 
 const TableForm: React.FC = () => {
     const dispatch = useDispatch();
@@ -61,27 +63,58 @@ const TableForm: React.FC = () => {
     return (
         <div className={`border rounded border-dark`}> 
             <Row className="`mt-1 pb-1 pt-4 px-3 d-flex justify-content-between align-items-center">
-                <Col xs={12} className="border-bottom border-dark">
+                <Col className="border-bottom border-dark">
                     <Form onSubmit={handleSubmit}>
                         <Row>
                             <Col xs={2}><span className="h2">Table {nextTableNumber}</span></Col>
-                            <Col xs={4}>
-                                <StatusInput
-                                    inDetailsComponent={false}
-                                    table={nextTable}
-                                    updateSelectedStatus={updateSelectedStatus}
-                                    selectedStatus={selectedStatus}
-                                />
+                            <Col>
+                                 <Form.Group className="w-100">
+                                    <Row className="my-2">
+                                    <Col xs={5}><Form.Label className="fw-light fs-4">Status:</Form.Label></Col>
+                                        <Col xs={6} className="mr-3">
+                                            <Form.Select
+                                                onChange={updateSelectedStatus} 
+                                                name="status" data-bs-theme="light" 
+                                                size="sm" className="border-dark mt-1" value={selectedStatus}>
+                                                {possibleStatusList.map(possibleStatus => 
+                                                    <option key={possibleStatus}>
+                                                        {possibleStatus}
+                                                    </option>
+                                                )}
+                                            </Form.Select>
+                                        </Col>
+                                    </Row>
+                                </Form.Group>
                             </Col>
-                            <Col xs={4}>
-                                <PeopleInput   
-                                    table={nextTable}
-                                    selectedStatus={selectedStatus}
-                                    updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
-                                    updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
-                                    displayedNumOfPeople={displayedNumOfPeople}
-                                    displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                                </Col>
+                            <Col>
+                                <Form.Group className="w-100">
+                                    <Row className="my-2  ">
+                                        <Col xs={4}><Form.Label className="fw-light fs-4 p-0 mr-2">People: </Form.Label></Col>
+                                        <Col xs={3}>
+                                            <Form.Control 
+                                                type="number" 
+                                                size="sm" 
+                                                name={`numOfPeople${nextTable.tableNumber}`}
+                                                className="border-dark text-center mt-1" 
+                                                value = {(selectedStatus === 'busy')?(displayedNumOfPeople):(0)}
+                                                onChange={updateDisplayedNumOfPeople}
+                                                disabled={selectedStatus !== 'busy'}
+                                            />
+                                        </Col>    
+                                        <Col xs={1} className="mt-1 mr-1 d-flex"><span className="h-100 mx-auto w-100 px-1 text-center lead">/</span></Col>
+                                        <Col xs={3} className=" ">
+                                            <Form.Control 
+                                                type="number" 
+                                                size="sm" 
+                                                name={`MaxNumOfPeople${nextTable.tableNumber}`}
+                                                className={"border-dark text-center mt-1"} 
+                                                value = {displayedMaxNumOfPeople}
+                                                onChange={updateDisplayedMaxNumOfPeople}
+                                            />
+                                        </Col>    
+                                    </Row>
+                                </Form.Group>
+                            </Col>
                             <Col className="d-flex justify-content-end align-content-center">
                                 <Button size="lg" variant="primary" type="submit" className="py-1 my-auto border-light text-right ml-auto">
                                     <i className="bi bi-plus"/>

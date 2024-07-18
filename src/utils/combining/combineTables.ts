@@ -51,9 +51,9 @@ const combineTables = (selectedTables: Table[], tableList: Table[]): Table[] => 
         const combinedTable: Table = {
             tableNumber: selectedTables[0].tableNumber, // Keep the original table number
             status: combinedStatus,
-            numOfPeople: selectedTables.reduce((total, table) => total + table.numOfPeople, 0),
-            maxNumOfPeople: selectedTables.reduce((max, table) => Math.max(max, table.maxNumOfPeople), 0),
-            bill: selectedTables.reduce((total, table) => total + table.bill, 0),
+            numOfPeople: selectedTables.reduce((total, table) => table.numOfPeople, 0),
+            maxNumOfPeople: selectedTables.reduce((max, table) => (table.maxNumOfPeople), 0),
+            bill: selectedTables.reduce((total, table) => table.bill, 0),
             combinedWith: Array.from(combinedSet).filter(num => num !== selectedTables[0].tableNumber) // Filter out its own tableNumber
         };
 

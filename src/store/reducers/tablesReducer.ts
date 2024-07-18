@@ -107,6 +107,27 @@ export const requestTableCombined = (table: Table): ThunkAction<void, TablesStat
   };
 };
 
+
+export const requestChangeTableDetails = (table: Table): ThunkAction<void, TablesState, unknown, TablesActionTypes> => {
+  return async (dispatch: Dispatch<TablesActionTypes>) => {
+    const tablesCollectionRef = collection(db, 'tables');
+    const q = query(tablesCollectionRef, where('tableNumber', '==', table.tableNumber));
+    try {
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (doc) => {
+        try {
+          await updateDoc(doc.ref, { ...table });
+          dispatch(changeTableDetails(table));
+        } catch (error) {
+          console.error('Error removing document:', error);
+        }
+      });
+    } catch (error) {
+      console.error('Error querying documents:', error);
+    }
+  };
+};
+
 const tablesReducer = (
   state = initialState,
   action: TablesActionTypes

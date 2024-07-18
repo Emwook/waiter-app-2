@@ -17,12 +17,12 @@ const StatusInput: React.FC<StatusInputProps> = ({
     return (
         <Form.Group className="w-100">
             <Row className="my-2">
-                <Col xs={3} md={3} lg={3}><Form.Label>Status:</Form.Label></Col>
-                <Col xs={6} md={5} lg={4}>
+            <Col xs={2}><Form.Label className="fw-light fs-3">Status:</Form.Label></Col>
+                <Col xs={3}>
                     <Form.Select
                         onChange={updateSelectedStatus} 
                         name="status" data-bs-theme="light" 
-                        size="sm" className="border-dark" value={selectedStatus}>
+                        size="sm" className="border-dark mt-2 fs-6" value={selectedStatus}>
                         {possibleStatusList.map(possibleStatus => 
                             <option key={possibleStatus}>
                                 {possibleStatus}
