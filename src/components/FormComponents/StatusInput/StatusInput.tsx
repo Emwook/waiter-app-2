@@ -1,0 +1,38 @@
+import { Row, Col, Form } from "react-bootstrap";
+import React from "react";
+import { possibleStatusList } from "../../../config/settings";
+import { Table } from "../../../types/tableTypes";
+
+interface StatusInputProps {
+    inDetailsComponent: boolean;
+    table: Table;
+    updateSelectedStatus: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+    selectedStatus:string;
+}
+
+const StatusInput: React.FC<StatusInputProps> = ({ 
+    table, updateSelectedStatus, 
+    inDetailsComponent, selectedStatus }) => {
+
+    return (
+        <Form.Group className="w-100">
+            <Row className="my-2">
+                <Col xs={3}><Form.Label className="fw-light fs-3">Status:</Form.Label></Col>
+                <Col xs={5}>
+                    <Form.Select
+                        onChange={updateSelectedStatus} 
+                        name="status" data-bs-theme="light" 
+                        size="sm" className="border-dark mt-2 fs-6" value={selectedStatus}>
+                        {possibleStatusList.map(possibleStatus => 
+                            <option key={possibleStatus}>
+                                {possibleStatus}
+                            </option>
+                        )}
+                    </Form.Select>
+                </Col>
+            </Row>
+        </Form.Group>
+    );
+};
+
+export default StatusInput;

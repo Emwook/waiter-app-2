@@ -100,7 +100,12 @@ export const requestTableCombined = (table: Table): ThunkAction<void, TablesStat
         try {
           updateDoc(doc.ref, {...table});
           dispatch(changeTableDetails(table));
-          dispatch(changeMessage(4) as any);
+          if(table.combinedWith.length > 0){
+            dispatch(changeMessage(4) as any);
+          }
+          else {
+            dispatch(changeMessage(16) as any);
+          }
         } catch (error) {
           console.error('Error changing document details:', error);
         }

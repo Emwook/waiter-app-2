@@ -25,8 +25,8 @@ export interface Message {
     },
     {
       messageNumber: 4,
-      messageDetails: 'Selected tables are now joined, their details are shared between each other.',
-      messageColor: 'info',
+      messageDetails: 'Selected tables joined successfully.',
+      messageColor: 'success',
     },
     {
       messageNumber: 5,
@@ -82,7 +82,12 @@ export interface Message {
         messageNumber: 15,
         messageDetails: `bill can be edited only when table is busy`,
         messageColor: 'warning',
-    }
+    },
+    {
+      messageNumber: 16,
+      messageDetails: `tables separated successfully`,
+      messageColor: 'success',
+  }
 
   ];
   

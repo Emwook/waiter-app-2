@@ -1,8 +1,9 @@
 import { FirebaseOptions, initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export const firebaseConfig: FirebaseOptions = {
-  apiKey: "AIzaaaaaaaaaatC-Vnm8bbbbbbbQ",
+  apiKey: "AIzaSyBtJw5CEctC-Vnm8nUIKjUSbOytA2T8NKQ",
   authDomain: "waiter-app-2-5201c.firebaseapp.com",
   projectId: "waiter-app-2-5201c",
   storageBucket: "waiter-app-2-5201c.appspot.com",
@@ -13,3 +14,4 @@ export const firebaseConfig: FirebaseOptions = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export const auth = getAuth(app);
