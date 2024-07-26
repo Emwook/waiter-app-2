@@ -10,6 +10,7 @@ import { Reservation } from '../types/reservationTypes';
 import reservationsReducer from './reducers/reservationsReducer';
 import messageReducer from './reducers/messageReducer';
 import userReducer from './reducers/userReducer';
+import { User } from './reducers/userReducer';
 
 export interface AppState {
   tables: Table[],
@@ -25,9 +26,9 @@ export interface AppState {
   message: {
     messageNumber: number;
   }
-  user: {
-    email: string;
-    id: string;
+  users: {
+    currentUser: User;
+    users: User[],
   }
 }
 const subreducers = {
@@ -36,7 +37,7 @@ const subreducers = {
     select: selectModeReducer,
     reservations: reservationsReducer,
     message: messageReducer,
-    user: userReducer,
+    users: userReducer,
 }
 
 const reducer = combineReducers(subreducers);
@@ -55,9 +56,9 @@ const initialState: AppState = {
   message: {
     messageNumber: 0,
   },
-  user: {
-    email: '',
-    id: '',
+  users: {
+    users: [],
+    currentUser: {name: '', password: ''}
   }
 
 }

@@ -193,7 +193,6 @@ const reservationsReducer = (
       }
       return state;
     case SET_REPEATING_RESERVATIONS:
-      console.log('dispatch in the store');
       return [...state, ...(action.payload as ReservationsState)];
     default:
       return state;
