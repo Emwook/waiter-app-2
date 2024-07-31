@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Reservation } from "../../../types/reservationTypes";
 import { formatHour } from "../../../utils/reservations/formatHour";
-import { Row, Col, Form } from "react-bootstrap";
+import { Col, Row, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import { formatDate, parseDate } from "../../../utils/reservations/dateUtils";
 import { requestChangeReservationDetails } from "../../../store/reducers/reservationsReducer";
@@ -23,23 +23,23 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     return hours + decimalMinutes;
   };
 
-  const [date, setDate] = useState<Date>(parseDate(reservation.dateStart, reservation.hour));
-  const [tableNumber, setTableNumber] = useState<number>(reservation.tableNumber);
-  const [hour, setHour] = useState<string>(formatHour(reservation.hour));
-  const [hourEnd, setHourEnd] = useState<string>(formatHour(reservation.hour + reservation.duration));
-  const [repeat, setRepeat] = useState<string>(reservation.repeat);
-  const [name, setName] =  useState<string>(reservation.name as string);
+  const [date, setDate] = useState<Date>(new Date());
+  const [tableNumber, setTableNumber] = useState<number>(0);
+  const [hour, setHour] = useState<string>('');
+  const [hourEnd, setHourEnd] = useState<string>('');
+  const [repeat, setRepeat] = useState<string>('');
+  const [name, setName] =  useState<string>('');
 
 
   useEffect(() => {
     setName('');
-    setDate(parseDate(reservation.dateStart, reservation.hour));
-    setTableNumber(reservation.tableNumber);
-    setHour(formatHour(reservation.hour));
-    setHourEnd(formatHour(reservation.hour + reservation.duration));
-    setRepeat(reservation.repeat);
-    setName(reservation.name || '');
-  }, [reservation,name ]);
+    setDate(parseDate(reservation?.dateStart, reservation?.hour));
+    setTableNumber(reservation?.tableNumber);
+    setHour(formatHour(reservation?.hour));
+    setHourEnd(formatHour(reservation?.hour + reservation?.duration));
+    setRepeat(reservation?.repeat);
+    setName(reservation?.name || '');
+  }, [reservation]);
 
   const handleDateChange = (selectedDate: Date) => {
     const { dateString } = formatDate(selectedDate);
@@ -48,7 +48,6 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
       dateStart: dateString,
     };
     setDate(selectedDate);
-    // setReservation(updatedReservation);
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
 
@@ -58,7 +57,6 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
       tableNumber: num,
     };
     setTableNumber(num);
-    // setReservation(updatedReservation);
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
 
@@ -71,7 +69,6 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
       duration: UpdatedDuration,
     };
     setHour(hourString);
-    // setReservation(updatedReservation);
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
 
@@ -83,7 +80,6 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
       duration: duration,
     };
     setHourEnd(hourString);
-    // setReservation(updatedReservation);
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
 
@@ -93,7 +89,6 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
       repeat: repeatType,
     };
     setRepeat(repeatType);
-    // setReservation(updatedReservation);
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
 
@@ -107,12 +102,12 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
     };
   return (
-    <>
-      <Row className="px-3 py-auto mb-2 mx-2 text-start">
-        <Col xs={2}><h5 className=" pr-2">Reservation ID:</h5></Col>
-        <Col xs={4}><h5 className="pr-2 text-secondary">{reservation?.id}</h5></Col>
-        <Col xs={2}><h5 className=" pr-2">Name:</h5></Col>
-        <Col xs={4}>
+    <div className="border border-gray rounded-1 px-1 mt-5 pb-3">
+      <Col className="px-3 py-auto my-3 mx-2 text-start">
+        <Row ><h6 className=" pr-2">Reservation ID:</h6></Row>
+        <Row ><h6 className="pr-2 text-secondary">{reservation?.id}</h6></Row>
+        <Row ><h6 className=" pr-2">Name:</h6></Row>
+        <Row >
             <Form.Control
                 type="text"
                 name="name"
@@ -121,11 +116,11 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
                 onChange={handleNameChange}
                 //placeholder={reservation.name ? reservation.name : 'abc'}
             />
-        </Col>
-      </Row>
-      <Row className="px-3 py-auto mb-2 mx-2 text-start">
-        <Col xs={2}><h5>Table:</h5></Col>
-         <Col xs={4}>
+        </Row>
+      </Col>
+      <Col className="px-3 py-auto mb-2 mx-2 text-start">
+        <Row ><h6>Table:</h6></Row>
+         <Row >
           <Form.Select
             onChange={e => handleTableNumberChange(Number(e.target.value))}
             name="tableNumber"
@@ -141,11 +136,11 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
               </option>
             )}
           </Form.Select>
-        </Col>
-        <Col xs={2}><h5>Time:</h5></Col>
-         <Col xs={4}>
-          <Row>
-              <Col xs={4} className="m-0 p-0">
+        </Row>
+        <Row ><h6>Time:</h6></Row>
+         <Row >
+          <Col>
+              <Row  className="m-0 p-0">
                 <Form.Control
                   type="time"
                   value={hour}
@@ -154,9 +149,9 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
                   min="12:00"
                   max="24:00"
                 />
-              </Col>
-              <Col xs={1} className="my-0 px-4"><span>-</span></Col>
-              <Col xs={4} className="m-0 p-0">
+              </Row>
+              <Row  className="my-0 px-4"><span>-</span></Row>
+              <Row  className="m-0 p-0">
                   <Form.Control
                     type="time"
                     value={hourEnd}
@@ -165,22 +160,22 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
                     min="12:00"
                     max="24:00"
                   />
-                </Col>
-          </Row>
-        </Col>
-      </Row>
-      <Row className="px-3 mx-2 text-start">
-       <Col xs={2}><h5>Date:</h5></Col>
-        <Col xs={4}>
+                </Row>
+          </Col>
+        </Row>
+      </Col>
+      <Col className="px-3 mx-2 text-start">
+       <Row ><h6>Date:</h6></Row>
+        <Row >
           <DatePicker
             selected={date}
             onChange={date => handleDateChange(date as Date)}
             className="text-center form-control"
             dateFormat="dd/MM/yyyy"
           />
-        </Col>
-        <Col xs={2}><h5>Repeating:</h5></Col>
-        <Col xs={4}>
+        </Row>
+        <Row ><h6>Repeating:</h6></Row>
+        <Row >
           <Form.Select
             onChange={e => handleRepeatTypeChange(String(e.target.value))}
             name="repeatForm"
@@ -196,9 +191,9 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
               </option>
             )}
           </Form.Select>
-        </Col>
-      </Row>
-    </>
+        </Row>
+      </Col>
+    </div>
   );
 };
 

@@ -7,7 +7,7 @@ import {
   requestReservationRemove,
 } from "../../../store/reducers/reservationsReducer";
 import { Reservation } from "../../../types/reservationTypes";
-import { Calendar, DateLocalizer, Views, momentLocalizer } from "react-big-calendar";
+import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { formatDate, parseDate } from "../../../utils/reservations/dateUtils";
@@ -18,10 +18,9 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { openFrom, openTo } from "../../../config/settings";
 import { generateReservationId } from "../../../utils/reservations/generateReservationId";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { Button, Container} from "react-bootstrap";
+import { Button} from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarToolbar from "../CalendarToolbar/CalendarToolbar";
-import SelectedResDetails from "../SelectedResDetails/SelectedResDetails";
 
 interface Resource {
   resourceId: number;
@@ -42,21 +41,20 @@ interface Event {
 
 interface ReservationOverviewProps {
   setDate: React.Dispatch<React.SetStateAction<Date>>
+  setSelectedRes:  React.Dispatch<React.SetStateAction<Reservation>>
 }
 
-const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
+const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSelectedRes}) => {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const dispatch = useDispatch();
   const DnDCalendar = withDragAndDrop(Calendar);
   const resListToday: Reservation[] = useSelector(getAllReservations);
   const [localResListToday, setLocalResListToday] = useState<Reservation[]>(resListToday);
-  const [showSelectedRes, setShowSelectedRes] = useState<Boolean>(false);
-  const [selectedRes, setSelectedRes] = useState<Reservation>(resListToday[0]);
+  setDate(startDate); // a change 
 
   useEffect(() => {
-    setDate(startDate);
     setLocalResListToday(resListToday);
-  }, [startDate, setDate, resListToday]);
+  }, [startDate, resListToday]);
 
 
   const calculateStartTime = (reservation: Reservation): Date => {
@@ -86,7 +84,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
     const startMinute = moment(start).minutes();
     const duration = moment(end).diff(moment(start), "hours", true);
     const newReservation: Reservation = {
-      id: generateReservationId(clickedDate, "false"),
+      id: generateReservationId(),
       dateStart: clickedDate,
       hour: startHour + startMinute / 60,
       duration,
@@ -96,9 +94,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
     };
     dispatch(requestReservationAdd(newReservation) as any);
     setLocalResListToday([...localResListToday, newReservation]);
-    setShowSelectedRes(false);
     setSelectedRes(newReservation);
-    setShowSelectedRes(true);
   };
 
   const handleEventResize = ({ event, start, end }: any) => {
@@ -166,8 +162,8 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
 
   const tables: Table[] = useSelector(getAllTables);
   const sortedTables = sortTables(tables, "tableNumber");
-  const tableNumbers = sortedTables.map((table) => table.tableNumber);
-  const resources: Resource[] = tableNumbers.map((num) => ({
+  const tableNumbers = sortedTables.map((table) => table?.tableNumber);
+  const resources: Resource[] = tableNumbers?.map((num) => ({
     resourceId: num,
     resourceTitle: `Table ${num}`,
   }));
@@ -194,7 +190,6 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
       name: e.name,
     }
     setSelectedRes(res);
-    setShowSelectedRes(true);
   }
 
   const handleNavigate = (action: 'prev' | 'next' | 'today' | 'date', newDate: Date): void => {
@@ -202,7 +197,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
   };
 
   return (
-    <Container className="mb-3">
+    <div className="mb-3 mx-0">
       <CalendarToolbar
         date={startDate}
         onNavigate={handleNavigate}
@@ -239,12 +234,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate}) => {
           timeslots={4}
         />
       </div>
-      <div className=" bg-none p-2 w-100 border border-gray mt-2 text-center" style={{ minHeight: '100px' }}>
-        {showSelectedRes &&
-         <SelectedResDetails reservation={selectedRes} tableNumbers={tableNumbers}/>
-        }
-      </div>
-    </Container>
+    </div>
   );
 };
 

@@ -7,10 +7,7 @@ const generateRandomLetters = (length: number): string => {
   return result;
 };
 
-export const generateReservationId = (
-  date: string,
-  repeat: string
-): string => {
+export const generateReservationId = () => {
   // Generate a random 5-letter identifier
   const randomIdentifier1 = generateRandomLetters(3);
   const randomIdentifier2 = generateRandomLetters(4);

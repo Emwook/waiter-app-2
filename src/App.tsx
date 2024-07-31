@@ -1,6 +1,4 @@
-// src/App.tsx
-
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Container } from "react-bootstrap";
@@ -11,15 +9,18 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { Table } from "./types/tableTypes";
 import { fetchAllTableData, getAllTables } from "./store/reducers/tablesReducer";
 import ReservationPage from "./components/ReservationsSection/ReservationPage/ReservationPage";
-import Login from "./components/AuthComponents/Login/Login";
-import Signup from "./components/AuthComponents/Signup/Signup";
+import { formatDate } from "./utils/reservations/dateUtils";
+import { fetchReservationsByDate } from "./store/reducers/reservationsReducer";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
+  const [date, setDate] = useState(new Date());
+  const {dateString: formattedDate} = formatDate(date);
 
   useEffect(() => {
     dispatch(fetchAllTableData() as any);
-  }, [dispatch]);
+    dispatch(fetchReservationsByDate(formattedDate) as any);
+  }, [dispatch, formattedDate]);
 
   const tables: Table[] = useSelector(getAllTables);
 
@@ -28,10 +29,8 @@ const App: React.FC = () => {
       <Menu />
       <Container>
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/" element={<TablesPage />} />
-          <Route path="/reservations" element={<ReservationPage />} />
+          <Route path="/reservations" element={<ReservationPage setDate={setDate} date={date}/>} />
           {tables.map((table: Table) => (
             <Route
               key={table.tableNumber}

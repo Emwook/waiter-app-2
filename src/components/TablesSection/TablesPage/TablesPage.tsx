@@ -65,9 +65,7 @@ const TablesPage: React.FC = () => {
                     <li>form checking in table form <i className="bi bi-check"></i></li>
                     <li>combination and decombination of tables  <i className="bi bi-check"></i></li>
                     <li>messages for wrong data insertion <i className="bi bi-check"></i></li>
-                    <li>user authentication <i className="bi bi-dash"></i></li>
-                    <li>log page of all changes done by a user<i className="bi bi-dash"></i></li>
-                    <li>advanced details for a table page with logs of changes and list of products ordered<i className="bi bi-dash"></i></li>
+                    <li>advanced details for a table page with logs of products ordered<i className="bi bi-dash"></i></li>
                 </ul>
       </Row>
     </div>

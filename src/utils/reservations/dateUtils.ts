@@ -14,7 +14,7 @@ export const formatDate = (date: Date): { dateString: string; hour: number } => 
 
 export const parseDate = (dateString: string, hour: number): Date => {
   if (!dateString) {
-    console.error("parseDate received an undefined or invalid dateString, corresponding date hour:", hour);
+    console.log("parseDate received an undefined or invalid dateString, corresponding date hour:", hour);
     return new Date();
   }
 

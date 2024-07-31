@@ -9,8 +9,6 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { Reservation } from '../types/reservationTypes';
 import reservationsReducer from './reducers/reservationsReducer';
 import messageReducer from './reducers/messageReducer';
-import userReducer from './reducers/userReducer';
-import { User } from './reducers/userReducer';
 
 export interface AppState {
   tables: Table[],
@@ -26,10 +24,6 @@ export interface AppState {
   message: {
     messageNumber: number;
   }
-  users: {
-    currentUser: User;
-    users: User[],
-  }
 }
 const subreducers = {
     tables: tablesReducer,
@@ -37,7 +31,6 @@ const subreducers = {
     select: selectModeReducer,
     reservations: reservationsReducer,
     message: messageReducer,
-    users: userReducer,
 }
 
 const reducer = combineReducers(subreducers);
@@ -55,12 +48,7 @@ const initialState: AppState = {
   },
   message: {
     messageNumber: 0,
-  },
-  users: {
-    users: [],
-    currentUser: {name: '', password: ''}
   }
-
 }
 const store = createStore(
   reducer,

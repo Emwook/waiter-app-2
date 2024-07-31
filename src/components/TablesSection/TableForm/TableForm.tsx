@@ -66,9 +66,9 @@ const TableForm: React.FC = () => {
     };
     
     return (
-        <div className={`border rounded border-dark`}> 
+        <div className={`border rounded border-secondary`}> 
             <Row className="`mt-1 pb-1 pt-3 px-3 d-flex justify-content-between align-items-center">
-                <Col className="border-bottom border-dark">
+                <Col className="border-bottom border-gray">
                     <Form onSubmit={handleSubmit}>
                         <Row>
                             <Col xs={2} className="mt-1"><span className="h2 mt-2">Table {nextTableNumber}</span></Col>

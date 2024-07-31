@@ -42,7 +42,7 @@ const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus }) =>
 
     return (
         <div className={`mt-1 pb-2 pt-4 px-3 d-flex justify-content-between align-items-center border-bottom
-            border-secondary 'bg-none'`}>
+            border-gray 'bg-none'`}>
             {(selectMode) && (
             <Form className="mx-1">
                 <Form.Check type="checkbox" onClick={handleSelect} />
