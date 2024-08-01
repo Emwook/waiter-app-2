@@ -27,8 +27,19 @@ const ReservationPage:React.FC<reservationPageProps> = ({setDate, date}) => {
     return (
         <div className="my-4">
             <Row>
-                <Col lg={2} xs={12}><RepeatingReservations chosenDate={date} setSelectedRes={setSelectedRes}/></Col>
-                <Col lg={7} xs={12}><ReservationOverview setDate={setDate} setSelectedRes={setSelectedRes}/></Col>
+                <Col lg={2} xs={12}>
+                    <RepeatingReservations 
+                        chosenDate={date} 
+                        setSelectedRes={setSelectedRes}
+                        selectedRes={selectedRes}
+                        />
+                </Col>
+                <Col lg={7} xs={12}>
+                    <ReservationOverview
+                        setDate={setDate}
+                        setSelectedRes={setSelectedRes}
+                        selectedRes={selectedRes}
+                        /></Col>
                 <Col lg={3} xs={12}><SelectedResDetails reservation={selectedRes} tableNumbers={tableNumbers}/></Col>
             </Row>            
                 <ul className="mt-4 border-top border-dark">

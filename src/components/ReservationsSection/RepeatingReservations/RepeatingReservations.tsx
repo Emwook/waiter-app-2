@@ -11,10 +11,10 @@ import { parseDate } from "../../../utils/reservations/dateUtils";
 interface RepeatingReservationProps {
     chosenDate: Date;
     setSelectedRes:  React.Dispatch<React.SetStateAction<Reservation>>
+    selectedRes: Reservation;
   }
 
-const RepeatingReservations: React.FC<RepeatingReservationProps> = ({chosenDate, setSelectedRes}) => {
-
+const RepeatingReservations: React.FC<RepeatingReservationProps> = ({chosenDate, setSelectedRes, selectedRes}) => {
     const stripTime = (date: Date): Date => {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate());
       };
@@ -30,16 +30,18 @@ const RepeatingReservations: React.FC<RepeatingReservationProps> = ({chosenDate,
       return res.repeat !== 'false' && isAfter(chosenDate, parsedDate);
     });
     
-    console.log("Filtered Reservations:", repResList);
-    
+    const selectRes = (res:Reservation) => {
+      setSelectedRes(res);
+    }    
     return (
         <div className="bg-none px-1 mt-5">
             {repResList.map(res => (
-                <Row xs={4} className="p-3 mx-2 border border-gray rounded-1 bg-none mt-1">
-                    <Col xs={12}><h6>Table {res?.tableNumber} <span className="text-primary">{res.id}</span></h6></Col>
-                    <Col xs={12}><h6>{res?.name!== '' ? 'for': '.'} {res.name} </h6></Col>
-                    <Col xs={12}><h6>from {res?.dateStart}   {res?.repeat} </h6></Col>
-                    <Col xs={12}><h6>{formatHour(res?.hour)} - {formatHour(Number(res?.hour) + res?.duration)}</h6></Col>
+                <Row xs={4} className={`px-0 py-3 mx-2 border rounded-1 bg-none mt-2 ${(selectedRes.tableNumber === res.tableNumber)?'border-dark':'border-gray'}`} onClick={() => selectRes(res)}>
+                    <Col xs={12}>Table {res?.tableNumber}</Col>
+                    <Col xs={12} className="text-primary">{res.id}</Col>
+                    <Col xs={12}>{(res.name) &&'for'} {res.name} </Col>
+                    <Col xs={12}>from {res?.dateStart}   {res?.repeat} </Col>
+                    <Col xs={12}>{formatHour(res?.hour)} - {formatHour(Number(res?.hour) + res?.duration)}</Col>
                 </Row>
             ))}
         </div>

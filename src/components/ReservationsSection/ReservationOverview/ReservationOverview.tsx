@@ -42,9 +42,10 @@ interface Event {
 interface ReservationOverviewProps {
   setDate: React.Dispatch<React.SetStateAction<Date>>
   setSelectedRes:  React.Dispatch<React.SetStateAction<Reservation>>
+  selectedRes: Reservation;
 }
 
-const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSelectedRes}) => {
+const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSelectedRes, selectedRes}) => {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const dispatch = useDispatch();
   const DnDCalendar = withDragAndDrop(Calendar);
@@ -135,24 +136,25 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
   const eventPropGetter = (event: Event) => {
     return {
       style: {
-        backgroundColor: event.isDraggable ? "#f8f9fa" : "#6c757d",
+        backgroundColor: event.isDraggable ? "#fff" : "#6c757d",
         marginLeft: "4px",
         color: "#212529",
+        border: ((event.title) === selectedRes.id) ?'1px solid #212529' : '1px solid #ced4da' ,
       },
     };
   };
 
   const EventComponent = (event: Event) => {
     return (
-      <div className="text-dark">
-        <span style={{ fontSize: '11px' }} className="my-0 text-primary">
+      <div className="text-dark d-flex justify-content-between">
+        <span style={{ fontSize: '10px' }} className="my-0 text-primary">
           {event.title}
         </span>
         <Button
           onClick={() => handleEventRemove(event)}
           className="mt-0 bg-danger py-0 px-2 border-0"
           size="sm"
-          style={{ marginLeft: '5px' }}
+          style={{ marginLeft: '5px', fontSize:'5px' }}
         >
           <i className="bi bi-trash" style={{ fontSize: '10px' }} />
         </Button>
@@ -168,11 +170,18 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
     resourceTitle: `Table ${num}`,
   }));
 
-  const { defaultDate, scrollToTime } = useMemo(
+  const { defaultDate, scrollToTime, formats } = useMemo(
     () => ({
-      defaultDate: new Date(2024, 6, 4),
+      defaultDate: new Date(2024, 1, 1),
       scrollToTime: new Date(1972, 0, 1, 8),
-    }),
+      formats: {
+        timeGutterFormat: (date: any, culture: any, localizer: any) =>
+          localizer.format(date, 'hh:mm', culture),
+        eventTimeRangeFormat: ({ start, end }: any, culture: any, localizer: any) =>
+          localizer.format(start, 'hh:mm', culture) +
+          ' - ' +
+          localizer.format(end, 'hh:mm', culture),
+    }}),
     []
   );
 
@@ -196,6 +205,9 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
     setStartDate(newDate);
   };
 
+
+  
+  
   return (
     <div className="mb-3 mx-0">
       <CalendarToolbar
@@ -210,6 +222,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
           events={events}
           onSelectEvent={handleSelectEvent}
           localizer={momentLocalizer(moment)}
+          formats={formats}
           onEventDrop={handleEventDrop}
           onEventResize={handleEventResize}
           resizable

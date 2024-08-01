@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Container, Button, Col, Row } from "react-bootstrap";
+import { Form, Container, Button, Row, Col, ListGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import StatusInput from "../../FormComponents/StatusInput/StatusInput";
 import PeopleInput from "../../FormComponents/PeopleInput/PeopleInput";
@@ -12,8 +12,10 @@ import { getAllTables, requestChangeTableDetails, requestTableCombined } from ".
 import styles from './TableDetails.module.scss';
 import MessageBox from "../../SharedLayoutComponents/MessageBox/MessageBox";
 import { changeMessage } from "../../../store/reducers/messageReducer";
-import clsx from "clsx";
 import combineTables from "../../../utils/combining/combineTables";
+import { Reservation } from "../../../types/reservationTypes";
+import { getAllReservations } from "../../../store/reducers/reservationsReducer";
+import { formatHour } from "../../../utils/reservations/formatHour";
 
 interface TableDetailsProps {
     tableNumber: number;
@@ -42,6 +44,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         }
         }
     }
+
     useEffect(() => {
         if (table) {
             setSelectedStatus(table.status);
@@ -53,6 +56,10 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         }
     }, [table]);
 
+    const repResList: Reservation[] = useSelector(getAllReservations).filter((res: Reservation) => {
+        return res.tableNumber === tableNumber;
+    });
+    console.log("repResList: ",repResList);
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const tableToUpdate: Table = {
@@ -142,50 +149,65 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
     
     return (
         <Container className="mt-4">
-            <Row className={styles.messageBox}>
+            <div className={styles.messageBox}>
                 <MessageBox/>
-            </Row>
-            <Row className="w-50">
-                <Col xs={8} className={clsx(styles.detailsBox)}>
-                {displayedCombined.length>0 
-                ? (
-                    <h2 className="py-4" >{`combined tables:  ${allCombined}`}</h2> 
-                )
-                : (
-                    <h2 className="py-4">Table {table?.tableNumber}</h2>
-                )
-                }
-                <Form onSubmit={handleSubmit}>
-                    <StatusInput
-                        selectedStatus={selectedStatus}
-                        inDetailsComponent={true}
-                        table={table}
-                        updateSelectedStatus={updateSelectedStatus}/>
-                    <PeopleInput
-                        selectedStatus={selectedStatus}
-                        table={table}  
-                        updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
-                        updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
-                        displayedNumOfPeople={displayedNumOfPeople}
-                        displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                    <BillInput
-                        selectedStatus={selectedStatus}
-                        table={table} 
-                        displayedBill={displayedBill}
-                        updateDisplayedBill={updateDisplayedBill}/>
-                    <Button variant="primary" type="submit" className="mt-2">
-                        Submit
-                    </Button>
+            </div>
+            <div className={styles.detailsBox}>
+                <div className={styles.subBox}>
                     {displayedCombined.length>0 
-                    && (
-                    <Button variant="warning" className="mx-4 mt-2 text-light" onClick={handleDecombine}>
-                        split
-                    </Button>
+                    ? (
+                        <h2 className="py-2" >{`combined tables:  ${allCombined}`}</h2> 
+                    )
+                    : (
+                        <h2 className="py-2">Table {table?.tableNumber}</h2>
                     )
                     }
-                </Form>
-                </Col>
-            </Row>
+                    <Form onSubmit={handleSubmit}>
+                        <StatusInput
+                            selectedStatus={selectedStatus}
+                            inDetailsComponent={true}
+                            table={table}
+                            updateSelectedStatus={updateSelectedStatus}/>
+                        <PeopleInput
+                            selectedStatus={selectedStatus}
+                            table={table}  
+                            updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
+                            updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
+                            displayedNumOfPeople={displayedNumOfPeople}
+                            displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
+                        <BillInput
+                            selectedStatus={selectedStatus}
+                            table={table} 
+                            displayedBill={displayedBill}
+                            updateDisplayedBill={updateDisplayedBill}/>
+                        <Button variant="primary" type="submit" className="mt-2">
+                            Submit
+                        </Button>
+                        {displayedCombined.length>0 
+                        && (
+                        <Button variant="warning" className="mx-4 mt-2 text-light" onClick={handleDecombine}>
+                            split
+                        </Button>
+                        )
+                        }
+                    </Form>
+                </div>
+                <div className={styles.subBox}>
+                    <h5>upcoming reservations</h5>
+                    <ListGroup className={styles.scrollable}>
+                        {repResList.map(res => (
+                        <ListGroup.Item key={res.id} className={`px-0 py-3 mx-2 border rounded-1 bg-white mt-2 border-gray`}>
+                            <Row className="mx-1">
+                                <Col xs={3} className="text-primary">{res.id}</Col>                       
+                                <Col xs={3}>{(res.repeat !=='false')&&'from'} {res?.dateStart} </Col>
+                                <Col xs={3}><span className="text-success">{(res.repeat !=='false') && res?.repeat} </span></Col>                       
+                                <Col xs={3}>{formatHour(res?.hour)} - {formatHour(Number(res?.hour) + res?.duration)}</Col>
+                            </Row>
+                        </ListGroup.Item>
+                    ))}
+                    </ListGroup>
+                </div>
+            </div>
         </Container>
     );
 }

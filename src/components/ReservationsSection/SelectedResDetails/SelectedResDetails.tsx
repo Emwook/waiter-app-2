@@ -102,12 +102,13 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
     };
   return (
-    <div className="border border-gray rounded-1 px-1 mt-5 pb-3">
-      <Col className="px-3 py-auto my-3 mx-2 text-start">
-        <Row ><h6 className=" pr-2">Reservation ID:</h6></Row>
-        <Row ><h6 className="pr-2 text-secondary">{reservation?.id}</h6></Row>
-        <Row ><h6 className=" pr-2">Name:</h6></Row>
-        <Row >
+    (reservation) ? (
+    <div className="border border-dark rounded-1 px-1 mt-5 pb-3">
+      <Col className="mx-3 my-3 text-start">
+        <Row className="mt-2"><h6>Reservation ID:</h6></Row>
+        <Row className="mt-2"><h5 className="text-primary lead">{reservation?.id}</h5></Row>
+        <Row className="mt-2"><h6>Name:</h6></Row>
+        <Row className="px-1">
             <Form.Control
                 type="text"
                 name="name"
@@ -117,10 +118,8 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
                 //placeholder={reservation.name ? reservation.name : 'abc'}
             />
         </Row>
-      </Col>
-      <Col className="px-3 py-auto mb-2 mx-2 text-start">
-        <Row ><h6>Table:</h6></Row>
-         <Row >
+        <Row className="mt-2"><h6>Table:</h6></Row>
+        <Row className="px-1">
           <Form.Select
             onChange={e => handleTableNumberChange(Number(e.target.value))}
             name="tableNumber"
@@ -137,36 +136,32 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
             )}
           </Form.Select>
         </Row>
-        <Row ><h6>Time:</h6></Row>
-         <Row >
-          <Col>
-              <Row  className="m-0 p-0">
-                <Form.Control
-                  type="time"
-                  value={hour}
-                  onChange={handleHourChange}
-                  className="rounded-2 text-center"
-                  min="12:00"
-                  max="24:00"
-                />
-              </Row>
-              <Row  className="my-0 px-4"><span>-</span></Row>
-              <Row  className="m-0 p-0">
-                  <Form.Control
-                    type="time"
-                    value={hourEnd}
-                    onChange={handleHourEndChange}
-                    className="rounded-2 text-center"
-                    min="12:00"
-                    max="24:00"
-                  />
-                </Row>
+        <Row className="mt-2"><h6>Time:</h6></Row>
+        <Row>
+          <Col className="px-1 m-0">
+            <Form.Control
+              type="time"
+              value={hour}
+              onChange={handleHourChange}
+              className="rounded-2 text-center"
+              min="12:00"
+              max="24:00"
+            />
           </Col>
-        </Row>
-      </Col>
-      <Col className="px-3 mx-2 text-start">
-       <Row ><h6>Date:</h6></Row>
-        <Row >
+          <Col xs={1}><span>-</span></Col>
+          <Col className="px-0 m-0">
+              <Form.Control
+                type="time"
+                value={hourEnd}
+                onChange={handleHourEndChange}
+                className="rounded-2 text-center"
+                min="12:00"
+                max="24:00"
+              />
+            </Col>
+          </Row>
+        <Row className="mt-2"><h6>Date:</h6></Row>
+        <Row className="px-1">
           <DatePicker
             selected={date}
             onChange={date => handleDateChange(date as Date)}
@@ -174,8 +169,8 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
             dateFormat="dd/MM/yyyy"
           />
         </Row>
-        <Row ><h6>Repeating:</h6></Row>
-        <Row >
+        <Row className="mt-2"><h6>Repeating:</h6></Row>
+        <Row className="px-1">
           <Form.Select
             onChange={e => handleRepeatTypeChange(String(e.target.value))}
             name="repeatForm"
@@ -194,6 +189,14 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
         </Row>
       </Col>
     </div>
+  )
+  :(
+    <div className="d-flex mt-5">
+      <div className="border border-gray rounded-1 px-1 m-auto pb-3 text-secondary w-100">
+        <h6 className="mt-4 text-center">select a reservation <br/> to edit</h6>
+      </div>
+    </div>
+  )
   );
 };
 
