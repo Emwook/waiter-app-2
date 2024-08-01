@@ -14,8 +14,11 @@ import MessageBox from "../../SharedLayoutComponents/MessageBox/MessageBox";
 import { changeMessage } from "../../../store/reducers/messageReducer";
 import combineTables from "../../../utils/combining/combineTables";
 import { Reservation } from "../../../types/reservationTypes";
-import { getAllReservations } from "../../../store/reducers/reservationsReducer";
-import { formatHour } from "../../../utils/reservations/formatHour";
+import { getAllReservations, requestReservationAdd } from "../../../store/reducers/reservationsReducer";
+import { formatHour, parseFormattedHour } from "../../../utils/reservations/formatHour";
+import moment from "moment";
+import { generateReservationId } from "../../../utils/reservations/generateReservationId";
+import { formatDate } from "../../../utils/reservations/dateUtils";
 
 interface TableDetailsProps {
     tableNumber: number;
@@ -34,7 +37,10 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
     const [displayedBill, setDisplayedBill] = useState<number>(defaultNewTable.bill);
     const [displayedCombined, setDisplayedCombined] = useState<number[]>(defaultNewTable.combinedWith);
     const allCombined: number[] = [tableNumber, ...displayedCombined];
+    const [hour, setHour] = useState<string>('');
+    const [hourEnd, setHourEnd] = useState<string>('');
     let temp: number;
+
     for (let i = 0; i < allCombined.length; i++) {
         for (let j = 0; j < allCombined.length - 1 - i; j++) {
         if (allCombined[j] > allCombined[j + 1]) {
@@ -56,10 +62,10 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         }
     }, [table]);
 
-    const repResList: Reservation[] = useSelector(getAllReservations).filter((res: Reservation) => {
+    const resList: Reservation[] = useSelector(getAllReservations).filter((res: Reservation) => {
         return res.tableNumber === tableNumber;
     });
-    console.log("repResList: ",repResList);
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const tableToUpdate: Table = {
@@ -82,6 +88,46 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         }
         navigate('/');
     };
+
+    const isBefore = (time1: string, time2: string) => {
+        const parseAndFloorTime = (time: string) => {
+            const [hoursStr, minutesStr] = time.split(':');
+            let hours = parseInt(hoursStr, 10);
+            let minutes = parseInt(minutesStr, 10);
+            minutes = Math.floor(minutes / 15) * 15;
+            return hours * 60 + minutes;
+        };
+        const totalMinutes1 = parseAndFloorTime(time1);
+        const totalMinutes2 = parseAndFloorTime(time2);
+    
+        return totalMinutes1 < totalMinutes2;
+    };
+
+    const handleReserved = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault(); 
+        const today = new Date();
+        const date = moment(today).format("DD/MM/YY");
+        const startHour = parseFormattedHour(hour);
+        const duration = parseFormattedHour(hourEnd) - startHour;
+        const newReservation: Reservation = {
+        id: generateReservationId(),
+        dateStart: date,
+        hour: startHour,
+        duration: duration,
+        tableNumber: tableNumber,
+        repeat: "false",
+        name: '',
+        };
+        dispatch(requestReservationAdd(newReservation) as any);
+        const { hour: timeNowNumber } = formatDate(today);
+        const timeNowString = formatHour(timeNowNumber);
+        if(isBefore(hour, timeNowString)){
+            setSelectedStatus('reserved' as TableStatus)
+            handleSubmit(e);
+        }
+        navigate('/')
+    };
+ 
 
     const updateSelectedStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const targetValue = (event.target.value);
@@ -141,7 +187,17 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                 setDisplayedCombined([]);
             });
         }
-    };    
+    };
+    const handleHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const hourString = event.target.value;
+        console.log('hour: ', hourString);
+        setHour(hourString);
+      };
+    
+      const handleHourEndChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const hourString = event.target.value;
+        setHourEnd(hourString);
+      };    
 
     if (loading) {
         return <Loading/>
@@ -154,6 +210,8 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             </div>
             <div className={styles.detailsBox}>
                 <div className={styles.subBox}>
+                    <Row>
+                    <Col xs={6}>
                     {displayedCombined.length>0 
                     ? (
                         <h2 className="py-2" >{`combined tables:  ${allCombined}`}</h2> 
@@ -191,11 +249,50 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                         )
                         }
                     </Form>
+                    </Col>
+                    {(selectedStatus === 'reserved')&& (
+                    <>
+                    <Col xs={5} className="mt-3">
+                    <Form onSubmit={handleReserved}>
+                        <Row className="justify-content-start text-center align-content-center mt-5">
+                            <Col xs={4} className="px-1 m-0">
+                                <Form.Control
+                                type="time"
+                                value={hour}
+                                onChange={handleHourChange}
+                                className="border-dark mt-2"
+                                min="12:00"
+                                max="24:00"
+                                size='sm'
+                                />
+                            </Col>
+                            <Col xs={2} className="d-flex"><p className="m-auto lead">-</p></Col>
+                            <Col xs={4} className="px-0 m-0">
+                                <Form.Control
+                                type="time"
+                                value={hourEnd}
+                                onChange={handleHourEndChange}
+                                className="border-dark mt-2"
+                                min="12:00"
+                                max="24:00"
+                                size='sm'
+                                />
+                            </Col>
+                            <Col xs={2} className="mt-2">
+                                <Button variant="success" size='sm' className="text-light" type="submit">
+                                    <i className="bi bi-check"/>
+                                </Button>
+                            </Col>
+                            </Row>
+                            </Form>   
+                        </Col>
+                        </>)}
+                    </Row>
                 </div>
                 <div className={styles.subBox}>
                     <h5>upcoming reservations</h5>
                     <ListGroup className={styles.scrollable}>
-                        {repResList.map(res => (
+                        {resList.map(res => (
                         <ListGroup.Item key={res.id} className={`px-0 py-3 mx-2 border rounded-1 bg-white mt-2 border-gray`}>
                             <Row className="mx-1">
                                 <Col xs={3} className="text-primary">{res.id}</Col>                       

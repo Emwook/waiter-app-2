@@ -28,8 +28,8 @@ const PeopleInput: React.FC<PeopleInputProps> = (
     return (
         <Form.Group className="w-100">
             <Row className="my-2  ">
-                <Col xs={3}><Form.Label className="fw-light fs-3 p-0">People: </Form.Label></Col>
-                <Col xs={2} onMouseEnter={handleDisabled}>
+                <Col xs={5}><Form.Label className="fw-light fs-3 p-0">People: </Form.Label></Col>
+                <Col xs={3} onMouseEnter={handleDisabled}>
                     <Form.Control 
                         type="number" 
                         size="sm" 
@@ -40,8 +40,8 @@ const PeopleInput: React.FC<PeopleInputProps> = (
                         disabled={selectedStatus !== 'busy'}
                     />
                 </Col>    
-                <Col xs={1} className="mt-2 d-flex"><span className="h-75 mt-0 mx-auto w-100 px-3 fs-5 text-center lead">/</span></Col>
-                <Col xs={2}>
+                <Col xs={1} className="mt-2 d-flex"><h2 className=" mt-0 mx-auto text-center lead">/</h2></Col>
+                <Col xs={3}>
                     <Form.Control 
                         type="number" 
                         size="sm" 

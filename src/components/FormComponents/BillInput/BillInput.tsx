@@ -22,9 +22,9 @@ const BillInput: React.FC<BillInputProps> = ({ table, displayedBill, updateDispl
     return (
         <Form.Group className="w-100">
             <Row className="my-2">
-                <Col xs={2}><Form.Label className="fw-light fs-3">Bill: </Form.Label></Col>
+                <Col xs={4}><Form.Label className="fw-light fs-3">Bill: </Form.Label></Col>
                 <Col xs={1} className="mt-2 d-flex justify-content-end"><span className="fw-light fs-4">$</span></Col>
-                <Col xs={5}  onMouseEnter={handleDisabled}>
+                <Col xs={7}  onMouseEnter={handleDisabled}>
                     <Form.Control 
                         type="number"
                         step="0.01" 
