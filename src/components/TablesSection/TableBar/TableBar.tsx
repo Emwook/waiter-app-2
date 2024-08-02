@@ -49,25 +49,28 @@ const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus }) =>
             </Form>
             )}
             <Col xs={2} ><h2>Table {Table ? Table.tableNumber : ''}</h2></Col>
-            <Col><span className={statusColor}>{Table ? Table.status : ''}</span></Col>
-            <Col><span className="text-muted">${Table ? Table.bill : ''}</span></Col>
-            <Col><span className="text-muted">{Table ? Table.numOfPeople : ''}/{Table ? Table.maxNumOfPeople : ''}</span></Col>
-            <Col>
+            <Col xs={1}><span className="text-muted">${Table ? Table.bill : ''}</span></Col>
+            <Col xs={1}><span className="text-muted">{Table ? Table.numOfPeople : ''}/{Table ? Table.maxNumOfPeople : ''}</span></Col>
+            <Col xs={2}><span className={statusColor}>{Table ? Table.status : ''}</span></Col>  
+            <Col xs={2}>
+            {Table.combinedWith.length > 0 && 
+            <>
                 <i className="bi bi-link"/>
                 <span className="text-muted px-1">
-                    {Table.combinedWith.length > 0 ? (
+                    {
                         Table.combinedWith.map((tableNumber, index) => (
                             <span key={tableNumber}>
                                 {tableNumber}
                                 {index < Table.combinedWith.length - 1 && ", "}
                             </span>
                         ))
-                    ) : (
-                        ""
-                    )}
+                    }
                 </span>
+                </>
+            }
             </Col>  
-            <Col xs={6} className="d-flex justify-content-end">
+            
+            <Col xs={4} className="d-flex justify-content-end">
                 <RemoveTable table={Table} />
                 <Button variant="primary" className="border-light text-right ml-auto">
                     <NavLink to={Table ? (`/table/${Table.tableNumber}`) : '/'} style={{ textDecoration: 'none', color: 'inherit' }}>

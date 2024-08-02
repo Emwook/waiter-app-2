@@ -35,6 +35,7 @@ interface Event {
   resourceId: number;
   repeat: string;
   name: string;
+  details: string;
   allDay: boolean;
   isDraggable: boolean;
 }
@@ -75,6 +76,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
     resourceId: reservation.tableNumber,
     repeat: reservation.repeat,
     name: reservation.name,
+    details: reservation.details,
     allDay: false,
     isDraggable: true,
   }));
@@ -92,6 +94,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
       tableNumber: resourceId,
       repeat: "false",
       name: '',
+      details: '',
     };
     dispatch(requestReservationAdd(newReservation) as any);
     setLocalResListToday([...localResListToday, newReservation]);
@@ -107,6 +110,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
       tableNumber: parseInt(event.resourceId, 10),
       repeat: "false",
       name: event.name,
+      details: event.details,
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
     setLocalResListToday(localResListToday.map(res => res.id === event.id ? updatedReservation : res));
@@ -121,7 +125,8 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
       duration: moment(end).diff(moment(start), "hours", true),
       tableNumber: parseInt(resourceId, 10),
       repeat: event.repeat,
-      name: event.name
+      name: event.name,
+      details: event.details,
     };
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
     setLocalResListToday(localResListToday.map(res => res.id === event.id ? updatedReservation : res));
@@ -197,6 +202,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
       tableNumber: e.resourceId,
       repeat: e.repeat,
       name: e.name,
+      details: e.details,
     }
     setSelectedRes(res);
   }

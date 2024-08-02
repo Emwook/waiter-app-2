@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Reservation } from "../../../types/reservationTypes";
 import { formatHour } from "../../../utils/reservations/formatHour";
@@ -29,6 +29,8 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
   const [hourEnd, setHourEnd] = useState<string>('');
   const [repeat, setRepeat] = useState<string>('');
   const [name, setName] =  useState<string>('');
+  const [details, setDetails] =  useState<string>('');
+
 
 
   useEffect(() => {
@@ -39,6 +41,7 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     setHourEnd(formatHour(reservation?.hour + reservation?.duration));
     setRepeat(reservation?.repeat);
     setName(reservation?.name || '');
+    setDetails(reservation?.details || '');
   }, [reservation]);
 
   const handleDateChange = (selectedDate: Date) => {
@@ -92,7 +95,7 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
   };
 
-  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => { //to fix the actual posting
     const newName = event.target.value as string;
     const updatedReservation: Reservation = {
       ...reservation,
@@ -101,6 +104,26 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     setName(newName);
     dispatch(requestChangeReservationDetails(updatedReservation) as any);
     };
+
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  const handleDetailsChange = (event: React.ChangeEvent<HTMLInputElement>) => { //to fix the actual posting
+
+    const textArea = textAreaRef.current;
+      if (textArea) {
+          textArea.style.height = 'auto';
+          textArea.style.height = `${textArea.scrollHeight}px`;
+      }
+        
+    const newDetails = event.target.value as string;
+    const updatedReservation: Reservation = {
+      ...reservation,
+      details: newDetails,
+    };
+    setDetails(newDetails);
+    dispatch(requestChangeReservationDetails(updatedReservation) as any);
+    };
+
   return (
     (reservation) ? (
     <div className="border border-dark rounded-1 px-1 mt-5 pb-3">
@@ -115,7 +138,6 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
                 className="border-gray text-left w-50"
                 value={name}
                 onChange={handleNameChange}
-                //placeholder={reservation.name ? reservation.name : 'abc'}
             />
         </Row>
         <Row className="mt-2"><h6>Table:</h6></Row>
@@ -187,6 +209,22 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
             )}
           </Form.Select>
         </Row>
+        {details !== '' && 
+        <>
+        <Row className="mt-2"><h6>Details:</h6></Row>
+        <Row className="px-1">
+        <Form.Control
+            as="textarea"
+            ref={textAreaRef}
+            name="name"
+            className="border-gray text-left w-100"
+            style={{ minHeight: '80px', textWrap: 'wrap', resize: 'none' }}
+            value={details}
+            onChange={handleDetailsChange}
+        />
+        </Row>
+        </>
+        }
       </Col>
     </div>
   )

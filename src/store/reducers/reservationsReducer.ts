@@ -181,10 +181,10 @@ export const getRepeatingReservations = createSelector(
     (reservations: Reservation[]) => reservations.filter(reservation => ((reservation.repeat !== 'false') && ((reservation.repeat !== 'undefined'))))
 );
 
-export const getReservationsByDate = (selectedDate: string) => {
-  const reservationsCollectionRef = collection(db, 'reservations');
-  const q = query(reservationsCollectionRef, where('dateStart', '==', selectedDate));
-  return q;
-};
+// export const getReservationsByDate = (selectedDate: string) => {
+//   const reservationsCollectionRef = collection(db, 'reservations');
+//   const q = query(reservationsCollectionRef, where('dateStart', '==', selectedDate));
+//   return q;
+// };
 
 export default reservationsReducer;

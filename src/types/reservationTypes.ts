@@ -6,4 +6,5 @@ export interface Reservation {
     repeat: string;
     tableNumber: number;
     name: string;
+    details: string;
 }

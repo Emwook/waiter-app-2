@@ -117,6 +117,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         tableNumber: tableNumber,
         repeat: "false",
         name: '',
+        details: '',
         };
         dispatch(requestReservationAdd(newReservation) as any);
         const { hour: timeNowNumber } = formatDate(today);
