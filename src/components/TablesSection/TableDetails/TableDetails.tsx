@@ -19,6 +19,7 @@ import { formatHour, parseFormattedHour } from "../../../utils/reservations/form
 import moment from "moment";
 import { generateReservationId } from "../../../utils/reservations/generateReservationId";
 import { formatDate } from "../../../utils/reservations/dateUtils";
+import ProductsForm from "../ProductsForm/ProductsForm";
 
 interface TableDetailsProps {
     tableNumber: number;
@@ -41,6 +42,9 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
     const [hourEnd, setHourEnd] = useState<string>('');
     let temp: number;
 
+    const disabledRes1 = ((selectedStatus === 'reserved')&&((hourEnd ==='')||(hour ==='')||(parseFormattedHour(hourEnd) <= parseFormattedHour(hour))))
+    const disabledRes2 = (hourEnd ==='')||(hour ==='')||(parseFormattedHour(hourEnd) <= parseFormattedHour(hour));
+
     for (let i = 0; i < allCombined.length; i++) {
         for (let j = 0; j < allCombined.length - 1 - i; j++) {
         if (allCombined[j] > allCombined[j + 1]) {
@@ -62,9 +66,13 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         }
     }, [table]);
 
-    const resList: Reservation[] = useSelector(getAllReservations).filter((res: Reservation) => {
-        return res.tableNumber === tableNumber;
-    });
+    const { dateString: today } = formatDate(new Date());
+    const resListThisTable: Reservation[] = useSelector(getAllReservations).filter((res: Reservation) => res.tableNumber === table.tableNumber);
+
+    const resList = resListThisTable.filter(res => 
+        (res.dateStart === today)
+    );
+
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -82,11 +90,13 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             const combinedWith: number[] = tables?.find(table => table.tableNumber === tableNumber)?.combinedWith ?? defaultNewTable.combinedWith ;
             combinedTablesToUpdate.push({...tableToUpdate, tableNumber: tableNumber, combinedWith: combinedWith});
         }
-        dispatch(requestChangeTableDetails(tableToUpdate) as any);
-        for(let i=0; i<table.combinedWith.length; i++){
-            dispatch(requestChangeTableDetails(combinedTablesToUpdate[i]) as any);
+       if(((selectedStatus ==='reserved') && (hour !=='') && (hourEnd !== '')) || (selectedStatus !=='reserved')) {
+            dispatch(requestChangeTableDetails(tableToUpdate) as any);
+            for(let i=0; i<table.combinedWith.length; i++){
+                dispatch(requestChangeTableDetails(combinedTablesToUpdate[i]) as any);
+            }
+            navigate('/');
         }
-        navigate('/');
     };
 
     const isBefore = (time1: string, time2: string) => {
@@ -110,14 +120,14 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         const startHour = parseFormattedHour(hour);
         const duration = parseFormattedHour(hourEnd) - startHour;
         const newReservation: Reservation = {
-        id: generateReservationId(),
-        dateStart: date,
-        hour: startHour,
-        duration: duration,
-        tableNumber: tableNumber,
-        repeat: "false",
-        name: '',
-        details: '',
+            id: generateReservationId(),
+            dateStart: date,
+            hour: startHour,
+            duration: duration,
+            tableNumber: tableNumber,
+            repeat: "false",
+            name: '',
+            details: '',
         };
         dispatch(requestReservationAdd(newReservation) as any);
         const { hour: timeNowNumber } = formatDate(today);
@@ -126,7 +136,6 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             setSelectedStatus('reserved' as TableStatus)
             handleSubmit(e);
         }
-        navigate('/')
     };
  
 
@@ -135,6 +144,10 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         setSelectedStatus(targetValue as TableStatus);
         if (targetValue !== 'busy'){
             setDisplayedBill(0);
+        }
+        if(targetValue === 'reserved'){
+            setHour('');
+            setHourEnd('');
         }
     };
 
@@ -189,16 +202,28 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             });
         }
     };
+
     const handleHourChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const hourString = event.target.value;
         console.log('hour: ', hourString);
         setHour(hourString);
       };
     
-      const handleHourEndChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleHourEndChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const hourString = event.target.value;
         setHourEnd(hourString);
-      };    
+    };    
+
+    // const handleButtonClick1 = () => {
+    //     if(disabledRes1){
+    //         dispatch(changeMessage(17) as any)
+    //     }
+    // }
+    // const handleButtonClick2 = () => {
+    //     if(disabledRes2){
+    //         dispatch(changeMessage(17) as any)
+    //     }
+    // }
 
     if (loading) {
         return <Loading/>
@@ -239,7 +264,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                             table={table} 
                             displayedBill={displayedBill}
                             updateDisplayedBill={updateDisplayedBill}/>
-                        <Button variant="primary" type="submit" className="mt-2">
+                        <Button variant="primary" type="submit" className="mt-2" disabled={disabledRes1}> {/*onMouseEnter={handleButtonClick1}*/}
                             Submit
                         </Button>
                         {displayedCombined.length>0 
@@ -280,7 +305,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                                 />
                             </Col>
                             <Col xs={2} className="mt-2">
-                                <Button variant="success" size='sm' className="text-light" type="submit">
+                                <Button variant="success" size='sm' className="text-light" type="submit" disabled={disabledRes2}> {/* onMouseEnter={handleButtonClick2}*/}
                                     <i className="bi bi-check"/>
                                 </Button>
                             </Col>
@@ -290,11 +315,12 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                         </>)}
                     </Row>
                 </div>
+                {resList.length>0 &&
                 <div className={styles.subBox}>
                     <h5>upcoming reservations</h5>
                     <ListGroup className={styles.scrollable}>
                         {resList.map(res => (
-                        <ListGroup.Item key={res.id} className={`px-0 py-3 mx-2 border rounded-1 bg-white mt-2 border-gray`}>
+                        <ListGroup.Item key={res.id} className={`px-0 py-3 mx-2 border rounded-1 bg-white mt-2 border-gray`} onClick={() => navigate('/reservations')}>
                             <Row className="mx-1">
                                 <Col xs={3} className="text-primary">{res.id}</Col>                       
                                 <Col xs={3}>{(res.repeat !=='false')&&'from'} {res?.dateStart} </Col>
@@ -305,7 +331,13 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                     ))}
                     </ListGroup>
                 </div>
+                
+                }
+                <div className={styles.subBox}>
+                    <ProductsForm/>
+                </div>
             </div>
+            
         </Container>
     );
 }

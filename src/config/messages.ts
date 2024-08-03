@@ -87,7 +87,12 @@ export interface Message {
       messageNumber: 16,
       messageDetails: `tables separated successfully`,
       messageColor: 'success',
-  }
+    },
+    {
+      messageNumber: 17,
+      messageDetails: `fill in reservation details or change status to continue`,
+      messageColor: 'success',
+    },
 
   ];
   

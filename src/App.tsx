@@ -11,6 +11,7 @@ import { fetchAllTableData, getAllTables } from "./store/reducers/tablesReducer"
 import ReservationPage from "./components/ReservationsSection/ReservationPage/ReservationPage";
 import { formatDate } from "./utils/reservations/dateUtils";
 import { fetchReservationsByDate } from "./store/reducers/reservationsReducer";
+import { fetchAllProductData } from "./store/reducers/productReducer";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const App: React.FC = () => {
   useEffect(() => {
     dispatch(fetchAllTableData() as any);
     dispatch(fetchReservationsByDate(formattedDate) as any);
+    dispatch(fetchAllProductData() as any);
   }, [dispatch, formattedDate]);
 
   const tables: Table[] = useSelector(getAllTables);
