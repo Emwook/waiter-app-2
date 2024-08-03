@@ -55,7 +55,7 @@ export interface Message {
     },
     {
         messageNumber: 10,
-        messageDetails: 'number of people can be edited only when table is busy',
+        messageDetails: 'number of people can be edited only when table is busy or currently reserved',
         messageColor: 'warning',
     },
     {
@@ -80,7 +80,7 @@ export interface Message {
     },
     {
         messageNumber: 15,
-        messageDetails: `bill can be edited only when table is busy`,
+        messageDetails: `bill can be edited only when table is busy or currently reserved`,
         messageColor: 'warning',
     },
     {

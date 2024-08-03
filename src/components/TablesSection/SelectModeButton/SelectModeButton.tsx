@@ -35,13 +35,11 @@ const SelectModeButton: React.FC = () => {
                     tableWithReservation = table;
                 }
             });
-            console.log('number of ress: ', amountOfReservations);
             if(amountOfReservations === 1){
                 const filteredReservations = resListToday.filter(res => 
                     (res.tableNumber === tableWithReservation.tableNumber) &&
                     ((res.hour + res.duration) > currentTime)
                 );
-                console.log('filtered: ',filteredReservations)
                 // Find the reservation with the smallest (res.hour - currentTime)
                 const mainReservation = filteredReservations.reduce<{ reservation: Reservation, diff: number } | null>((closest, res) => {
                     const diff = res.hour - currentTime;

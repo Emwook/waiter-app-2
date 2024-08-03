@@ -3,6 +3,7 @@ import { Form, Row, Col } from "react-bootstrap";
 import { Table } from "../../../types/tableTypes";
 import { useDispatch } from "react-redux";
 import { changeMessage } from "../../../store/reducers/messageReducer";
+import useIsTableReserved from "../../../utils/reservations/useIsTableReserved";
 
 interface BillInputProps {
     table: Table;
@@ -14,8 +15,20 @@ interface BillInputProps {
 
 const BillInput: React.FC<BillInputProps> = ({ table, displayedBill, updateDisplayedBill, selectedStatus }) => {
     const dispatch = useDispatch();
+    const isNowReserved: boolean = useIsTableReserved(table);
+
+    let toBeDisabled: boolean = false;
+    if (selectedStatus !== 'busy' && selectedStatus !== 'reserved'){
+        toBeDisabled = true;
+    }
+    else if(selectedStatus === 'reserved' && isNowReserved === false){
+        toBeDisabled = true;
+    }
+    else{
+        toBeDisabled = false;
+    }
     const handleDisabled = (e: any) => {
-        if (selectedStatus !== 'busy') {
+        if (toBeDisabled) {
             dispatch(changeMessage(15) as any);
         }
     };  
@@ -33,7 +46,7 @@ const BillInput: React.FC<BillInputProps> = ({ table, displayedBill, updateDispl
                         className="border-dark text-center mt-2 fs-6" 
                         value={displayedBill} 
                         onChange={updateDisplayedBill}
-                        disabled={selectedStatus !== 'busy'}
+                        disabled={toBeDisabled}
                     />
                 </Col>    
             </Row>
