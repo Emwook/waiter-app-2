@@ -43,10 +43,7 @@ const ReservationPage:React.FC<reservationPageProps> = ({setDate, date}) => {
                 <Col lg={3} xs={12}><SelectedResDetails reservation={selectedRes} tableNumbers={tableNumbers}/></Col>
             </Row>            
                 <ul className="mt-4 border-top border-dark">
-                    <li>repeating reservations - list type group of repeating reservations <i className="bi bi-check"></i></li>
                     <li>search - search window to look for a reservation by its id <i className="bi bi-dash"></i></li>
-                    <li>overview - calendar view with DnD for editablitiy <i className="bi bi-plus-slash-minus"></i></li>
-                    <li>detailed view - editable single reservation for variables different than time and duration <i className="bi bi-plus-slash-minus"></i></li>
                 </ul>
         </div>
     )

@@ -1,23 +1,22 @@
+.boxLeft {
+    background-color: #fff; // bootstrap light
+}
+
+.subBox {
+    background-color: #fff; // bootstrap light
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 20px;
+    width:100%;
+    margin-top:10px;
+}
 .detailsBox {
-    position: absolute;
-    left: 50%;
-    top: 18%;
-    width: max-content;
-    transform: translateX(-50%);
     border-radius: 6px;
+    width: 100%;
     background-color: #fff; // bootstrap light
     margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    .subBox {
-        background-color: #f8f9fa; // bootstrap light
-        border: 1px solid black;
-        border-radius: 4px;
-        margin: 5px 10px;
-        padding: 20px;
-        max-width: 700px;
-        
-    }
+    padding: 10px;
+    margin: 10px auto;
 }
 .scrollable{ 
     max-height: 150px;
@@ -27,4 +26,12 @@
     width: 50%;
     margin: 0 auto;
     margin-bottom: 20px;
+}
+
+.products {
+    padding-top:20px;
+    margin-top:10px;
+    background-color: #fff; // bootstrap light
+    border: 1px solid black;
+    border-radius: 4px;
 }

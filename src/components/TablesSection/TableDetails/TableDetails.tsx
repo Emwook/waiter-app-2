@@ -234,109 +234,111 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             <div className={styles.messageBox}>
                 <MessageBox/>
             </div>
-            <div className={styles.detailsBox}>
-                <div className={styles.subBox}>
-                    <Row>
-                    <Col xs={6}>
-                    {displayedCombined.length>0 
-                    ? (
-                        <h2 className="py-2" >{`combined tables:  ${allCombined}`}</h2> 
-                    )
-                    : (
-                        <h2 className="py-2">Table {table?.tableNumber}</h2>
-                    )
-                    }
-                    <Form onSubmit={handleSubmit}>
-                        <StatusInput
-                            selectedStatus={selectedStatus}
-                            inDetailsComponent={true}
-                            table={table}
-                            updateSelectedStatus={updateSelectedStatus}/>
-                        <PeopleInput
-                            selectedStatus={selectedStatus}
-                            table={table}  
-                            updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
-                            updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
-                            displayedNumOfPeople={displayedNumOfPeople}
-                            displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
-                        <BillInput
-                            selectedStatus={selectedStatus}
-                            table={table} 
-                            displayedBill={displayedBill}
-                            updateDisplayedBill={updateDisplayedBill}/>
-                        <Button variant="primary" type="submit" className="mt-2" disabled={disabledRes1}> {/*onMouseEnter={handleButtonClick1}*/}
-                            Submit
-                        </Button>
+            <Row className={styles.boxLeft}>
+                <Col xs={6}>
+                    <Row className={styles.subBox}>
+                        <Col xs={6}>
                         {displayedCombined.length>0 
-                        && (
-                        <Button variant="warning" className="mx-4 mt-2 text-light" onClick={handleDecombine}>
-                            split
-                        </Button>
+                        ? (
+                            <h2 className="py-2" >{`combined tables:  ${allCombined}`}</h2> 
+                        )
+                        : (
+                            <h2 className="py-2">Table {table?.tableNumber}</h2>
                         )
                         }
-                    </Form>
-                    </Col>
-                    {(selectedStatus === 'reserved')&& (
-                    <>
-                    <Col xs={5} className="mt-3">
-                    <Form onSubmit={handleReserved}>
-                        <Row className="justify-content-start text-center align-content-center mt-5">
-                            <Col xs={4} className="px-1 m-0">
-                                <Form.Control
-                                type="time"
-                                value={hour}
-                                onChange={handleHourChange}
-                                className="border-dark mt-2"
-                                min="12:00"
-                                max="24:00"
-                                size='sm'
-                                />
-                            </Col>
-                            <Col xs={2} className="d-flex"><p className="m-auto lead">-</p></Col>
-                            <Col xs={4} className="px-0 m-0">
-                                <Form.Control
-                                type="time"
-                                value={hourEnd}
-                                onChange={handleHourEndChange}
-                                className="border-dark mt-2"
-                                min="12:00"
-                                max="24:00"
-                                size='sm'
-                                />
-                            </Col>
-                            <Col xs={2} className="mt-2">
-                                <Button variant="success" size='sm' className="text-light" type="submit" disabled={disabledRes2}> {/* onMouseEnter={handleButtonClick2}*/}
-                                    <i className="bi bi-check"/>
-                                </Button>
-                            </Col>
-                            </Row>
-                            </Form>   
+                        <Form onSubmit={handleSubmit}>
+                            <StatusInput
+                                selectedStatus={selectedStatus}
+                                inDetailsComponent={true}
+                                table={table}
+                                updateSelectedStatus={updateSelectedStatus}/>
+                            <PeopleInput
+                                selectedStatus={selectedStatus}
+                                table={table}  
+                                updateDisplayedNumOfPeople={updateDisplayedNumOfPeople}
+                                updateDisplayedMaxNumOfPeople={updateDisplayedMaxNumOfPeople}
+                                displayedNumOfPeople={displayedNumOfPeople}
+                                displayedMaxNumOfPeople={displayedMaxNumOfPeople}/>
+                            <BillInput
+                                selectedStatus={selectedStatus}
+                                table={table} 
+                                displayedBill={displayedBill}
+                                updateDisplayedBill={updateDisplayedBill}/>
+                            <Button variant="primary" type="submit" className="mt-2" disabled={disabledRes1}> {/*onMouseEnter={handleButtonClick1}*/}
+                                Submit
+                            </Button>
+                            {displayedCombined.length>0 
+                            && (
+                            <Button variant="warning" className="mx-4 mt-2 text-light" onClick={handleDecombine}>
+                                split
+                            </Button>
+                            )
+                            }
+                        </Form>
                         </Col>
+                        {(selectedStatus === 'reserved')&& (
+                        <>
+                        <Col xs={5} className="mt-3">
+                        <Form onSubmit={handleReserved}>
+                            <Row className="justify-content-start text-center align-content-center mt-5">
+                                <Col xs={4} className="px-1 m-0">
+                                    <Form.Control
+                                    type="time"
+                                    value={hour}
+                                    onChange={handleHourChange}
+                                    className="border-dark mt-2"
+                                    min="12:00"
+                                    max="24:00"
+                                    size='sm'
+                                    />
+                                </Col>
+                                <Col xs={2} className="d-flex"><p className="m-auto lead">-</p></Col>
+                                <Col xs={4} className="px-0 m-0">
+                                    <Form.Control
+                                    type="time"
+                                    value={hourEnd}
+                                    onChange={handleHourEndChange}
+                                    className="border-dark mt-2"
+                                    min="12:00"
+                                    max="24:00"
+                                    size='sm'
+                                    />
+                                </Col>
+                                <Col xs={2} className="mt-2">
+                                    <Button variant="success" size='sm' className="text-light" type="submit" disabled={disabledRes2}> {/* onMouseEnter={handleButtonClick2}*/}
+                                        <i className="bi bi-check"/>
+                                    </Button>
+                                </Col>
+                                </Row>
+                                </Form>   
+                            </Col>
                         </>)}
                     </Row>
-                </div>
-                {resList.length>0 &&
-                <div className={styles.subBox}>
-                    <h5>upcoming reservations</h5>
-                    <ListGroup className={styles.scrollable}>
-                        {resList.map(res => (
-                        <ListGroup.Item key={res.id} className={`px-0 py-3 mx-2 border rounded-1 bg-white mt-2 border-gray`} onClick={() => navigate('/reservations')}>
-                            <Row className="mx-1">
-                                <Col xs={3} className="text-primary">{res.id}</Col>                       
-                                <Col xs={3}>{(res.repeat !=='false')&&'from'} {res?.dateStart} </Col>
-                                <Col xs={3}><span className="text-success">{(res.repeat !=='false') && res?.repeat} </span></Col>                       
-                                <Col xs={3}>{formatHour(res?.hour)} - {formatHour(Number(res?.hour) + res?.duration)}</Col>
-                            </Row>
-                        </ListGroup.Item>
-                    ))}
-                    </ListGroup>
-                </div>
-                
-                }
-                <div className={styles.subBox}>
+                    <Row className={styles.subBox}>
+                    {resList.length>0 &&
+                        <Col xs={6} >
+                            <h5>upcoming reservations</h5>
+                            <ListGroup className={styles.scrollable}>
+                                {resList.map(res => (
+                                <ListGroup.Item key={res.id} className={`px-0 py-3 mx-2 border rounded-1 bg-white mt-2 border-gray`} onClick={() => navigate('/reservations')}>
+                                    <Row className="mx-1">
+                                        <Col xs={3} className="text-primary">{res.id}</Col>                       
+                                        <Col xs={3}>{(res.repeat !=='false')&&'from'} {res?.dateStart} </Col>
+                                        <Col xs={3}><span className="text-success">{(res.repeat !=='false') && res?.repeat} </span></Col>                       
+                                        <Col xs={3}>{formatHour(res?.hour)} - {formatHour(Number(res?.hour) + res?.duration)}</Col>
+                                    </Row>
+                                </ListGroup.Item>
+                            ))}
+                            </ListGroup>
+                        </Col>
+                        
+                        }
+                    </Row>
+                </Col>
+                <Col xs={6} className={styles.products}>
                     <ProductsForm/>
-                </div>
-            </div>
+                </Col>
+            </Row>
             
         </Container>
     );

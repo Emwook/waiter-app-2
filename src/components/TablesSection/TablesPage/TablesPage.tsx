@@ -95,14 +95,6 @@ const TablesPage: React.FC = () => {
         }
       </div>
       <TableForm />
-      <Row>
-      <ul className="mt-4 border-top border-dark">
-                    <li>form checking in table form <i className="bi bi-check"></i></li>
-                    <li>combination and decombination of tables  <i className="bi bi-check"></i></li>
-                    <li>messages for wrong data insertion <i className="bi bi-check"></i></li>
-                    <li>advanced details for a table page with logs of products ordered<i className="bi bi-dash"></i></li>
-                </ul>
-      </Row>
     </div>
   );
 };
