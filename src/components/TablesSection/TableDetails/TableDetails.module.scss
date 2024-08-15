@@ -16,8 +16,8 @@
     background-color: #fff; // bootstrap light
     margin-top: 20px;
     padding: 10px;
-    margin: 10px auto;
 }
+
 .scrollable{ 
     max-height: 150px;
     overflow-y: auto;
@@ -29,9 +29,11 @@
 }
 
 .products {
+    margin-left:20px; 
     padding-top:20px;
     margin-top:10px;
     background-color: #fff; // bootstrap light
     border: 1px solid black;
     border-radius: 4px;
 }
+

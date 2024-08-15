@@ -11,12 +11,15 @@ import reservationsReducer from './reducers/reservationsReducer';
 import messageReducer from './reducers/messageReducer';
 import { Product } from '../types/productTypes';
 import productReducer from './reducers/productReducer';
+import orderReducer from './reducers/orderReducer';
+import { Order } from '../types/cartItemTypes';
 
 export interface AppState {
   //firestore connected
   tables: Table[],
   reservations: Reservation[],
   products: Product[],
+  order: Order,
   //local
   methods: {
     groupingMethod: GroupingMethod;
@@ -38,6 +41,7 @@ const subreducers = {
     reservations: reservationsReducer,
     message: messageReducer,
     products: productReducer,
+    order: orderReducer
 }
 
 const reducer = combineReducers(subreducers);
@@ -57,6 +61,10 @@ const initialState: AppState = {
     messageNumber: 0,
   },
   products: [],
+  order: {
+    items: [],
+    tableNumber: 0,
+  }
 }
 const store = createStore(
   reducer,

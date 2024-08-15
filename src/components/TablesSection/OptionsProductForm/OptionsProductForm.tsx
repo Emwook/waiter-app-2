@@ -4,9 +4,10 @@ import { Col, Row } from 'react-bootstrap';
 
 interface OptionsProductFormProps {
     product: Product;
+    disabled: boolean;
 }
 
-const OptionsProductForm: React.FC<OptionsProductFormProps> = ({ product }) => {
+const OptionsProductForm: React.FC<OptionsProductFormProps> = ({ product, disabled }) => {
 
     // Function to create checkbox elements
     const createCheckbox = (option: Option): JSX.Element => (
@@ -49,7 +50,7 @@ const OptionsProductForm: React.FC<OptionsProductFormProps> = ({ product }) => {
             {product.params !== undefined && Object.keys(product.params).map(key => {
                 const section = product.params![key];
                 return (
-                    <fieldset key={key}>
+                    <fieldset key={key} disabled={disabled}>
                         <legend  className='fs-5'>{section.label}</legend>
                         <Row className='small'>
                         {section.type === 'select' ? <select className='mx-3 mb-3 p-0 w-50 border border-gray rounded-1'>

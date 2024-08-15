@@ -9,9 +9,10 @@ interface ProductBarProps {
   isOpen: boolean;
   eventKey: string;
   onSelect: (key: string | null) => void;
+  disabled: boolean;
 }
 
-const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSelect }) => {
+const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSelect, disabled }) => {
   const [quantity, setQuantity] = useState(1);
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,12 +36,13 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
         </Accordion.Header>
         <Accordion.Body className={styles.body}>
           <Row>
-            <OptionsProductForm product={product} />
+            <OptionsProductForm product={product} disabled={disabled}/>
           </Row>
           <Row className='mt-3 mx-1'>
             <Col xs={3}>
               <Form.Group controlId={`quantity-${product.id}`} className="mb-3">
                 <Form.Control
+                  disabled={disabled}
                   type="number"
                   value={quantity}
                   onChange={handleQuantityChange}
@@ -49,7 +51,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
               </Form.Group>
             </Col>
             <Col xs={2}>
-              <Button variant="primary" onClick={handleAddClick}>
+              <Button variant="primary" onClick={handleAddClick}  disabled={disabled}>
                 <i className='bi bi-plus'/>
               </Button>
             </Col>
@@ -59,11 +61,12 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
     </div>
     ):(
       <div className='border border-gray rounded-1 p-0 mb-3 bg-body-none'>
-        <Row className='align-items-center'>
-          <Col className='mx-4'>{product.name}</Col>
+        <Row className='align-items-center justify-content-between'>
+          <Col xs={5} className='mx-3'>{product.name}</Col>
           <Col xs={3}>
               <Form.Group controlId={`quantity-${product.id}`} className="mb-3">
                 <Form.Control
+                  disabled={disabled}
                   type="number"
                   value={quantity}
                   onChange={handleQuantityChange}
@@ -72,8 +75,8 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
                 />
               </Form.Group>
             </Col>
-            <Col xs={2}>
-              <Button variant="primary" onClick={handleAddClick}>
+            <Col>
+              <Button variant="primary" onClick={handleAddClick} disabled={disabled}>
                 <i className='bi bi-plus'/>
               </Button>
             </Col>

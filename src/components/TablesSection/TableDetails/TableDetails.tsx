@@ -20,6 +20,7 @@ import moment from "moment";
 import { generateReservationId } from "../../../utils/reservations/generateReservationId";
 import { formatDate } from "../../../utils/reservations/dateUtils";
 import ProductsForm from "../ProductsForm/ProductsForm";
+import TableOrder from "../TableOrder/TableOrder";
 
 interface TableDetailsProps {
     tableNumber: number;
@@ -40,6 +41,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
     const allCombined: number[] = [tableNumber, ...displayedCombined];
     const [hour, setHour] = useState<string>('');
     const [hourEnd, setHourEnd] = useState<string>('');
+    const [disabled, setDisabled] = useState<boolean>(table.status !== 'busy');
     let temp: number;
 
     const disabledRes1 = ((selectedStatus === 'reserved')&&((hourEnd ==='')||(hour ==='')||(parseFormattedHour(hourEnd) <= parseFormattedHour(hour))))
@@ -65,6 +67,15 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             setLoading(false);
         }
     }, [table]);
+
+    useEffect(() => {
+        if (selectedStatus !== 'busy') {
+            setDisabled(true);
+        }
+        else {
+            setDisabled(false);
+        }
+    }, [selectedStatus]);
 
     const { dateString: today } = formatDate(new Date());
     const resListThisTable: Reservation[] = useSelector(getAllReservations).filter((res: Reservation) => res.tableNumber === table.tableNumber);
@@ -235,9 +246,9 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                 <MessageBox/>
             </div>
             <Row className={styles.boxLeft}>
-                <Col xs={6}>
+                <Col xs={4}>
                     <Row className={styles.subBox}>
-                        <Col xs={6}>
+                        <Col xs={12}>
                         {displayedCombined.length>0 
                         ? (
                             <h2 className="py-2" >{`combined tables:  ${allCombined}`}</h2> 
@@ -278,7 +289,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                         </Col>
                         {(selectedStatus === 'reserved')&& (
                         <>
-                        <Col xs={5} className="mt-3">
+                        <Col xs={12} className="mt-3">
                         <Form onSubmit={handleReserved}>
                             <Row className="justify-content-start text-center align-content-center mt-5">
                                 <Col xs={4} className="px-1 m-0">
@@ -316,16 +327,16 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                     </Row>
                     <Row className={styles.subBox}>
                     {resList.length>0 &&
-                        <Col xs={6} >
+                        <Col xs={12} >
                             <h5>upcoming reservations</h5>
                             <ListGroup className={styles.scrollable}>
                                 {resList.map(res => (
                                 <ListGroup.Item key={res.id} className={`px-0 py-3 mx-2 border rounded-1 bg-white mt-2 border-gray`} onClick={() => navigate('/reservations')}>
                                     <Row className="mx-1">
-                                        <Col xs={3} className="text-primary">{res.id}</Col>                       
-                                        <Col xs={3}>{(res.repeat !=='false')&&'from'} {res?.dateStart} </Col>
-                                        <Col xs={3}><span className="text-success">{(res.repeat !=='false') && res?.repeat} </span></Col>                       
-                                        <Col xs={3}>{formatHour(res?.hour)} - {formatHour(Number(res?.hour) + res?.duration)}</Col>
+                                        <Col xs={4} className="text-primary">{res.id}</Col>                       
+                                        <Col xs={4}>{(res.repeat !=='false')&&'from'} {res?.dateStart} </Col>
+                                        {/* <Col xs={3}><span className="text-success">{(res.repeat !=='false') && res?.repeat} </span></Col>                        */}
+                                        <Col xs={4}>{formatHour(res?.hour)} - {formatHour(Number(res?.hour) + res?.duration)}</Col>
                                     </Row>
                                 </ListGroup.Item>
                             ))}
@@ -335,9 +346,13 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                         }
                     </Row>
                 </Col>
-                <Col xs={6} className={styles.products}>
-                    <ProductsForm/>
+                <Col xs={4} className={styles.products}>
+                    <TableOrder disabled={disabled} tableNumber={table.tableNumber}/>
                 </Col>
+                <Col className={styles.products}>
+                    <ProductsForm disabled={disabled} />
+                </Col>
+                
             </Row>
             
         </Container>
