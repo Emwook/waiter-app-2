@@ -1,7 +1,7 @@
 import { ThunkAction } from 'redux-thunk';
 import { AppState } from '../store';
 import { Dispatch } from 'redux';
-import { collection, getDocs, query, updateDoc, where} from 'firebase/firestore';
+import { addDoc, collection, doc, getDocs, query, updateDoc, where} from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { Order, OrderItem } from '../../types/cartItemTypes';
 
@@ -25,7 +25,7 @@ export const SET_ORDER = createActionName('SET_ORDER');
 
 export const setOrder = (payload: OrderState): SetOrderAction => ({ type: SET_ORDER, payload });
 
-export const fetchOrderData = (tableNumber:number): ThunkAction<void, AppState, unknown, OrderActionTypes> => {
+export const requestFetchOrderData = (tableNumber:number): ThunkAction<void, AppState, unknown, OrderActionTypes> => {
   return async (dispatch: Dispatch<OrderActionTypes>) => {
     const orderCollectionRef = collection(db, "orders");
     const q = query(orderCollectionRef, where('tableNumber', '==', tableNumber));
@@ -41,23 +41,37 @@ export const fetchOrderData = (tableNumber:number): ThunkAction<void, AppState, 
   };
 };
 
-export const requestChangeOrderDetails = (order: Order): ThunkAction<void, OrderState, unknown, OrderActionTypes> => {
+export const requestChangeOrder = (order: Order): ThunkAction<void, OrderState, unknown, OrderActionTypes> => {
   return async (dispatch: Dispatch<OrderActionTypes>) => {
     const ordersCollectionRef = collection(db, 'orders');
     const q = query(ordersCollectionRef, where('tableNumber', '==', order.tableNumber));
-    try {
-      const querySnapshot = await getDocs(q);
-      querySnapshot.forEach(async (doc) => {
+      try {
+        const querySnapshot = await getDocs(q);
+        if(!querySnapshot.empty){
+          console.log('got here: ', querySnapshot);
+          querySnapshot.forEach(async (doc) => {
+          try {
+            updateDoc(doc.ref, { ...order });
+            dispatch(setOrder(order));
+          } 
+          catch (error) {
+            console.error('Error changing order details:', error);
+            console.log(order);
+          }
+        });
+      }
+      else {
         try {
-          updateDoc(doc.ref, { ...order });
+          await addDoc(ordersCollectionRef, order);
           dispatch(setOrder(order));
+          //dispatch(changeMessage(1) as any);
         } catch (error) {
-          console.error('Error changing order details:', error);
-          console.log(order);
+          console.error("Error adding order:", error);
         }
-      });
-    } catch (error) {
-      console.error('Error querying orders:', error);
+      }
+    }
+    catch (error) {
+        console.error('Error querying orders:', error);
     }
   };
 };

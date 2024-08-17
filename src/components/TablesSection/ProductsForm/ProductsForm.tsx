@@ -7,9 +7,10 @@ import { Accordion } from 'react-bootstrap';
 
 interface ProductsFormProps {
   disabled: boolean;
+  tableNumber: number;
 }
 
-const ProductsForm: React.FC<ProductsFormProps> = ({disabled}) => {
+const ProductsForm: React.FC<ProductsFormProps> = ({disabled, tableNumber}) => {
   const products: Product[] = useSelector(getAllProducts);
   const [activeKey, setActiveKey] = useState<string | null>(null);
 
@@ -29,6 +30,7 @@ const ProductsForm: React.FC<ProductsFormProps> = ({disabled}) => {
             eventKey={product.id}
             onSelect={handleSelect}
             disabled={disabled}
+            tableNumber={tableNumber}
           />
         ))}
       </Accordion>

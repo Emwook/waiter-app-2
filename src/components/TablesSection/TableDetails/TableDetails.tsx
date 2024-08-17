@@ -21,6 +21,7 @@ import { generateReservationId } from "../../../utils/reservations/generateReser
 import { formatDate } from "../../../utils/reservations/dateUtils";
 import ProductsForm from "../ProductsForm/ProductsForm";
 import TableOrder from "../TableOrder/TableOrder";
+import { requestFetchOrderData } from "../../../store/reducers/orderReducer";
 
 interface TableDetailsProps {
     tableNumber: number;
@@ -42,7 +43,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
     const [hour, setHour] = useState<string>('');
     const [hourEnd, setHourEnd] = useState<string>('');
     const [disabled, setDisabled] = useState<boolean>(table.status !== 'busy');
-    let temp: number;
+    let temp: number; 
 
     const disabledRes1 = ((selectedStatus === 'reserved')&&((hourEnd ==='')||(hour ==='')||(parseFormattedHour(hourEnd) <= parseFormattedHour(hour))))
     const disabledRes2 = (hourEnd ==='')||(hour ==='')||(parseFormattedHour(hourEnd) <= parseFormattedHour(hour));
@@ -66,7 +67,12 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             setDisplayedCombined(table.combinedWith);
             setLoading(false);
         }
-    }, [table]);
+        // const newOrder: Order = {
+        //     items: [],
+        //     tableNumber: tableNumber,
+        // }
+        dispatch(requestFetchOrderData(tableNumber) as any)
+    }, [table, tableNumber, dispatch]);
 
     useEffect(() => {
         if (selectedStatus !== 'busy') {
@@ -350,7 +356,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                     <TableOrder disabled={disabled} tableNumber={table.tableNumber}/>
                 </Col>
                 <Col className={styles.products}>
-                    <ProductsForm disabled={disabled} />
+                    <ProductsForm disabled={disabled} tableNumber={table.tableNumber}/>
                 </Col>
                 
             </Row>

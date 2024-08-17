@@ -3,6 +3,9 @@ import { Accordion, Button, Form, Col, Row } from 'react-bootstrap';
 import { Product } from '../../../types/productTypes';
 import OptionsProductForm from '../OptionsProductForm/OptionsProductForm';
 import styles from './ProductBar.module.scss';
+import { useDispatch } from 'react-redux';
+import { requestChangeOrder } from '../../../store/reducers/orderReducer';
+import { Order } from '../../../types/cartItemTypes';
 
 interface ProductBarProps {
   product: Product;
@@ -10,18 +13,32 @@ interface ProductBarProps {
   eventKey: string;
   onSelect: (key: string | null) => void;
   disabled: boolean;
+  tableNumber: number;
 }
 
-const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSelect, disabled }) => {
+const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSelect, disabled, tableNumber }) => {
   const [quantity, setQuantity] = useState(1);
+  const dispatch = useDispatch();
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(Number(event.target.value));
   };
 
   const handleAddClick = () => {
-    // Handle the logic for adding the product with the specified quantity
-    console.log(`Added ${quantity} of ${product.name} to cart.`);
+    const newOrderItem:Order = {
+      tableNumber: tableNumber,
+      items: [
+        {
+          id: product.id,
+          name: product.name,
+          priceSingle: product.price,
+          amount: quantity,
+          //chosenParams?: ChosenParams;
+        }
+      ]
+    }
+    console.log(newOrderItem);
+    dispatch(requestChangeOrder(newOrderItem) as any);
   };
 
   return (
