@@ -13,9 +13,11 @@ export interface ChosenParams {
 
 export interface OrderItem {
     id: string;
+    code: string;
     name: string;
     priceSingle: number;
     amount: number;
+    status: string;
     chosenParams?: ChosenParams;
 }
 

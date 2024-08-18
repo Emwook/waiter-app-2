@@ -6,6 +6,7 @@ import styles from './ProductBar.module.scss';
 import { useDispatch } from 'react-redux';
 import { requestChangeOrder } from '../../../store/reducers/orderReducer';
 import { Order } from '../../../types/cartItemTypes';
+import { generateReservationId } from '../../../utils/reservations/generateReservationId';
 
 interface ProductBarProps {
   product: Product;
@@ -33,7 +34,9 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
           name: product.name,
           priceSingle: product.price,
           amount: quantity,
-          //chosenParams?: ChosenParams;
+          status: 'ordered',
+          code: generateReservationId(),
+          //schosenParams: ChosenParams;
         }
       ]
     }

@@ -1,7 +1,7 @@
 import { ThunkAction } from 'redux-thunk';
 import { AppState } from '../store';
 import { Dispatch } from 'redux';
-import { addDoc, collection, doc, getDocs, query, updateDoc, where} from 'firebase/firestore';
+import { addDoc, arrayUnion, collection, doc, getDocs, query, updateDoc, where} from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { Order, OrderItem } from '../../types/cartItemTypes';
 
@@ -41,37 +41,50 @@ export const requestFetchOrderData = (tableNumber:number): ThunkAction<void, App
   };
 };
 
-export const requestChangeOrder = (order: Order): ThunkAction<void, OrderState, unknown, OrderActionTypes> => {
+export const requestChangeOrder = (
+  order: Order
+): ThunkAction<void, OrderState, unknown, OrderActionTypes> => {
   return async (dispatch: Dispatch<OrderActionTypes>) => {
     const ordersCollectionRef = collection(db, 'orders');
     const q = query(ordersCollectionRef, where('tableNumber', '==', order.tableNumber));
-      try {
-        const querySnapshot = await getDocs(q);
-        if(!querySnapshot.empty){
-          console.log('got here: ', querySnapshot);
-          querySnapshot.forEach(async (doc) => {
+
+    try {
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        console.log('Document found:', querySnapshot);
+
+        querySnapshot.forEach(async (doc) => {
           try {
-            updateDoc(doc.ref, { ...order });
-            dispatch(setOrder(order));
-          } 
-          catch (error) {
-            console.error('Error changing order details:', error);
-            console.log(order);
+            const existingData = doc.data();
+            const existingItems: OrderItem[] = existingData.items || [];
+            const tableNumber: number = existingData.tableNumber;
+
+            // Merge the new items with the existing items
+            const updatedItems = [...existingItems, ...order.items];
+
+            // Update the document with the merged items array
+            await updateDoc(doc.ref, {
+              tableNumber: tableNumber,
+              items: updatedItems,
+            });
+
+            dispatch(setOrder({ tableNumber, items: updatedItems }));
+          } catch (error) {
+            console.error('Error updating order details:', error);
           }
         });
-      }
-      else {
+      } else {
         try {
+          // If no document exists, add a new one
           await addDoc(ordersCollectionRef, order);
           dispatch(setOrder(order));
-          //dispatch(changeMessage(1) as any);
         } catch (error) {
-          console.error("Error adding order:", error);
+          console.error("Error adding new order:", error);
         }
       }
-    }
-    catch (error) {
-        console.error('Error querying orders:', error);
+    } catch (error) {
+      console.error('Error querying orders:', error);
     }
   };
 };
