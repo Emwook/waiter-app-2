@@ -4,9 +4,10 @@ import { Product } from '../../../types/productTypes';
 import OptionsProductForm from '../OptionsProductForm/OptionsProductForm';
 import styles from './ProductBar.module.scss';
 import { useDispatch } from 'react-redux';
-import { requestChangeOrder } from '../../../store/reducers/orderReducer';
+import { getOrder, requestChangeOrder } from '../../../store/reducers/orderReducer';
 import { Order } from '../../../types/cartItemTypes';
 import { generateReservationId } from '../../../utils/reservations/generateReservationId';
+import { useSelector } from 'react-redux';
 
 interface ProductBarProps {
   product: Product;
@@ -20,6 +21,7 @@ interface ProductBarProps {
 const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSelect, disabled, tableNumber }) => {
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
+  const order:Order = useSelector(getOrder as any);
 
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(Number(event.target.value));
@@ -29,6 +31,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
     const newOrderItem:Order = {
       tableNumber: tableNumber,
       items: [
+        ...order.items,
         {
           id: product.id,
           name: product.name,
@@ -36,7 +39,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
           amount: quantity,
           status: 'ordered',
           code: generateReservationId(),
-          //schosenParams: ChosenParams;
+          //chosenParams: ChosenParams;
         }
       ]
     }

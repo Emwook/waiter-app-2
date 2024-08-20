@@ -52,24 +52,50 @@ export const requestChangeOrder = (
       const querySnapshot = await getDocs(q);
 
       if (!querySnapshot.empty) {
-        console.log('Document found:', querySnapshot);
-
         querySnapshot.forEach(async (doc) => {
           try {
             const existingData = doc.data();
             const existingItems: OrderItem[] = existingData.items || [];
             const tableNumber: number = existingData.tableNumber;
 
-            // Merge the new items with the existing items
-            const updatedItems = [...existingItems, ...order.items];
+            // Check if the new order is smaller
+            const newOrderSize = order.items.length;
+            const existingOrderSize = existingItems.length;
 
-            // Update the document with the merged items array
-            await updateDoc(doc.ref, {
-              tableNumber: tableNumber,
-              items: updatedItems,
-            });
+            if (newOrderSize < existingOrderSize) {
+              // If the new order has fewer items, replace the entire order
+              await updateDoc(doc.ref, {
+                tableNumber: tableNumber,
+                items: order.items,
+              });
 
-            dispatch(setOrder({ tableNumber, items: updatedItems }));
+              // Dispatch the new order directly
+              dispatch(setOrder({ tableNumber, items: order.items }));
+            } else {
+              // Create a map of existing items by their code for easy lookup
+              const itemMap = new Map<string, OrderItem>(
+                existingItems.map(item => [item.code, item])
+              );
+
+              // Replace or add new items from the order argument
+              order.items.forEach(newItem => {
+                itemMap.set(newItem.code, newItem);
+              });
+
+              // Convert the map back to an array
+              const updatedItems = Array.from(itemMap.values());
+
+              // Update the document with the merged items array
+              await updateDoc(doc.ref, {
+                tableNumber: tableNumber,
+                items: updatedItems,
+              });
+
+              // Update the passed order object with the merged items
+              order.items = updatedItems;
+
+              dispatch(setOrder({ tableNumber, items: updatedItems }));
+            }
           } catch (error) {
             console.error('Error updating order details:', error);
           }
@@ -88,6 +114,7 @@ export const requestChangeOrder = (
     }
   };
 };
+
 
 const orderReducer = (
   state = initialState,

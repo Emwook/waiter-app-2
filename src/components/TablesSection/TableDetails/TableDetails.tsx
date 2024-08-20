@@ -21,7 +21,6 @@ import { generateReservationId } from "../../../utils/reservations/generateReser
 import { formatDate } from "../../../utils/reservations/dateUtils";
 import ProductsForm from "../ProductsForm/ProductsForm";
 import TableOrder from "../TableOrder/TableOrder";
-import { requestFetchOrderData } from "../../../store/reducers/orderReducer";
 
 interface TableDetailsProps {
     tableNumber: number;
@@ -67,11 +66,6 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
             setDisplayedCombined(table.combinedWith);
             setLoading(false);
         }
-        // const newOrder: Order = {
-        //     items: [],
-        //     tableNumber: tableNumber,
-        // }
-        dispatch(requestFetchOrderData(tableNumber) as any)
     }, [table, tableNumber, dispatch]);
 
     useEffect(() => {
