@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Accordion, Button, Form, Col, Row } from 'react-bootstrap';
 import { Product } from '../../../types/productTypes';
 import OptionsProductForm from '../OptionsProductForm/OptionsProductForm';
 import styles from './ProductBar.module.scss';
 import { useDispatch } from 'react-redux';
 import { getOrder, requestChangeOrder } from '../../../store/reducers/orderReducer';
-import { Order } from '../../../types/cartItemTypes';
+import { ChosenParams, Order } from '../../../types/orderItemTypes';
 import { generateReservationId } from '../../../utils/reservations/generateReservationId';
 import { useSelector } from 'react-redux';
 
@@ -22,10 +22,30 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
   const order:Order = useSelector(getOrder as any);
-
+  const [chosenParams, setChosenParams] = useState<ChosenParams>([]);
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(Number(event.target.value));
   };
+  useEffect(() => {
+    if (product.params) {
+      const newParams: ChosenParams = [];
+
+      // Iterate over each section in params
+      for (const section in product.params) {
+        const paramSection = product.params[section];
+        const defaultOptions = Object.values(paramSection.options)
+          .filter(option => option.default)
+          .map(option => option.label);
+
+        if (defaultOptions.length > 0) {
+          newParams.push({ [section]: defaultOptions });
+        }
+      }
+
+      // Update chosenParams with newParams
+      setChosenParams(newParams);
+    }
+  }, [product.params, setChosenParams]);
 
   const handleAddClick = () => {
     const newOrderItem:Order = {
@@ -39,11 +59,10 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
           amount: quantity,
           status: 'ordered',
           code: generateReservationId(),
-          //chosenParams: ChosenParams;
+          chosenParams: chosenParams,
         }
       ]
     }
-    console.log(newOrderItem);
     dispatch(requestChangeOrder(newOrderItem) as any);
   };
 
@@ -59,7 +78,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
         </Accordion.Header>
         <Accordion.Body className={styles.body}>
           <Row>
-            <OptionsProductForm product={product} disabled={disabled}/>
+            <OptionsProductForm product={product} disabled={disabled} chosenParams={chosenParams} setChosenParams={setChosenParams}/>
           </Row>
           <Row className='mt-3 mx-1'>
             <Col xs={3}>

@@ -12,7 +12,7 @@ import messageReducer from './reducers/messageReducer';
 import { Product } from '../types/productTypes';
 import productReducer from './reducers/productReducer';
 import orderReducer from './reducers/orderReducer';
-import { Order } from '../types/cartItemTypes';
+import { Order } from '../types/orderItemTypes';
 
 export interface AppState {
   //firestore connected

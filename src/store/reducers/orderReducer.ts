@@ -1,9 +1,9 @@
 import { ThunkAction } from 'redux-thunk';
 import { AppState } from '../store';
 import { Dispatch } from 'redux';
-import { addDoc, arrayUnion, collection, doc, getDocs, query, updateDoc, where} from 'firebase/firestore';
+import { addDoc, collection, getDocs, query, updateDoc, where} from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
-import { Order, OrderItem } from '../../types/cartItemTypes';
+import { Order, OrderItem } from '../../types/orderItemTypes';
 
 type OrderState = Order;
 
@@ -25,21 +25,31 @@ export const SET_ORDER = createActionName('SET_ORDER');
 
 export const setOrder = (payload: OrderState): SetOrderAction => ({ type: SET_ORDER, payload });
 
-export const requestFetchOrderData = (tableNumber:number): ThunkAction<void, AppState, unknown, OrderActionTypes> => {
+export const requestFetchOrderData = (tableNumber: number): ThunkAction<void, AppState, unknown, OrderActionTypes> => {
   return async (dispatch: Dispatch<OrderActionTypes>) => {
     const orderCollectionRef = collection(db, "orders");
     const q = query(orderCollectionRef, where('tableNumber', '==', tableNumber));
+
     try {
-      const data = await getDocs(q);
-      const filteredData: OrderItem[] = data.docs.map((doc) => ({
-        ...doc.data(),
-      } as OrderItem));
-      dispatch(setOrder({items:filteredData, tableNumber:tableNumber}));
+      const querySnapshot = await getDocs(q);
+      const items: OrderItem[] = [];
+
+      // Iterate over the documents and extract the items
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if (data && Array.isArray(data.items)) {
+          items.push(...data.items);
+        }
+      });
+
+      // Dispatch the order with the correct items and tableNumber
+      dispatch(setOrder({ items, tableNumber }));
     } catch (error) {
       console.error("Error fetching order:", error);
     }
   };
 };
+
 
 export const requestChangeOrder = (
   order: Order

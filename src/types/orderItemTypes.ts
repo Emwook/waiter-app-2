@@ -1,16 +1,13 @@
 export interface ChosenOption {
     label: string;
-    price: number;
-}
-
-export interface ChosenParams {
-    [key: string]: {
-        options: {
-            [key: string]: ChosenOption;
-        };
-    };
-}
-
+  }
+  
+  export interface ChosenParam {
+    [section: string]: string[]; 
+  }
+  
+  export type ChosenParams = ChosenParam[];
+  
 export interface OrderItem {
     id: string;
     code: string;
