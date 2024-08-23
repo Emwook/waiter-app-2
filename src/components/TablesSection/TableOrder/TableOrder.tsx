@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Order, OrderItem } from '../../../types/orderItemTypes';
-import { getOrder, requestChangeOrder, requestFetchOrderData } from '../../../store/reducers/orderReducer';
+import { getOrders, requestChangeOrder, requestFetchSingleOrder } from '../../../store/reducers/orderReducer';
 import { Button, Col, Row } from 'react-bootstrap';
+import { mockOrder } from '../../../config/settings';
 
 interface TableOrderProps {
   disabled: boolean;
@@ -11,14 +12,14 @@ interface TableOrderProps {
 
 const TableOrder: React.FC<TableOrderProps> = ({ disabled, tableNumber }) => {
   const dispatch = useDispatch();
-  
-  useEffect(() => {
-    dispatch(requestFetchOrderData(tableNumber) as any);
-  }, [tableNumber, dispatch]);
 
-  const order:Order = useSelector(getOrder as any);
+  useEffect(() => {
+    dispatch(requestFetchSingleOrder(tableNumber) as any);
+  }, [tableNumber, dispatch]);
+  const orders: Order[] = useSelector(getOrders as any);
+  const order = orders.filter(o => o.tableNumber === tableNumber)[0] || mockOrder;
   let total = 0;
-  order.items.forEach(item => {
+  order?.items?.forEach(item => {
     total += item.priceSingle * item.amount;
   });
 
@@ -83,8 +84,8 @@ const TableOrder: React.FC<TableOrderProps> = ({ disabled, tableNumber }) => {
     console.log('newOrderItems', newOrderItems);
     // Create the updated order object
     const updatedOrder = {
-      ...order, // Spread the existing order to keep other properties
-      items: newOrderItems, // Update the items array
+      ...order, 
+      items: newOrderItems,
     };
   
     // Dispatch the action to request changing the order
@@ -136,7 +137,7 @@ const TableOrder: React.FC<TableOrderProps> = ({ disabled, tableNumber }) => {
         ))}
         <li className='list-group-item'>
           <Row className='text-center'>
-            <Col xs={8} className='text-end'><b>Total: </b></Col>
+            <Col xs={9} className='text-end'><b>Total: </b></Col>
             <Col xs={1}><b>${total}</b></Col>
           </Row>
         </li>

@@ -127,7 +127,7 @@ const OptionsProductForm: React.FC<OptionsProductFormProps> = ({
     <form>
       {product.params ? (
         Object.keys(product.params).map(section => {
-          const { label, type, options } = product.params![section]; // Non-null assertion here
+          const { label, type, options } = product.params![section];
           return (
             <fieldset key={section} disabled={disabled} style={{fontSize: '14px'}}>
               <legend className='fs-5'>{label}</legend>

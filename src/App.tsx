@@ -12,6 +12,7 @@ import ReservationPage from "./components/ReservationsSection/ReservationPage/Re
 import { formatDate } from "./utils/reservations/dateUtils";
 import { fetchReservationsByDate } from "./store/reducers/reservationsReducer";
 import { fetchAllProductData } from "./store/reducers/productReducer";
+import { requestFetchAllOrders } from "./store/reducers/orderReducer";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const App: React.FC = () => {
     dispatch(fetchAllTableData() as any);
     dispatch(fetchReservationsByDate(formattedDate) as any);
     dispatch(fetchAllProductData() as any);
+    dispatch(requestFetchAllOrders() as any);
   }, [dispatch, formattedDate]);
 
   const tables: Table[] = useSelector(getAllTables);
@@ -37,7 +39,7 @@ const App: React.FC = () => {
             <Route
               key={table.tableNumber}
               path={`/table/${table.tableNumber}`}
-              element={<TableDetails tableNumber={table.tableNumber} />}
+              element={<TableDetails table={table} />}
             />
           ))}
         </Routes>

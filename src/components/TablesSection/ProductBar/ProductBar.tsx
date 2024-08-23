@@ -4,10 +4,12 @@ import { Product } from '../../../types/productTypes';
 import OptionsProductForm from '../OptionsProductForm/OptionsProductForm';
 import styles from './ProductBar.module.scss';
 import { useDispatch } from 'react-redux';
-import { getOrder, requestChangeOrder } from '../../../store/reducers/orderReducer';
+import { getOrders, requestChangeOrder } from '../../../store/reducers/orderReducer';
 import { ChosenParams, Order } from '../../../types/orderItemTypes';
 import { generateReservationId } from '../../../utils/reservations/generateReservationId';
 import { useSelector } from 'react-redux';
+import { Table } from '../../../types/tableTypes';
+import { requestChangeTableDetails } from '../../../store/reducers/tablesReducer';
 
 interface ProductBarProps {
   product: Product;
@@ -15,14 +17,17 @@ interface ProductBarProps {
   eventKey: string;
   onSelect: (key: string | null) => void;
   disabled: boolean;
-  tableNumber: number;
+  table: Table;
 }
 
-const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSelect, disabled, tableNumber }) => {
+const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSelect, disabled, table }) => {
+  const tableNumber = table.tableNumber;
   const [quantity, setQuantity] = useState(1);
   const dispatch = useDispatch();
-  const order:Order = useSelector(getOrder as any);
+  const orders:Order[] = useSelector(getOrders as any);
+  const order = orders.find(o => o.tableNumber === tableNumber) || {tableNumber: tableNumber, items:[]}
   const [chosenParams, setChosenParams] = useState<ChosenParams>([]);
+  const [productTotal, setProductTotal] = useState<number>(product.price)
   const handleQuantityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuantity(Number(event.target.value));
   };
@@ -47,6 +52,26 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
     }
   }, [product.params, setChosenParams]);
 
+  useEffect(() => {
+    let optionsTotal = 0;
+
+    chosenParams.forEach(param => {
+      const section = Object.keys(param)[0];
+      const selectedOptions = param[section];
+      if (product.params && product.params[section]) {
+        selectedOptions.forEach(optionLabel => {
+          const option = Object.values(product.params![section].options).find(opt => opt.label === optionLabel);
+          if (option) {
+            optionsTotal += option.price;
+          }
+        });
+      }
+    });
+
+    setProductTotal(product.price + optionsTotal);
+  }, [chosenParams, product.params, product.price]);
+
+
   const handleAddClick = () => {
     const newOrderItem:Order = {
       tableNumber: tableNumber,
@@ -55,7 +80,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
         {
           id: product.id,
           name: product.name,
-          priceSingle: product.price,
+          priceSingle: productTotal,
           amount: quantity,
           status: 'ordered',
           code: generateReservationId(),
@@ -64,6 +89,12 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
       ]
     }
     dispatch(requestChangeOrder(newOrderItem) as any);
+    const oldBill: number = table.bill;
+    const newTable:Table = {
+      ...table,
+      bill: (oldBill + productTotal)
+    }    
+    dispatch(requestChangeTableDetails(newTable) as any);
   };
 
   return (
@@ -81,7 +112,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
             <OptionsProductForm product={product} disabled={disabled} chosenParams={chosenParams} setChosenParams={setChosenParams}/>
           </Row>
           <Row className='mt-3 mx-1'>
-            <Col xs={3}>
+            <Col xs={4}>
               <Form.Group controlId={`quantity-${product.id}`} className="mb-3">
                 <Form.Control
                   disabled={disabled}
@@ -91,6 +122,11 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
                   min={1}
                 />
               </Form.Group>
+            </Col>
+            <Col className='mt-2' xs={3} style={{ userSelect: 'none' }}>
+            <span className='bg-light py-2 px-3 mt-2 border-secondary border rounded-1'>
+              ${productTotal}
+            </span>
             </Col>
             <Col xs={2}>
               <Button variant="primary" onClick={handleAddClick}  disabled={disabled}>
@@ -104,7 +140,9 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
     ):(
       <div className='border border-gray rounded-1 p-0 mb-3 bg-body-none'>
         <Row className='align-items-center justify-content-between'>
-          <Col xs={5} className='mx-3'>{product.name}</Col>
+          <Col xs={5} className='mx-3'>            
+            <span>{product.name}</span>
+          </Col>
           <Col xs={3}>
               <Form.Group controlId={`quantity-${product.id}`} className="mb-3">
                 <Form.Control

@@ -1,3 +1,4 @@
+import { Order } from "../types/orderItemTypes";
 import { Table } from "../types/tableTypes";
 
 export const mostNumOfPeople = 10;
@@ -36,3 +37,8 @@ export const statusOrder: { [status: string]: number } = {
     'cleaning': 2,
     'reserved': 3
 };
+
+export const mockOrder: Order = {
+    items: [],
+    tableNumber: 9999,
+}

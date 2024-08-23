@@ -16,7 +16,7 @@ interface TableBarProps {
 const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus }) => {
     const dispatch = useDispatch();
     const selectMode = useSelector(checkSelectMode);
-    
+   
     let statusColor: string = 'text-dark';
 
     switch(Table.status){

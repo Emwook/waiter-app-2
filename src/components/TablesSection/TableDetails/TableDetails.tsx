@@ -23,14 +23,14 @@ import ProductsForm from "../ProductsForm/ProductsForm";
 import TableOrder from "../TableOrder/TableOrder";
 
 interface TableDetailsProps {
-    tableNumber: number;
+    table: Table;
 }
 
-const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {    
+const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {    
+    const tableNumber = table.tableNumber;
+    const tables: Table[] = useSelector(getAllTables as any);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const tables: Table[]  = useSelector(getAllTables);
-    const table: Table = tables?.find(table => table.tableNumber === tableNumber) ?? defaultNewTable;
     const [loading, setLoading] = useState<boolean>(true);
 
     const [selectedStatus, setSelectedStatus] = useState<TableStatus>(defaultNewTable.status); 
@@ -98,7 +98,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         const combinedTablesToUpdate: Table[] =[]
         for(let i=0; i<table.combinedWith.length; i++){
             const tableNumber = table.combinedWith[i];
-            const combinedWith: number[] = tables?.find(table => table.tableNumber === tableNumber)?.combinedWith ?? defaultNewTable.combinedWith ;
+            const combinedWith: number[] = table.combinedWith ?? defaultNewTable.combinedWith ;
             combinedTablesToUpdate.push({...tableToUpdate, tableNumber: tableNumber, combinedWith: combinedWith});
         }
        if(((selectedStatus ==='reserved') && (hour !=='') && (hourEnd !== '')) || (selectedStatus !=='reserved')) {
@@ -205,7 +205,6 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
         const filteredTables = tables.filter(t => t.combinedWith.includes(table.tableNumber));
         filteredTables.push(table);
         if (filteredTables.length > 1) {
-            console.log('decombination : ', filteredTables);
             const tablesToCombine: Table[] = combineTables(filteredTables, tables);
             tablesToCombine.forEach(table => {
                 dispatch(requestTableCombined(table) as any);
@@ -350,7 +349,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ tableNumber }) => {
                     <TableOrder disabled={disabled} tableNumber={table.tableNumber}/>
                 </Col>
                 <Col className={styles.products}>
-                    <ProductsForm disabled={disabled} tableNumber={table.tableNumber}/>
+                    <ProductsForm disabled={disabled} table={table}/>
                 </Col>
                 
             </Row>

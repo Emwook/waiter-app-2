@@ -4,13 +4,14 @@ import { getAllProducts } from '../../../store/reducers/productReducer';
 import { Product } from '../../../types/productTypes';
 import ProductBar from '../ProductBar/ProductBar'; // Adjust the import path as necessary
 import { Accordion } from 'react-bootstrap';
+import { Table } from '../../../types/tableTypes';
 
 interface ProductsFormProps {
   disabled: boolean;
-  tableNumber: number;
+  table: Table;
 }
 
-const ProductsForm: React.FC<ProductsFormProps> = ({disabled, tableNumber}) => {
+const ProductsForm: React.FC<ProductsFormProps> = ({disabled, table}) => {
   const products: Product[] = useSelector(getAllProducts);
   const [activeKey, setActiveKey] = useState<string | null>(null);
 
@@ -30,7 +31,7 @@ const ProductsForm: React.FC<ProductsFormProps> = ({disabled, tableNumber}) => {
             eventKey={product.id}
             onSelect={handleSelect}
             disabled={disabled}
-            tableNumber={tableNumber}
+            table={table}
           />
         ))}
       </Accordion>

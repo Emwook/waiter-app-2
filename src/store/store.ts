@@ -19,7 +19,7 @@ export interface AppState {
   tables: Table[],
   reservations: Reservation[],
   products: Product[],
-  order: Order,
+  orders: Order[],
   //local
   methods: {
     groupingMethod: GroupingMethod;
@@ -41,7 +41,7 @@ const subreducers = {
     reservations: reservationsReducer,
     message: messageReducer,
     products: productReducer,
-    order: orderReducer
+    orders: orderReducer
 }
 
 const reducer = combineReducers(subreducers);
@@ -61,10 +61,7 @@ const initialState: AppState = {
     messageNumber: 0,
   },
   products: [],
-  order: {
-    items: [],
-    tableNumber: 0,
-  }
+  orders: [],
 }
 const store = createStore(
   reducer,
