@@ -245,15 +245,16 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                 <MessageBox/>
             </div>
             <Row className={styles.boxLeft}>
-                <Col xs={4} className={styles.products}>
+                <Col xs={3} className={styles.products}>
                     <Row >
                         <Col xs={12}>
+                        <h2 className="pt-2">overview:</h2>
                         {displayedCombined.length>0 
                         ? (
-                            <h2 className="py-2" >{`combined tables:  ${allCombined}`}</h2> 
+                            <h4>{`combined tables:  ${allCombined}`}</h4> 
                         )
                         : (
-                            <h2 className="py-2">Table {table?.tableNumber}</h2>
+                            <h4> table {table?.tableNumber}</h4>
                         )
                         }
                         <Form onSubmit={handleSubmit}>
@@ -275,7 +276,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                                 displayedBill={displayedBill}
                                 updateDisplayedBill={updateDisplayedBill}/>
                             <Button variant="primary" type="submit" className="mt-2" disabled={disabledRes1}> {/*onMouseEnter={handleButtonClick1}*/}
-                                Submit
+                                submit
                             </Button>
                             {displayedCombined.length>0 
                             && (
@@ -288,15 +289,15 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                         </Col>
                         {(selectedStatus === 'reserved')&& (
                         <>
-                        <Col xs={12} className="mt-1">
+                        <Col xs={11} className="mx-2">
                         <Form onSubmit={handleReserved}>
-                            <Row className="justify-content-start text-center align-content-center mt-5">
+                            <Row className="justify-content-start text-center align-content-center mt-3">
                                 <Col xs={4} className="px-1 m-0">
                                     <Form.Control
                                     type="time"
                                     value={hour}
                                     onChange={handleHourChange}
-                                    className="border-dark mt-2"
+                                    className="mt-2"
                                     min="12:00"
                                     max="24:00"
                                     size='sm'
@@ -308,7 +309,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                                     type="time"
                                     value={hourEnd}
                                     onChange={handleHourEndChange}
-                                    className="border-dark mt-2"
+                                    className=" mt-2"
                                     min="12:00"
                                     max="24:00"
                                     size='sm'
@@ -330,7 +331,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                             <h5>upcoming reservations</h5>
                             <ListGroup className={styles.scrollable}>
                                 {resList.map(res => (
-                                <ListGroup.Item key={res.id} className={`px-0 py-3 mx-2 border rounded-1 bg-white mt-2 border-gray`} onClick={() => navigate('/reservations')}>
+                                <ListGroup.Item key={res.id} className={`px-0 py-3 mx-2 border rounded-1 bg-white mt-1 border-gray`} onClick={() => navigate('/reservations')}>
                                     <Row className="mx-1">
                                         <Col xs={4} className="text-primary">{res.id}</Col>                       
                                         <Col xs={4}>{(res.repeat !=='false')&&'from'} {res?.dateStart} </Col>
@@ -344,15 +345,12 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                     </Row>
                     }   
                 </Col>
-
-                <Col xs={4} className={styles.products}>
-                    <TableOrder disabled={disabled} table={table}/>
-                </Col>
-
                 <Col className={styles.products}>
                     <ProductsForm disabled={disabled} table={table}/>
                 </Col>
-                
+                <Col xs={3} className={styles.products}>
+                    <TableOrder disabled={disabled} table={table}/>
+                </Col>
             </Row>
             
         </Container>

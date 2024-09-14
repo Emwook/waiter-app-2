@@ -18,7 +18,7 @@
 }
 
 .scrollable{ 
-    max-height: 150px;
+    max-height: 100px;
     overflow-y: auto;
 }
 .messageBox {
@@ -28,9 +28,9 @@
 }
 
 .products {
+    height: 84vh;
     margin-left:20px; 
     padding:20px;
-    margin-top:10px;
     background-color: #fff; // bootstrap light
     border: 1px solid black;
     border-radius: 4px;

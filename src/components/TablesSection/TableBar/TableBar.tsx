@@ -44,14 +44,16 @@ const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus }) =>
         <div className={`mt-1 pb-2 pt-4 px-3 d-flex justify-content-between align-items-center border-bottom
             border-gray 'bg-none'`}>
             {(selectMode) && (
+            <Col xs={1}>
             <Form className="mx-1">
                 <Form.Check type="checkbox" onClick={handleSelect} />
             </Form>
+            </Col>
             )}
             <Col xs={2} ><h2>Table {Table ? Table.tableNumber : ''}</h2></Col>
             <Col xs={1}><span className="text-muted">${Table ? Table.bill : ''}</span></Col>
             <Col xs={1}><span className="text-muted">{Table ? Table.numOfPeople : ''}/{Table ? Table.maxNumOfPeople : ''}</span></Col>
-            <Col xs={2}><span className={statusColor}>{Table ? Table.status : ''}</span></Col>  
+            <Col xs={1}><span className={statusColor}>{Table ? Table.status : ''}</span></Col>  
             <Col xs={2}>
             {Table.combinedWith.length > 0 && 
             <>

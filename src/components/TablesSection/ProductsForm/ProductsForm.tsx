@@ -5,6 +5,7 @@ import { Product } from '../../../types/productTypes';
 import ProductBar from '../ProductBar/ProductBar'; // Adjust the import path as necessary
 import { Accordion } from 'react-bootstrap';
 import { Table } from '../../../types/tableTypes';
+import styles from './ProductsForm.module.scss';
 
 interface ProductsFormProps {
   disabled: boolean;
@@ -20,7 +21,7 @@ const ProductsForm: React.FC<ProductsFormProps> = ({disabled, table}) => {
   };
 
   return (
-    <div className="mt-1 px-3">
+    <div className={styles.accordion}>
       <h2 className="py-2">add to order:</h2>
       <Accordion activeKey={activeKey} onSelect={() => (handleSelect)}>
         {products.map((product: Product) => (

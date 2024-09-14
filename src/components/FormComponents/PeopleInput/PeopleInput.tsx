@@ -41,13 +41,13 @@ const PeopleInput: React.FC<PeopleInputProps> = (
     return (
         <Form.Group className="w-100">
             <Row className="my-2  ">
-                <Col xs={5}><Form.Label className="fw-light fs-3 p-0">People: </Form.Label></Col>
+                <Col xs={4}><Form.Label><h3 className="lead pt-3">People: </h3></Form.Label></Col>
                 <Col xs={3} onMouseEnter={handleDisabled}>
                     <Form.Control 
                         type="number" 
                         size="sm" 
                         name={`numOfPeople${table.tableNumber}`}
-                        className="border-dark text-center mt-2 fs-6" 
+                        className="text-center mt-2 fs-6" 
                         value = {(selectedStatus === 'busy')?(displayedNumOfPeople):(0)}
                         onChange={updateDisplayedNumOfPeople}
                         disabled={toBeDisabled}
@@ -59,7 +59,7 @@ const PeopleInput: React.FC<PeopleInputProps> = (
                         type="number" 
                         size="sm" 
                         name={`MaxNumOfPeople${table.tableNumber}`}
-                        className={"border-dark text-center mt-2 fs-6"} 
+                        className={" text-center mt-2 fs-6"} 
                         value = {displayedMaxNumOfPeople}
                         onChange={updateDisplayedMaxNumOfPeople}
                     />

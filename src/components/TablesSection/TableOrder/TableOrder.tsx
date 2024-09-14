@@ -109,7 +109,7 @@ const TableOrder: React.FC<TableOrderProps> = ({ disabled, table }) => {
   
   return (
     <div className="my-2 px-1" style={{ userSelect: 'none' }}>
-      <h2 className="py-2">Order:</h2>
+      <h2 className="py-2">ordered:</h2>
       <ul className='list-group list-group-flush w-100'>
         <li className='list-group-item'>
           <Row className='justify-content-between text-center'>
