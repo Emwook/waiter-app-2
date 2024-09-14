@@ -245,8 +245,8 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                 <MessageBox/>
             </div>
             <Row className={styles.boxLeft}>
-                <Col xs={4}>
-                    <Row className={styles.subBox}>
+                <Col xs={4} className={styles.products}>
+                    <Row >
                         <Col xs={12}>
                         {displayedCombined.length>0 
                         ? (
@@ -288,7 +288,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                         </Col>
                         {(selectedStatus === 'reserved')&& (
                         <>
-                        <Col xs={12} className="mt-3">
+                        <Col xs={12} className="mt-1">
                         <Form onSubmit={handleReserved}>
                             <Row className="justify-content-start text-center align-content-center mt-5">
                                 <Col xs={4} className="px-1 m-0">
@@ -324,8 +324,8 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                             </Col>
                         </>)}
                     </Row>
-                    <Row className={styles.subBox}>
                     {resList.length>0 &&
+                    <Row className={styles.subBox}>                   
                         <Col xs={12} >
                             <h5>upcoming reservations</h5>
                             <ListGroup className={styles.scrollable}>
@@ -341,13 +341,14 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                             ))}
                             </ListGroup>
                         </Col>
-                        
-                        }
                     </Row>
+                    }   
                 </Col>
+
                 <Col xs={4} className={styles.products}>
-                    <TableOrder disabled={disabled} tableNumber={table.tableNumber}/>
+                    <TableOrder disabled={disabled} table={table}/>
                 </Col>
+
                 <Col className={styles.products}>
                     <ProductsForm disabled={disabled} table={table}/>
                 </Col>

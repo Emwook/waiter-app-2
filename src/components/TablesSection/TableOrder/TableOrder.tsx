@@ -1,23 +1,36 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Order, OrderItem } from '../../../types/orderItemTypes';
 import { getOrders, requestChangeOrder, requestFetchSingleOrder } from '../../../store/reducers/orderReducer';
 import { Button, Col, Row } from 'react-bootstrap';
 import { mockOrder } from '../../../config/settings';
+import { Table } from '../../../types/tableTypes';
+import { requestChangeTableDetails } from '../../../store/reducers/tablesReducer';
 
 interface TableOrderProps {
   disabled: boolean;
-  tableNumber: number;
+  table: Table;
 }
 
-const TableOrder: React.FC<TableOrderProps> = ({ disabled, tableNumber }) => {
+const TableOrder: React.FC<TableOrderProps> = ({ disabled, table }) => {
   const dispatch = useDispatch();
-
+  const tableNumber = table.tableNumber;
+  // Fetch the order for the specified table number when the component mounts
   useEffect(() => {
     dispatch(requestFetchSingleOrder(tableNumber) as any);
-  }, [tableNumber, dispatch]);
+  }, [dispatch, tableNumber]); // Line 13: Added tableNumber as a dependency
+
   const orders: Order[] = useSelector(getOrders as any);
-  const order = orders.filter(o => o.tableNumber === tableNumber)[0] || mockOrder;
+  
+  // Update the order state when orders update
+  const [order, setOrder] = useState<Order>(orders.filter(o => o.tableNumber === tableNumber)[0] || mockOrder);
+
+  // Line 16: Add effect to update local order when Redux orders change
+  useEffect(() => {
+    const currentOrder = orders.filter(o => o.tableNumber === tableNumber)[0] || mockOrder;
+    setOrder(currentOrder);
+  }, [orders, tableNumber]);
+
   let total = 0;
   order?.items?.forEach(item => {
     total += item.priceSingle * item.amount;
@@ -77,20 +90,22 @@ const TableOrder: React.FC<TableOrderProps> = ({ disabled, tableNumber }) => {
   };
 
   const handleItemDelete = (item: OrderItem) => {
-    console.log('item code:', item.code);
-  
-    // Filter out the item with the matching code
-    const newOrderItems = order.items.filter(i => i.code !== item.code);
-    console.log('newOrderItems', newOrderItems);
-    // Create the updated order object
-    const updatedOrder = {
-      ...order, 
-      items: newOrderItems,
-    };
-  
-    // Dispatch the action to request changing the order
-    dispatch(requestChangeOrder(updatedOrder) as any);
+    console.log('item code received: ', item.code );
+    const orderUpdated: Order = {
+      ...order,
+      items: order.items.filter(i => i.code !== item.code),
+    } 
+    console.log('orderUpdated', orderUpdated);
+    dispatch(requestChangeOrder(orderUpdated) as any);
+    const oldBill = table.bill;
+    const newTable:Table = {
+      ...table,
+      bill: (oldBill - (item.priceSingle * item.amount)),
+    }    
+    dispatch(requestChangeTableDetails(newTable) as any);
+    setOrder(orderUpdated);
   };
+  
   
   return (
     <div className="my-2 px-1" style={{ userSelect: 'none' }}>
@@ -100,7 +115,6 @@ const TableOrder: React.FC<TableOrderProps> = ({ disabled, tableNumber }) => {
           <Row className='justify-content-between text-center'>
             <Col xs={6} className='text-start px-2'>Name</Col>
             <Col xs={2}>Amount</Col> 
-            {/* <Col xs={2}>Status</Col> */}
             <Col xs={2}>Price</Col>
             <Col xs={2}> </Col>
           </Row>
@@ -112,7 +126,6 @@ const TableOrder: React.FC<TableOrderProps> = ({ disabled, tableNumber }) => {
                 <h6>{item.name}</h6>
                 <div className='mx-1'>
                   {item.chosenParams?.map((param, index) => {
-                    // Extract the parameter name and values
                     const [paramName, values] = Object.entries(param)[0];
                     const valuesString = Array.isArray(values) ? values.join(', ') : '';
                     return (
@@ -124,8 +137,7 @@ const TableOrder: React.FC<TableOrderProps> = ({ disabled, tableNumber }) => {
                   })}
                 </div>
               </Col>
-              <Col xs={2}>{item.amount}</Col> 
-              {/* <Col xs={2}>{item.status}</Col> */}
+              <Col xs={2}>{item.amount}</Col>
               <Col xs={2}>{item ? ('$' + String(item.priceSingle * item.amount)) : ''}</Col>
               <Col xs={2}>
                 <Button size="sm" className={`bg-${handleColor(item.status)} border-1 border-dark text-dark`} onClick={() => handleItemDelete(item)}>

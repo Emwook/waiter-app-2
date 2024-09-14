@@ -100,30 +100,14 @@ export const requestChangeOrder = (
       const querySnapshot = await getDocs(q);
       if (!querySnapshot.empty) {
         const doc = querySnapshot.docs[0];
-        const existingData = doc.data() as Order;
 
-        // Create a map of existing items by their code for easy lookup
-        const itemMap = new Map<string, OrderItem>(
-          existingData.items.map(item => [item.code, item])
-        );
-
-        // Replace or add new items from the order argument
-        order.items.forEach(newItem => {
-          itemMap.set(newItem.code, newItem);
-        });
-
-        // Convert the map back to an array
-        const updatedItems = Array.from(itemMap.values());
-
-        // Update the document with the merged items array
+        // Completely override the existing items with the new ones
         await updateDoc(doc.ref, {
           tableNumber: order.tableNumber,
-          items: updatedItems,
+          items: order.items,  // Use the new items array as is
         });
 
-        // Update the passed order object with the merged items
-        order.items = updatedItems;
-
+        // Dispatch the updated order to Redux
         dispatch(setSingleOrder(order));
       } else {
         // If no document exists, add a new one
@@ -136,15 +120,21 @@ export const requestChangeOrder = (
   };
 };
 
+
 // Reducer
 const orderReducer = (state = initialState, action: OrderActionTypes): Orders => {
   switch (action.type) {
     case SET_ORDERS:
       return action.payload;
+
     case SET_SINGLE_ORDER:
+      // Line 69: Replace the order's items with the updated ones
       return state.map(order =>
-        order.tableNumber === action.payload.tableNumber ? action.payload : order
+        order.tableNumber === action.payload.tableNumber
+          ? { ...order, items: action.payload.items }  // Replace the items array entirely
+          : order
       );
+
     default:
       return state;
   }
