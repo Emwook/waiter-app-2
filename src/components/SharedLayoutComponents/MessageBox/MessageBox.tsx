@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Col } from 'react-bootstrap';
+import { Button, Col, Row } from 'react-bootstrap';
 import styles from './MessageBox.module.scss';
 import { messages } from '../../../config/messages';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,13 +29,23 @@ const MessageBox: React.FC = () => {
     };
   }, [message, currentMessageNumber, dispatch]);
 
+  const handleHide = () => {
+    dispatch(changeMessage(0) as any);
+  }
 
   return (
-    <Col className={clsx({[styles.showMessage]: currentMessageNumber !== 0})}>
-      <div  className={clsx(styles.bar, `text-${messageColor} border-${messageColor}`)}>
-          <span>{messageDetails}</span>
-      </div>
-    </Col>
+    <div className={clsx({[styles.showMessage]: currentMessageNumber !== 0})}>
+      <Row  className={clsx(styles.bar, `text-${messageColor} border-${messageColor} mt-2`)}>
+        <Col xs={10}>
+          <p>{messageDetails}</p>
+        </Col>
+        <Col xs={1} className={styles.button}>
+          <Button variant='clear' className={`bg-none text-${messageColor} px-1 my-0 py-0 mx-1`} onClick={handleHide}>
+            <i className='bi bi-x'/>
+          </Button>
+        </Col>
+      </Row>
+    </div>
   );
 };
 

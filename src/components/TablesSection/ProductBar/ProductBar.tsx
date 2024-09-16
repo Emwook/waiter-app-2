@@ -10,6 +10,7 @@ import { generateReservationId } from '../../../utils/reservations/generateReser
 import { useSelector } from 'react-redux';
 import { Table } from '../../../types/tableTypes';
 import { requestChangeTableDetails } from '../../../store/reducers/tablesReducer';
+import { changeMessage } from '../../../store/reducers/messageReducer';
 
 interface ProductBarProps {
   product: Product;
@@ -97,6 +98,12 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
     dispatch(requestChangeTableDetails(newTable) as any);
   };
 
+  const handleMessage = () => {
+    if(disabled){
+      dispatch(changeMessage(18) as any);
+    }
+  }
+
   return (
     <>
     {product.params ?(
@@ -107,7 +114,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
             <span>{product.name}</span>
           </div>
         </Accordion.Header>
-        <Accordion.Body className={styles.body}>
+        <Accordion.Body className={styles.body} onMouseEnter={handleMessage}>
           <Row>
             <OptionsProductForm product={product} disabled={disabled} chosenParams={chosenParams} setChosenParams={setChosenParams}/>
           </Row>
@@ -129,7 +136,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
             </span>
             </Col>
             <Col xs={2}>
-              <Button variant="primary" onClick={handleAddClick}  disabled={disabled}>
+              <Button variant="primary" onClick={handleAddClick}  disabled={disabled} >
                 <i className='bi bi-plus'/>
               </Button>
             </Col>
@@ -143,7 +150,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
           <Col xs={5} className='mx-3'>            
             <span>{product.name}</span>
           </Col>
-          <Col xs={3}>
+          <Col xs={3} onMouseEnter={handleMessage}>
               <Form.Group controlId={`quantity-${product.id}`} className="mb-3">
                 <Form.Control
                   disabled={disabled}
@@ -155,7 +162,7 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
                 />
               </Form.Group>
             </Col>
-            <Col>
+            <Col onMouseEnter={handleMessage}>
               <Button variant="primary" onClick={handleAddClick} disabled={disabled}>
                 <i className='bi bi-plus'/>
               </Button>

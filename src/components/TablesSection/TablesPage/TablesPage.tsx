@@ -67,10 +67,10 @@ const TablesPage: React.FC = () => {
   });
   return (
     <div>
+      <MessageBox/>
       <Row className="align-content-end">
         <SortingPanel/>
         <GroupingPanel/>
-        <MessageBox/>
         <SelectModeButton/>
       </Row>
       <div className="my-4">

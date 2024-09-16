@@ -113,16 +113,16 @@ const TableOrder: React.FC<TableOrderProps> = ({ disabled, table }) => {
       <ul className='list-group list-group-flush w-100'>
         <li className='list-group-item'>
           <Row className='justify-content-between text-center'>
-            <Col xs={6} className='text-start px-2'>Name</Col>
-            <Col xs={2}>Amount</Col> 
-            <Col xs={2}>Price</Col>
+            <Col xs={4} className='text-start px-2'>Name</Col>
+            <Col xs={3}>Amount</Col> 
+            <Col xs={3}>Price</Col>
             <Col xs={2}> </Col>
           </Row>
         </li>
         {order.items?.map(item => (
           <li key={item.code} className={`list-group-item list-group-item-${handleColor(item.status)} py-1`} onDoubleClick={() => handleStatusChange(item)}>
             <Row className='justify-content-between text-center'>
-              <Col xs={6} className='text-start'>
+              <Col xs={4} className='text-start'>
                 <h6>{item.name}</h6>
                 <div className='mx-1'>
                   {item.chosenParams?.map((param, index) => {
@@ -137,8 +137,8 @@ const TableOrder: React.FC<TableOrderProps> = ({ disabled, table }) => {
                   })}
                 </div>
               </Col>
-              <Col xs={2}>{item.amount}</Col>
-              <Col xs={2}>{item ? ('$' + String(item.priceSingle * item.amount)) : ''}</Col>
+              <Col xs={3}>{item.amount}</Col>
+              <Col xs={3}>{item ? ('$' + String(item.priceSingle * item.amount)) : ''}</Col>
               <Col xs={2}>
                 <Button size="sm" className={`bg-${handleColor(item.status)} border-1 border-dark text-dark`} onClick={() => handleItemDelete(item)}>
                   <i className='bi bi-trash'/>

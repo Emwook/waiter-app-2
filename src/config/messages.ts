@@ -93,6 +93,11 @@ export interface Message {
       messageDetails: `fill in reservation details or change status to continue`,
       messageColor: 'success',
     },
+    {
+      messageNumber: 18,
+      messageDetails: `adding items to order unavailable when table is not busy`,
+      messageColor: 'warning',
+    },
 
   ];
   

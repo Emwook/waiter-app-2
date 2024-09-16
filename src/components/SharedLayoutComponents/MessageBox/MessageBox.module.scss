@@ -1,16 +1,25 @@
 .bar {
     display: none;
+    position: absolute;
+    z-index: 4;
     border: 1px solid gray;
     border-radius: 6px;
-    padding: 5px 10px;
-    margin: 24px 0 0 12px;
+    padding: 10px 10px;
     max-height: max-content;
-    font-size: 16px;
+    font-size: 20px;
     text-align: center;
-    min-width: 40vw;
+    max-width: 30vw;
+    left:40%;
+    top: 10%;
+    background: rgba(#f8f9fa, 0.95);
+    .button {
+        display: flex;
+        align-content: center;
+        height:min-content;
+    }
 }
 .showMessage {
     .bar {
-        display: block;
+        display: flex;
     }
 }

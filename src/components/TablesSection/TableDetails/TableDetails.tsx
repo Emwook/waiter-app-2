@@ -106,7 +106,7 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
             for(let i=0; i<table.combinedWith.length; i++){
                 dispatch(requestChangeTableDetails(combinedTablesToUpdate[i]) as any);
             }
-            navigate('/');
+            // navigate('/');
         }
     };
 
@@ -240,10 +240,9 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
     }
     
     return (
-        <Container className="mt-4">
-            <div className={styles.messageBox}>
-                <MessageBox/>
-            </div>
+        <>
+        <MessageBox/>
+        <Container>
             <Row className={styles.boxLeft}>
                 <Col xs={3} className={styles.products}>
                     <Row >
@@ -352,8 +351,8 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                     <TableOrder disabled={disabled} table={table}/>
                 </Col>
             </Row>
-            
         </Container>
+        </>
     );
 }
 
