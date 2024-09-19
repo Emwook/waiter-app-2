@@ -36,7 +36,7 @@ const RepeatingReservations: React.FC<RepeatingReservationProps> = ({chosenDate,
     return (
         <div className="bg-none px-1 mt-5">
             {repResList.map(res => (
-                <Row xs={4} className={`px-0 py-3 mx-2 border rounded-1 bg-none mt-2 ${(selectedRes.tableNumber === res.tableNumber)?'border-dark':'border-gray'}`} onClick={() => selectRes(res)}>
+                <Row xs={4} className={`px-0 py-3 mx-2 border rounded-1 bg-none mt-2 ${(selectedRes?.tableNumber === res?.tableNumber)?'border-dark':'border-gray'}`} onClick={() => selectRes(res)}>
                     <Col xs={12}>Table {res?.tableNumber}</Col>
                     <Col xs={12} className="text-primary">{res.id}</Col>
                     <Col xs={12}>{(res.name) &&'for'} {res.name} </Col>

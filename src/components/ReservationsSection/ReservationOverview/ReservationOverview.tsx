@@ -52,17 +52,70 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
   const DnDCalendar = withDragAndDrop(Calendar);
   const resListToday: Reservation[] = useSelector(getAllReservations);
   const [localResListToday, setLocalResListToday] = useState<Reservation[]>(resListToday);
-  setDate(startDate); // a change 
+  setDate(startDate); // a change, an old one perhaps but a change none the less
 
   useEffect(() => {
     setLocalResListToday(resListToday);
   }, [startDate, resListToday]);
 
+  // const areDatesIntegerWeeksApart = (d1: Date, d2: Date): boolean => {
+  //   const millisecondsInADay = 1000 * 60 * 60 * 24; // Total milliseconds in a day
+  //   const daysDifference = Math.abs(d1.getTime() - d2.getTime()) / millisecondsInADay;
+  //   const roundedDaysDifference = Math.round(daysDifference);
+  //   console.log('is true?: ', roundedDaysDifference % 7 === 0, 'daysDifference:', roundedDaysDifference);
+  //   return roundedDaysDifference % 7 === 0;
+  // };
+  
+
+  // const areDatesIntegerMonthsApart = (d1: Date, d2: Date): boolean => {
+  //   const yearDifference = d2.getFullYear() - d1.getFullYear();
+  //   const monthDifference = d2.getMonth() - d1.getMonth();
+  //   const totalMonthsDifference = yearDifference * 12 + monthDifference;
+  //   return Math.abs(totalMonthsDifference) >= 1;  // Must be at least 1 full month apart
+  // };
+  
+
+  // const areDatesIntegerYearsApart = (d1: Date, d2: Date): boolean => {
+  //   const yearDifference = Math.abs(d2.getFullYear() - d1.getFullYear());
+  //   const sameMonthAndDay = d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+  //   return yearDifference >= 1 && sameMonthAndDay;
+  // };
 
   const calculateStartTime = (reservation: Reservation): Date => {
-    return parseDate(reservation.dateStart, reservation.hour);
+    const originalDate = parseDate(reservation.dateStart, reservation.hour);
+    let dateStart: Date = originalDate;
+  
+    // switch(reservation.repeat) {
+    //   case 'daily':
+    //     dateStart = new Date(startDate);
+    //     break;
+  
+    //   case 'weekly':
+    //     if (areDatesIntegerWeeksApart(originalDate, startDate)) {
+    //       dateStart = new Date(startDate);
+    //     }
+    //     break;
+  
+    //   case 'monthly':
+    //     if (areDatesIntegerMonthsApart(originalDate, startDate)) {
+    //       dateStart = new Date(startDate);
+    //     }
+    //     break;
+  
+    //   case 'annually':
+    //     if (areDatesIntegerYearsApart(originalDate, startDate)) {
+    //       dateStart = new Date(startDate);
+    //     }
+    //     break;
+  
+    //   default:
+    //     break;
+    // }
+  
+    // console.log('reservation: ', reservation.repeat, ', dateStart: ', dateStart, 'startDate: ', startDate);
+    return dateStart;
   };
-
+  
   const calculateEndTime = (reservation: Reservation): Date => {
     const startTime = parseDate(reservation.dateStart, reservation.hour);
     return new Date(startTime.getTime() + reservation.duration * 60 * 60 * 1000);
