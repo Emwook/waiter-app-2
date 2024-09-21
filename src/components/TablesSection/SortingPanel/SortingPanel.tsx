@@ -20,7 +20,7 @@ const SortingPanel: React.FC= () => {
     };
 
     return (
-            <Col xs={2} className="mt-4 d-flex justify-content-start">
+            <Col xs={3} md={2}  className="mt-4 d-flex justify-content-start">
                 <Dropdown className="w-100" onSelect={handleSelect}>
                     <Dropdown.Toggle variant="light" className="w-100 border-secondary text-center ml-auto" id="dropdown-basic">
                         Sort by

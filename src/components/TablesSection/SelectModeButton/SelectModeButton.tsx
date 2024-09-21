@@ -79,7 +79,7 @@ const SelectModeButton: React.FC = () => {
     };
 
     return (
-        <Col className="mt-4 d-flex justify-content-end">
+        <Col  xs={6} md={8} className="mt-4 d-flex justify-content-end">
             {selectMode && (
                 <>
                     <Button variant='success' className={`border mx-1 ${selectMode ? 'border-light' : 'border-primary'}`} onClick={handleCombine} >

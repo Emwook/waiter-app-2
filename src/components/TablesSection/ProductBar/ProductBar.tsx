@@ -149,11 +149,11 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
     ):(
       <div className='border border-gray rounded-1 p-0 mb-3 bg-body-none'>
         <Row className='align-items-center justify-content-between'>
-          <Col xs={5} className='mx-3'>            
+          <Col xs={11} md={11} lg={3} className='mx-3'>            
             <span>{product.name}</span>
           </Col>
-          <Col xs={3} onMouseEnter={handleMessage}>
-              <Form.Group controlId={`quantity-${product.id}`} className="mb-3">
+          <Col onMouseEnter={handleMessage}>
+              <Form.Group controlId={`quantity-${product.id}`} className="mb-3 mx-1">
                 <Form.Control
                   disabled={disabled}
                   type="number"
@@ -163,9 +163,9 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
                   className='mt-3'
                 />
               </Form.Group>
-            </Col>
-            <Col onMouseEnter={handleMessage}>
-              <Button variant="primary" onClick={handleAddClick} disabled={disabled}>
+            </Col >
+            <Col xs={7} md={4} lg={3} onMouseEnter={handleMessage} >
+              <Button variant="primary" size={"sm"} onClick={handleAddClick} disabled={disabled}>
                 <i className='bi bi-plus'/>
               </Button>
             </Col>

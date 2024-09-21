@@ -9,15 +9,28 @@
     font-size: 20px;
     text-align: center;
     max-width: 30vw;
-    left:40%;
+    left: 40%;
     top: 10%;
     background: rgba(#f8f9fa, 0.95);
+
     .button {
         display: flex;
         align-content: center;
-        height:min-content;
+        height: min-content;
+    }
+
+    @media (max-width: 768px) {
+        position: sticky;
+        top: 0;
+        left: auto;
+        right: auto;
+        width: 100%;
+        margin: 0 auto;
+        max-width: none;
+        z-index: 9999;
     }
 }
+
 .showMessage {
     .bar {
         display: flex;

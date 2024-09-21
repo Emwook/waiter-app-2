@@ -229,7 +229,7 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
     </div>
   )
   :(
-    <div className="d-flex mt-5">
+    <div className="d-flex mt-lg-5">
       <div className="border border-gray rounded-1 px-1 m-auto pb-3 text-secondary w-100">
         <h6 className="mt-4 text-center">select a reservation <br/> to edit</h6>
       </div>

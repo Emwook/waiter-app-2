@@ -71,8 +71,8 @@ const TableForm: React.FC = () => {
                 <Col className="border-bottom border-gray">
                     <Form onSubmit={handleSubmit}>
                         <Row>
-                            <Col xs={2} className="mt-1"><span className="h2 mt-2">Table {nextTableNumber}</span></Col>
-                            <Col>
+                            <Col xs={12} lg={3} className="mt-1"><span className="h2 mt-2">Table {nextTableNumber}</span></Col>
+                            <Col xs={10} md={5} lg={4}>
                                  <Form.Group className="w-100">
                                     <Row className="my-2">
                                     <Col xs={5}><Form.Label className="fw-light fs-4">Status:</Form.Label></Col>
@@ -91,7 +91,7 @@ const TableForm: React.FC = () => {
                                     </Row>
                                 </Form.Group>
                             </Col>
-                            <Col>
+                            <Col xs={10} md={5} lg={4}>
                                 <Form.Group className="w-100">
                                     <Row className="my-2  ">
                                         <Col xs={4}><Form.Label className="fw-light fs-4 p-0 mr-2">People: </Form.Label></Col>
@@ -100,7 +100,7 @@ const TableForm: React.FC = () => {
                                                 type="number" 
                                                 size="sm" 
                                                 name={`numOfPeople${nextTable.tableNumber}`}
-                                                className={clsx("border-dark text-center mt-1")}
+                                                className={("border-dark text-center mt-1")}
                                                 value = {(selectedStatus === 'busy')?(displayedNumOfPeople):(0)}
                                                 onChange={updateDisplayedNumOfPeople}
                                                 disabled={selectedStatus !== 'busy'}
@@ -120,8 +120,8 @@ const TableForm: React.FC = () => {
                                     </Row>
                                 </Form.Group>
                             </Col>
-                            <Col className="d-flex justify-content-end align-content-center">
-                                <Button size="lg" variant="primary" type="submit" className="py-1 my-auto border-light text-right ml-auto">
+                            <Col  xs={2} lg={1} className="d-flex justify-content-end align-content-center">
+                                <Button size="lg" variant="success" type="submit" className="py-1 my-auto border-light text-right ml-auto">
                                     <i className="bi bi-plus"/>
                                 </Button>
                             </Col>

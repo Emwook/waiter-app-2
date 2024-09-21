@@ -21,6 +21,7 @@ import { generateReservationId } from "../../../utils/reservations/generateReser
 import { formatDate } from "../../../utils/reservations/dateUtils";
 import ProductsForm from "../ProductsForm/ProductsForm";
 import TableOrder from "../TableOrder/TableOrder";
+import clsx from "clsx";
 
 interface TableDetailsProps {
     table: Table;
@@ -243,8 +244,8 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
         <>
         <MessageBox/>
         <Container>
-            <Row className={styles.boxLeft}>
-                <Col xs={3} className={styles.products}>
+            <Row className={styles.box}>
+                <Col xs={12} md={4} className={styles.products}>
                     <Row >
                         <Col xs={12}>
                         <h2 className="pt-2">overview:</h2>
@@ -344,10 +345,10 @@ const TableDetails: React.FC<TableDetailsProps> = ({ table }) => {
                     </Row>
                     }   
                 </Col>
-                <Col className={styles.products}>
+                <Col  xs={12} md={4} className={styles.products}>
                     <ProductsForm disabled={disabled} table={table}/>
                 </Col>
-                <Col xs={3} className={styles.products}>
+                <Col xs={12} md={4} className={styles.products}>
                     <TableOrder disabled={disabled} table={table}/>
                 </Col>
             </Row>
