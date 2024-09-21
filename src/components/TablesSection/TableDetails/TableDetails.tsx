@@ -21,7 +21,6 @@ import { generateReservationId } from "../../../utils/reservations/generateReser
 import { formatDate } from "../../../utils/reservations/dateUtils";
 import ProductsForm from "../ProductsForm/ProductsForm";
 import TableOrder from "../TableOrder/TableOrder";
-import clsx from "clsx";
 
 interface TableDetailsProps {
     table: Table;

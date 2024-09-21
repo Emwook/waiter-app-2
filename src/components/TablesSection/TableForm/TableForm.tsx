@@ -6,7 +6,6 @@ import { mostNumOfPeople, leastNumOfPeople, defaultNewTable } from "../../../con
 import { useDispatch } from "react-redux";
 import { requestTableAdd } from "../../../store/reducers/tablesReducer";
 import { possibleStatusList } from "../../../config/settings";
-import clsx from 'clsx';
 import { changeMessage } from "../../../store/reducers/messageReducer";
 
 
