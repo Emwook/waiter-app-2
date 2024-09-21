@@ -5,6 +5,9 @@ import { useDispatch } from "react-redux";
 import { getAllTables, requestTableCombined, requestTableRemove } from "../../../store/reducers/tablesReducer";
 import { useSelector } from "react-redux";
 import combineTables from "../../../utils/combining/combineTables";
+import { getOrders, requestOrderRemove } from "../../../store/reducers/orderReducer";
+import { Order, Orders } from "../../../types/orderItemTypes";
+import { changeMessage } from "../../../store/reducers/messageReducer";
 
 interface RemoveTableButtonProps {
     table: Table;
@@ -14,7 +17,7 @@ const RemoveTableButton:React.FC<RemoveTableButtonProps> = ({table}) =>{
     const dispatch = useDispatch();
     const tableToRemove: Table = table;
     const tables: Table[] = (useSelector(getAllTables as any) as Table[])
-
+    const order: Order = (useSelector(getOrders as any) as Orders).filter(o => o.tableNumber === table.tableNumber)[0];
     const handleDecombine = () => {
         const filteredTables = tables.filter(t => t.combinedWith.includes(table.tableNumber));
         filteredTables.push(table);
@@ -29,7 +32,15 @@ const RemoveTableButton:React.FC<RemoveTableButtonProps> = ({table}) =>{
     const handleRemove = (e: React.FormEvent<HTMLButtonElement>) => {
         e.preventDefault();
         handleDecombine();
-        dispatch(requestTableRemove(tableToRemove) as any);
+        if(tableToRemove.status !=='busy' && tableToRemove.bill === 0){
+            dispatch(requestTableRemove(tableToRemove) as any);
+            if(order){
+                dispatch(requestOrderRemove(order) as any);
+            }
+        }
+        else {
+            dispatch(changeMessage(19) as any);
+        }
     };
 
     

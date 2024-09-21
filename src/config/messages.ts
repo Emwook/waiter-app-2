@@ -98,6 +98,11 @@ export interface Message {
       messageDetails: `adding items to order unavailable when table is not busy`,
       messageColor: 'warning',
     },
+    {
+      messageNumber: 19,
+      messageDetails: `cannot remove table when it's occupied or bill is not paid`,
+      messageColor: 'danger',
+    },
 
   ];
   

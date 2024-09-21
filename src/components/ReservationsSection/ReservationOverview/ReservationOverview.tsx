@@ -18,9 +18,13 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import { openFrom, openTo } from "../../../config/settings";
 import { generateReservationId } from "../../../utils/reservations/generateReservationId";
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.css';
-import { Button} from "react-bootstrap";
+import { Button, Row} from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
-import CalendarToolbar from "../CalendarToolbar/CalendarToolbar";
+import { Col } from "react-bootstrap";
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import Loading from "../../SharedLayoutComponents/Loading/Loading";
 
 interface Resource {
   resourceId: number;
@@ -53,6 +57,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
   const resListToday: Reservation[] = useSelector(getAllReservations);
   const [localResListToday, setLocalResListToday] = useState<Reservation[]>(resListToday);
   setDate(startDate); // a change, an old one perhaps but a change none the less
+  const [visible, setVisible] = useState<boolean>(true);
 
   useEffect(() => {
     setLocalResListToday(resListToday);
@@ -230,7 +235,7 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
 
   const { defaultDate, scrollToTime, formats } = useMemo(
     () => ({
-      defaultDate: new Date(2024, 1, 1),
+      defaultDate: new Date(),
       scrollToTime: new Date(1972, 0, 1, 8),
       formats: {
         timeGutterFormat: (date: any, culture: any, localizer: any) =>
@@ -259,22 +264,74 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
     }
     setSelectedRes(res);
   }
+  const handleTimeOut = () => {
+    let timer: NodeJS.Timeout | null = null;
+  
+    if (visible) {
+      setVisible(false);
+  
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      timer = setTimeout(() => {
+        setVisible(true);
+        timer = null;
+      }, 500); 
+    }
+  };
 
   const handleNavigate = (action: 'prev' | 'next' | 'today' | 'date', newDate: Date): void => {
+    handleTimeOut();
     setStartDate(newDate);
   };
 
+  const goToBack = () => {
+    const newDate = new Date(startDate);
+    newDate.setDate(startDate.getDate() - 1);
+    handleNavigate('prev', newDate);
+  };
 
+  const goToNext = () => {
+    const newDate = new Date(startDate);
+    newDate.setDate(startDate.getDate() + 1);
+    handleNavigate('next', newDate);
+  };
+
+  const goToToday = () => {
+    const newDate = new Date();
+    handleNavigate('today', newDate);
+  };
+
+  const handleDateChange = (selectedDate: Date) => {
+    setStartDate(selectedDate);
+  };
+ 
+  
   
   
   return (
     <div className="mb-3 mx-0">
-      <CalendarToolbar
-        date={startDate}
-        onNavigate={handleNavigate}
-        onSetDate={setStartDate}
-      />
+        <Row className='d-flex mb-2'>
+          <Col xs={6}>
+              <Button variant="light" className="border border-gray w-25 rounded-1" onClick={goToToday}>
+                  Today
+              </Button>
+          </Col>
+          <Col xs={6} className='justify-content-end d-flex'>
+              <Button variant="light" onClick={goToBack} className='px-auto border border-gray'>
+                  <i className="bi bi-arrow-left" />
+              </Button>
+              <DatePicker 
+                  selected={startDate} 
+                  onChange={date => handleDateChange(date as Date)} 
+                  className="text-center form-control rounded-1"
+                  dateFormat="dd/MM/yyyy"
+              />
+              <Button variant="light" onClick={goToNext} className='px-auto rounded-right border border-gray'>
+                  <i className="bi bi-arrow-right" />
+              </Button>
+          </Col>
+      </Row>
       <div className="z-0">
+        {visible ? ( 
         <DnDCalendar
           defaultDate={defaultDate}
           defaultView={Views.DAY}
@@ -305,6 +362,9 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
           step={15}
           timeslots={4}
         />
+        ):(
+          <Loading/>
+        )}
       </div>
     </div>
   );

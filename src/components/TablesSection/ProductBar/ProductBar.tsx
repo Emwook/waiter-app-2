@@ -93,9 +93,11 @@ const ProductBar: React.FC<ProductBarProps> = ({ product, isOpen, eventKey, onSe
     const oldBill: number = table.bill;
     const newTable:Table = {
       ...table,
-      bill: (oldBill + productTotal)
+      bill: oldBill + productTotal,
     }    
-    dispatch(requestChangeTableDetails(newTable) as any);
+    if(oldBill + productTotal > 0){
+      dispatch(requestChangeTableDetails(newTable) as any);
+    }
   };
 
   const handleMessage = () => {

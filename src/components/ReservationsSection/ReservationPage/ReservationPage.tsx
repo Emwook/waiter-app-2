@@ -42,9 +42,6 @@ const ReservationPage:React.FC<reservationPageProps> = ({setDate, date}) => {
                         /></Col>
                 <Col lg={3} xs={12}><SelectedResDetails reservation={selectedRes} tableNumbers={tableNumbers}/></Col>
             </Row>            
-                <ul className="mt-4 border-top border-dark">
-                    <li>search - search window to look for a reservation by its id <i className="bi bi-dash"></i></li>
-                </ul>
         </div>
     )
 }
