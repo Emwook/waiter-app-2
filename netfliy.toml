@@ -1,7 +1,6 @@
 [build]
 command = "npm run build"
 publish = "build/"
-base = ""  # Set this only if your project is inside a subfolder
 
 [[redirects]]
 from = "/*"
