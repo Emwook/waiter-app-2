@@ -310,12 +310,12 @@ const ReservationOverview: React.FC<ReservationOverviewProps> = ({setDate, setSe
   return (
     <div className="mb-3 mx-0">
         <Row className='d-flex mb-2'>
-          <Col xs={6}>
-              <Button variant="light" className="border border-gray w-25 rounded-1" onClick={goToToday}>
+          <Col xs={3} sm={3} md={6} className="py-xs-0 m-xs-0">
+              <Button variant="light" className="border border-gray rounded-1" onClick={goToToday}>
                   Today
               </Button>
           </Col>
-          <Col xs={6} className='justify-content-end d-flex'>
+          <Col xs={9} sm={9} md={6} className='justify-content-end d-flex'>
               <Button variant="light" onClick={goToBack} className='px-auto border border-gray'>
                   <i className="bi bi-arrow-left" />
               </Button>

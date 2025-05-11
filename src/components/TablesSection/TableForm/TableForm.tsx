@@ -99,7 +99,7 @@ const TableForm: React.FC = () => {
                                                 type="number" 
                                                 size="sm" 
                                                 name={`numOfPeople${nextTable.tableNumber}`}
-                                                className={("border-dark text-center mt-1")}
+                                                className={("border-dark text-center mt-1 px-1")}
                                                 value = {(selectedStatus === 'busy')?(displayedNumOfPeople):(0)}
                                                 onChange={updateDisplayedNumOfPeople}
                                                 disabled={selectedStatus !== 'busy'}
@@ -111,7 +111,7 @@ const TableForm: React.FC = () => {
                                                 type="number" 
                                                 size="sm" 
                                                 name={`MaxNumOfPeople${nextTable.tableNumber}`}
-                                                className={"border-dark text-center mt-1"} 
+                                                className={"border-dark text-center mt-1 px-1"} 
                                                 value = {displayedMaxNumOfPeople}
                                                 onChange={updateDisplayedMaxNumOfPeople}
                                             />
@@ -120,7 +120,7 @@ const TableForm: React.FC = () => {
                                 </Form.Group>
                             </Col>
                             <Col  xs={2} lg={1} className="d-flex justify-content-end align-content-center">
-                                <Button size="lg" variant="success" type="submit" className="py-1 my-auto border-light text-right ml-auto">
+                                <Button size="sm" variant="success" type="submit" className="py-1 my-auto border-light text-right ml-auto">
                                     <i className="bi bi-plus"/>
                                 </Button>
                             </Col>

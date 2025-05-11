@@ -41,8 +41,8 @@ const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus }) =>
     };
 
     return (
-        <div className={`mt-1 pb-2 pt-4 px-3 d-flex justify-content-between align-items-center border-bottom
-            border-gray 'bg-none'`}>
+        <div className={`mt-1 pb-2 pt-4 px-1 d-flex justify-content-between align-items-center border-bottom
+            border-gray 'bg-none flex-wrap flex-md-nowrap'`}>
             {(selectMode) && (
             <Col xs={1}>
             <Form className="mx-1">
@@ -50,11 +50,11 @@ const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus }) =>
             </Form>
             </Col>
             )}
-            <Col xs={2} ><h2>Table {Table ? Table.tableNumber : ''}</h2></Col>
-            <Col xs={1}><span className="text-muted">${Table ? Table.bill : ''}</span></Col>
-            <Col xs={1}><span className="text-muted">{Table ? Table.numOfPeople : ''}/{Table ? Table.maxNumOfPeople : ''}</span></Col>
-            <Col xs={1}><span className={statusColor}>{Table ? Table.status : ''}</span></Col>  
-            <Col xs={2}>
+            <Col xs={12} md={3} ><span className="h2">Table {Table ? Table.tableNumber : ''}</span></Col>
+            <Col xs={1} md={1}><span className="text-muted">${Table ? Table.bill : ''}</span></Col>
+            <Col xs={1} md={1}><span className="text-muted">{Table ? Table.numOfPeople : ''}/{Table ? Table.maxNumOfPeople : ''}</span></Col>
+            <Col xs={3} md={1}><span className={statusColor}>{Table ? Table.status : ''}</span></Col>  
+            <Col xs={3} md={2}>
             {Table.combinedWith.length > 0 && 
             <>
                 <i className="bi bi-link"/>
@@ -72,7 +72,7 @@ const TableBar: React.FC<TableBarProps> = ({ Table, index, inGroupByStatus }) =>
             }
             </Col>  
             
-            <Col xs={4} className="d-flex justify-content-end">
+            <Col xs={1} md={4} className="d-flex justify-content-end">
                 <RemoveTable table={Table} />
                 <Button variant="primary" className="border-light text-right ml-auto">
                     <NavLink to={Table ? (`/table/${Table.tableNumber}`) : '/'} style={{ textDecoration: 'none', color: 'inherit' }}>

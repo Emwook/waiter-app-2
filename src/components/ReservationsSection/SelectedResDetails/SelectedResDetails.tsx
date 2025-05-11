@@ -160,7 +160,7 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
         </Row>
         <Row className="mt-2"><h6>Time:</h6></Row>
         <Row>
-          <Col className="px-1 m-0">
+          <Col xs={5} className="px-1 m-0">
             <Form.Control
               type="time"
               value={hour}
@@ -171,7 +171,7 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
             />
           </Col>
           <Col xs={1}><span>-</span></Col>
-          <Col className="px-0 m-0">
+          <Col xs={5} className="px-0 m-0">
               <Form.Control
                 type="time"
                 value={hourEnd}
@@ -180,16 +180,18 @@ const SelectedResDetails: React.FC<SelectedResDetailsProps> = ({ reservation, ta
                 min="12:00"
                 max="24:00"
               />
-            </Col>
-          </Row>
+          </Col>
+        </Row>
         <Row className="mt-2"><h6>Date:</h6></Row>
-        <Row className="px-1">
-          <DatePicker
-            selected={date}
-            onChange={date => handleDateChange(date as Date)}
-            className="text-center form-control"
-            dateFormat="dd/MM/yyyy"
-          />
+        <Row className="d-flex justify-content-start">
+          <Col xs={12}>
+            <DatePicker
+              selected={date}
+              onChange={date => handleDateChange(date as Date)}
+              className="text-center form-control"
+              dateFormat="dd/MM/yyyy"
+            />
+          </Col>
         </Row>
         <Row className="mt-2"><h6>Repeating:</h6></Row>
         <Row className="px-1">
