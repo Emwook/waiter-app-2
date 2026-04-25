@@ -1,0 +1,6 @@
+services:
+  nowa-apka:
+    image: ghcr.io/emwook/waiterapp:latest
+    restart: always
+    ports:
+      - "3005:80"
