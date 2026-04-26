@@ -28,8 +28,8 @@ A responsive web application built to manage restaurant orders and table service
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/Emwook/TWOJA-NOWA-NAZWA-REPO.git](https://github.com/Emwook/TWOJA-NOWA-NAZWA-REPO.git)
-cd TWOJA-NOWA-NAZWA-REPO
+git clone https://github.com/Emwook/waiter-app-2.git
+cd waiter-app-2
 ```
 
 ### 2. Install Dependencies
